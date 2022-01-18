@@ -1,0 +1,10 @@
+*.o
+*.pyc
+*.tar.xz
+*.*~
+*.pdf
+*.root
+.nfs*
+*DS_Store
+*#
+**/workdir_*
