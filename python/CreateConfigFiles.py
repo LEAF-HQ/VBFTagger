@@ -1,5 +1,5 @@
 from ModuleRunnerBase import *
-from CreateConfigFilesBase import *
+from Submitter.CreateConfigFilesBase import *
 from VBFTagger.Tuplizer.Signals_VBF import *
 from Utils import *
 
@@ -14,6 +14,10 @@ class ConfigFileHandles(VariablesBase, CreateConfigFilesBase):
         self.modifyConfigAttribute('JER_Version', ROOT.JERC_Info[year]['JER_Version'])
 
 
+def CreateConfigFiles(xmlfilename, years, AllSamples):
+    CFH = ConfigFileHandles(xmlfilename, years = years, AllSamples=AllSamples)
+    CFH.modifyAllSettings()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('xmlfilename', type=str, help='Name of the XML file')
@@ -24,14 +28,12 @@ def main():
     years       = args.years
 
     years = ['UL18']
-    # xmlfilename = 'GenLevelStudiesConfig.xml'
+    xmlfilename = 'GenLevelStudiesConfig.xml'
 
     AllSamples = SampleContainer()
     Add_Signals_VBFAnalysis(AllSamples)
 
-    CFH = ConfigFileHandles(xmlfilename, years = years, AllSamples=AllSamples)
-    CFH.modifyAllSettings()
-
+    CreateConfigFiles(xmlfilename=xmlfilename, years=years, AllSamples=AllSamples)
 
 if __name__ == '__main__':
     main()

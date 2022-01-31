@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[
 
-<!ENTITY ModuleName  "GenLevelStudies" >
-
+<!ENTITY User             "anmalara" >
+<!ENTITY ModuleName       "GenLevelStudies" >
+<!-- <!ENTITY OutputDirectory  "/pnfs/iihe/cms/store/user/&User;/VBFTagger/Year/&ModuleName;/" > -->
+<!ENTITY OutputDirectory  "/user/&User;/WorkingArea/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/Year/&ModuleName;/" >
 ]>
 
 
-<Configuration OutputDirectory="/pnfs/iihe/cms/store/user/anmalara/VBFTagger/Year/&ModuleName;/" PostFix="" SEDirector="root://maite.iihe.ac.be:1094/" TargetLumi="None" AnalysisTool="&ModuleName;Module">
+<Configuration OutputDirectory="&OutputDirectory;" PostFix="" SEDirector="root://maite.iihe.ac.be:1094/" TargetLumi="None" AnalysisTool="&ModuleName;Tool">
 
   <SubmissionSettings FilesPerJob="1"/>
 

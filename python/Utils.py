@@ -10,9 +10,9 @@ from utils import *
 # from tdrstyle_all import *
 # from StatisticFunctions import *
 
-# ROOT.gInterpreter.ProcessLine('#include "'+os.environ["CMSSW_BASE"]+'/src/UHH2/VHResonances/include/constants.hpp"')
-ROOT.gInterpreter.Declare('#include "LEAF/Analyzer/include/mytestfolder/TagConstants.h"')
-ROOT.gInterpreter.Declare('#include "LEAF/Analyzer/include/mytestfolder/RunConstants.h"')
+import ROOT
+
+ROOT.gSystem.Load('libConstants.so')
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptFit(0)
