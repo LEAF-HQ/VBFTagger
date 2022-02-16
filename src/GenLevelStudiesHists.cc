@@ -34,9 +34,15 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
   book<TH1F>("genmet_phi",      ";#phi(gen. p_{T}^{miss}); Events / bin",  60, -3.5, 3.5);
   book<TH2D>("genmet_phi_pt",   ";metphi;pt; Events / bin", 60, -3.5, 3.5, 100,    0, 1000);
 
+  book<TH1F>("NumberOfParticles","; Number of particles ; Events",100, 0, 350);
+  book<TH1F>("NumberOfChargedParticles","; Number of charged particles ; Events",100, 0, 200);
+
+
 }
 
 void GenLevelStudiesHists::fill(const RecoEvent & event){
+
+
   double weight = event.weight;
   int id1 = event.geninfo->id1();
   int id2 = event.geninfo->id1();
@@ -61,6 +67,18 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   hist<TH1F>("genmet")->Fill(event.genmet->pt(), weight);
   hist<TH1F>("genmet_phi")->Fill(event.genmet->phi(), weight);
   hist<TH2D>("genmet_phi_pt")->Fill(event.genmet->phi(), event.genmet->pt(), weight);
+
+  hist<TH1F>("NumberOfParticles")->Fill(event.genparticles_all->size(),weight);
+
+  int NChargedParticles = 0;                                      // Initialise counter
+  for(size_t i=0; i<event.genparticles_all->size(); i++){
+    GenParticle p = event.genparticles_all->at(i);
+    if(abs(p.charge()) == 1) {
+      //hist<TH1F>("NumberOfChargedParticles")->Fill(event.genparticles_all->size(), weight);
+      NChargedParticles += 1;                                     // If particle is charged, counter +1
+    }
+  }
+  hist<TH1F>("NumberOfChargedParticles")->Fill(NChargedParticles, weight);
 
 
 
