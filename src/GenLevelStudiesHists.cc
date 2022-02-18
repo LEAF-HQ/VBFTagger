@@ -34,7 +34,7 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
   // book<TH1F>("genmet_phi",      ";#phi(gen. p_{T}^{miss}); Events / bin",  60, -3.5, 3.5);
   // book<TH2D>("genmet_phi_pt",   ";metphi;pt; Events / bin", 60, -3.5, 3.5, 100,    0, 1000);
 
-  book<TH1F>("NumberOfParticles","; Number of particles ; Events",100, 0, 350);
+  book<TH1F>("NumberOfParticles","; Number of particles ; Events",100, 0, 300);
   book<TH1F>("NumberOfChargedParticles","; Number of charged particles ; Events",100, 0, 200);
 
   // book<TH1F>("PdgId","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",1201, -600.5, 600.5);
