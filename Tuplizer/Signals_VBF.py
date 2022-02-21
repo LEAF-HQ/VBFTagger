@@ -59,8 +59,8 @@ def Add_Signals_GluGlu(SampleContainer):
             xsecs=YearDependentContainer(),
             xmlfiles=YearDependentContainer({'UL18':'Analyzer/datasets/UL18/Summer20/MINIAOD/GluGluHToZZTo4L_M125.xml'}),
             nevents_das=YearDependentContainer({'UL18': 940000}),
-            nevents_generated=YearDependentContainer({'UL18': 940000}),
-            nevents_weighted=YearDependentContainer({'UL18': 940000}),
+            nevents_generated=YearDependentContainer({'UL18': 888200.0}),
+            nevents_weighted=YearDependentContainer({'UL18': 25642042.527}),
             ),
         'GluGluToZH_HToZZTo4L_M125': Sample(
             type='MC',
