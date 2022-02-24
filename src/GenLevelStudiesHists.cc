@@ -1,7 +1,6 @@
 #include "LEAF/VBFTagger/include/GenLevelStudiesHists.h"
 #include "LEAF/Analyzer/include/constants.h"
 #include "LEAF/Analyzer/include/useful_functions.h"
-#include "LEAF/Analyzer/include/Particle.h"
 #include <TH1F.h>
 #include <TFile.h>
 #include <TGraphAsymmErrors.h>
@@ -21,7 +20,7 @@ using namespace std;
 
 GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
 
-  // book<TH1F>("sumweights",      ";sum of event weights; Events / bin",      1,  0.5, 1.5);
+  book<TH1F>("sumweights",      ";sum of event weights; Events / bin",      1,  0.5, 1.5);
   //
   // book<TH1F>("geninfoscalepdf", ";PDF scale; Events / bin",               200,    0, 3000);
   // book<TH1F>("geninfoid1",      ";ID of initial state 1; Events / bin",    27, -5.5, 21.5);
@@ -35,17 +34,22 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
   // book<TH1F>("genmet_phi",      ";#phi(gen. p_{T}^{miss}); Events / bin",  60, -3.5, 3.5);
   // book<TH2D>("genmet_phi_pt",   ";metphi;pt; Events / bin", 60, -3.5, 3.5, 100,    0, 1000);
 
-  book<TH1F>("NumberOfParticles","; Number of particles ; Events",201, 0, 200);
-  book<TH1F>("NumberOfChargedParticles","; Number of charged particles ; Events",81, 0, 80);
+  book<TH1F>("NumberOfParticles<1GeV","; Number of particles with Pt < 1 GeV; Events",201, 0, 200);
+  book<TH1F>("NumberOfParticles>1GeV","; Number of particles with Pt > 1 GeV; Events",201, 0, 200);
+  book<TH1F>("NumberOfChargedParticles<1GeV","; Number of charged particles with Pt < 1 GeV; Events",81, 0, 80);
+  book<TH1F>("NumberOfChargedParticles>1GeV","; Number of charged particles with Pt > 1 GeV; Events",81, 0, 80);
 
-  // book<TH1F>("PdgId","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",1201, -600.5, 600.5);
-  book<TH1F>("PdgId2","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",621, -310.5, 310.5);
+  int NPdgId = 4000;
+  book<TH1F>("PdgId","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",2*NPdgId+1, -NPdgId-0.5, NPdgId+0.5);
+  hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 + 1,"Quarks");
+  hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +11,"Leptons");
+  hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +23,"Z");
+  hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +25,"H");
+  hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +111,"Mesons");
+  hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +2112,"Baryons");
 
-  // hist<TH1F>("pdgid")->GetXaxis()->SetBinLabel(1,"NAME1");
-  // hist<TH1F>("pdgid")->GetXaxis()->SetBinLabel(2,"NAME2");
-  // Fill('NAME1',weight);
 
-  book<TH1F>("verifH","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",201, 0, 200);
+  book<TH1F>("verifH","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",501, 0, 500);
   book<TH1F>("verifZ","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",201, 0, 200);
   book<TH1F>("4Lmass","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",151, 0, 150);
   book<TH1F>("4Lpt","H->ZZ->4l (M = 125 GeV); Pt (GeV) ; Number of particles",300, 0, 800);
@@ -57,9 +61,9 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
 
 
   double weight = event.weight;
-  // int id1 = event.geninfo->id1();
-  // int id2 = event.geninfo->id1();
-  // hist<TH1F>("sumweights")->Fill(1, weight);
+  int id1 = event.geninfo->id1();
+  int id2 = event.geninfo->id1();
+  hist<TH1F>("sumweights")->Fill(1, weight);
   //
   // hist<TH1F>("geninfoscalepdf")->Fill(event.geninfo->scale_pdf(), weight);
   // hist<TH1F>("geninfoid1")->Fill(id1, weight);
@@ -81,14 +85,12 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   // hist<TH1F>("genmet_phi")->Fill(event.genmet->phi(), weight);
   // hist<TH2D>("genmet_phi_pt")->Fill(event.genmet->phi(), event.genmet->pt(), weight);
 
-  hist<TH1F>("NumberOfParticles")->Fill(event.genparticles_all->size(),weight);
-
-  int NChargedParticles = 0;
-  TLorentzVector FourLeptons;                                   // Initialise counter
+  int NumberOfParticles[4] = {0,0,0,0};                                         // counter {<1GeV, >1GeV, charged<1Gev, charged>1GeV}
+  TLorentzVector FourLeptons;
   for(size_t i=0; i<event.genparticles_all->size(); i++){
     GenParticle m = event.genparticles_all->at(i);
-    // hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
-    hist<TH1F>("PdgId2")->Fill(m.pdgid(), weight);
+
+    hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
 
     if (m.pdgid() == 25 && m.get_statusflag(GenParticle::isLastCopy))  {
       if (!m.get_statusflag(GenParticle::isHardProcess) && !m.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
@@ -112,12 +114,24 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
       hist<TH1F>("4Lpt")->Fill(FourLeptons.Pt(), weight);
     }
 
-
-    if(abs(m.charge()) == 1) {
-      NChargedParticles += 1;                                  // If particle is charged, counter +1
+    if (m.pt() < 1) {
+      NumberOfParticles[0] += 1;
+      if(abs(m.charge()) == 1) {
+        NumberOfParticles[2] += 1;                                  // If particle is charged, counter +1
+      }
     }
+    if (m.pt() >= 1) {
+      NumberOfParticles[1] += 1;
+      if(abs(m.charge()) == 1) {
+        NumberOfParticles[3] += 1;                                  // If particle is charged, counter +1
+      }
+    }
+
   }
-  hist<TH1F>("NumberOfChargedParticles")->Fill(NChargedParticles, weight);
+  hist<TH1F>("NumberOfParticles<1GeV")->Fill(NumberOfParticles[0], weight);
+  hist<TH1F>("NumberOfParticles>1GeV")->Fill(NumberOfParticles[1], weight);
+  hist<TH1F>("NumberOfChargedParticles<1GeV")->Fill(NumberOfParticles[2], weight);
+  hist<TH1F>("NumberOfChargedParticles>1GeV")->Fill(NumberOfParticles[3], weight);
 
 
 
