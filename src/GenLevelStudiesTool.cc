@@ -23,6 +23,7 @@
 #include "LEAF/VBFTagger/include/VBFTaggerEvent.h"
 #include "LEAF/VBFTagger/include/GenLevelStudiesHists.h"
 #include "LEAF/VBFTagger/include/Utils.h"
+#include "LEAF/VBFTagger/include/GenEventMatch.h"
 
 using namespace std;
 
@@ -49,6 +50,7 @@ private:
 
   // Modules used in the analysis
   unique_ptr<LumiWeightApplicator> lumiweight_applicator;
+  unique_ptr<GenEventMatch> gen_event_match;
   unique_ptr<JetCleaner> cleaner_jet;
 
   // Selections used in the analysis
@@ -86,6 +88,8 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
   event->reset();
 
   lumiweight_applicator.reset(new LumiWeightApplicator(cfg));
+
+  gen_event_match.reset(new GenEventMatch(cfg));
 
   MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
   cleaner_jet.reset(new JetCleaner(jet_id));
@@ -125,6 +129,8 @@ bool GenLevelStudiesTool::Process(){
 
   // fill one set of histograms called "nominal", which is necessary for PostAnalyzer scripts
   fill_histograms("nominal");
+
+  gen_event_match->process(*event);
 
 
   // store events passing the full selection for the next step

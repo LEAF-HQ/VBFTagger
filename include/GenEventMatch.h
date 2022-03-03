@@ -6,19 +6,20 @@
 #include "LEAF/Analyzer/include/GenParticlePrinter.h"
 #include "LEAF/Analyzer/include/GenLevelUtils.h"
 #include "LEAF/VBFTagger/include/VBFTaggerEvent.h"
+#include "LEAF/VBFTagger/include/GenParticleStatusPrinter.h"
 
 
-class GenEventMatch: public AnalysisModule<VBFTaggerEvent> {
+class GenEventMatch: public AnalysisModule<RecoEvent> {
 public:
   explicit GenEventMatch(const Config& cfg);
   virtual ~GenEventMatch() = default;
 
-  virtual bool process(VBFTaggerEvent & event) override;
+  virtual bool process(RecoEvent & event) override;
 
-  GenParticle FindParticle(VBFTaggerEvent& event, int );
-  GenParticle FindParticle(VBFTaggerEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::isLastCopy);
-  std::vector<GenParticle> FindMothers(VBFTaggerEvent&, GenParticle);
-  std::vector<GenParticle> FindDaughters(VBFTaggerEvent&, GenParticle);
+  GenParticle FindParticle(RecoEvent& event, int );
+  GenParticle FindParticle(RecoEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::isLastCopy);
+  std::vector<GenParticle> FindMothers(RecoEvent&, GenParticle);
+  std::vector<GenParticle> FindDaughters(RecoEvent&, GenParticle);
 
   template<typename T>
   std::vector<T> ParticlesInJet(const Particle  & jet, const std::vector<T> & particles, double deltarmin=0.6){
@@ -36,4 +37,14 @@ public:
 protected:
 
   unique_ptr<GenParticlePrinter> gp_printer;
+  unique_ptr<GenParticleStatusPrinter> gp_status_printer;
 };
+
+template<class T>
+ostream& operator<<(ostream& os, const std::vector<T>& vec)
+{
+ for (const auto& x: vec) {
+    os << x << " ";
+  }
+  return os;
+}
