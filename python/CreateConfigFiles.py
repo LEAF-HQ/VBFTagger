@@ -28,7 +28,7 @@ def main():
     years       = args.years
 
     years = ['UL18']
-    xmlfilename = 'GenLevelStudiesConfig.xml'
+    #xmlfilename = 'GenLevelStudiesConfig.xml'
 
     AllSamples = SampleContainer()
     Add_Signals_VBFAnalysis(AllSamples)
