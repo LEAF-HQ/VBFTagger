@@ -17,7 +17,7 @@ public:
   virtual bool process(RecoEvent & event) override;
 
   GenParticle FindParticle(RecoEvent& event, int );
-  GenParticle FindParticle(RecoEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::isLastCopy);
+  GenParticle FindParticle(RecoEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::StatusFlag::isLastCopy);
   std::vector<GenParticle> FindMothers(RecoEvent&, GenParticle);
   std::vector<GenParticle> FindDaughters(RecoEvent&, GenParticle);
 

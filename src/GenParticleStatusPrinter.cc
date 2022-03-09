@@ -37,9 +37,9 @@ bool GenParticleStatusPrinter::process(RecoEvent & event){
       }
     }
 
-    // if(!gp.get_statusflag(GenParticle::isLastCopy)) continue;
+    // if(!gp.isLastCopy()) continue;
     // if(abs(gp.pdgid()) > 30) continue;
-    cout << i << "  ,  " << gp.identifier() << "  ,  " << pdgId2str(gp.pdgid()) << "  ,  " << gp.mother_identifier() << " (pdgid: " << pdgId2str(motherpdgid) << ") ,  " << gp.get_statusflag(GenParticle::isPrompt) << "  ,  "<< gp.get_statusflag(GenParticle::isDecayedLeptonHadron) << "  ,  "<< gp.get_statusflag(GenParticle::isTauDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::isPromptTauDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::isDirectTauDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::isDirectPromptTauDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::isDirectHadronDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::isHardProcess) << "  ,  "<< gp.get_statusflag(GenParticle::fromHardProcess) << "  ,  "<< gp.get_statusflag(GenParticle::isHardProcessTauDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::isDirectHardProcessTauDecayProduct) << "  ,  "<< gp.get_statusflag(GenParticle::fromHardProcessBeforeFSR) << "  ,  "<< gp.get_statusflag(GenParticle::isFirstCopy) << "  ,  "<< gp.get_statusflag(GenParticle::isLastCopy) << "  ,  "<< gp.get_statusflag(GenParticle::isLastCopyBeforeFSR) << endl;
+    cout << i << "  ,  " << gp.identifier() << "  ,  " << pdgId2str(gp.pdgid()) << "  ,  " << gp.mother_identifier() << " (pdgid: " << pdgId2str(motherpdgid) << ") ,  " << gp.isPrompt() << "  ,  "<< gp.isDecayedLeptonHadron() << "  ,  "<< gp.isTauDecayProduct() << "  ,  "<< gp.isPromptTauDecayProduct() << "  ,  "<< gp.isDirectTauDecayProduct() << "  ,  "<< gp.isDirectPromptTauDecayProduct() << "  ,  "<< gp.isDirectHadronDecayProduct() << "  ,  "<< gp.isHardProcess() << "  ,  "<< gp.fromHardProcess() << "  ,  "<< gp.isHardProcessTauDecayProduct() << "  ,  "<< gp.isDirectHardProcessTauDecayProduct() << "  ,  "<< gp.fromHardProcessBeforeFSR() << "  ,  "<< gp.isFirstCopy() << "  ,  "<< gp.isLastCopy() << "  ,  "<< gp.isLastCopyBeforeFSR() << endl;
   }
   cout << endl << endl << endl << endl;
   return true;
