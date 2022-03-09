@@ -5,6 +5,8 @@
 
 #include "TString.h"
 
+#include "LEAF/Analyzer/include/useful_functions.h"
+
 inline const TString BoolToTString(bool b) { return b ? "true" : "false";}
 
 
