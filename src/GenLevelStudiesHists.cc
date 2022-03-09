@@ -90,11 +90,11 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   for(size_t i=0; i<event.genparticles_all->size(); i++){
     GenParticle m = event.genparticles_all->at(i);
 
-    if (!m.get_statusflag(GenParticle::isHardProcess) && !m.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
+    if (!m.isHardProcess() && !m.fromHardProcessBeforeFSR()) continue;
     hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
 
-    if (m.pdgid() == 25 && m.get_statusflag(GenParticle::isLastCopy))  {
-      if (!m.get_statusflag(GenParticle::isHardProcess) && !m.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
+    if (m.pdgid() == 25 && m.isLastCopy())  {
+      if (!m.isHardProcess() && !m.fromHardProcessBeforeFSR()) continue;
       hist<TH1F>("verifH")->Fill(m.m(), weight);
       for(size_t j=0; j<event.genparticles_all->size(); j++) {
         GenParticle z = event.genparticles_all->at(j);

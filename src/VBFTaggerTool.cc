@@ -21,6 +21,7 @@
 
 #include "LEAF/VBFTagger/include/VBFTaggerEvent.h"
 #include "LEAF/VBFTagger/include/VBFTaggerHists.h"
+#include "LEAF/VBFTagger/include/GenEventMatch.h"
 
 using namespace std;
 
@@ -44,6 +45,9 @@ private:
 
   // Selections used in the analysis
   unique_ptr<NJetSelection> selection_njets;
+
+  unique_ptr<GenEventMatch> genEvent_match;
+
 };
 
 
@@ -58,6 +62,9 @@ VBFTaggerTool::VBFTaggerTool(const Config & cfg) : BaseTool(cfg){
 
   selection_njets.reset(new NJetSelection(cfg, 4, -1));
 
+  selection_njets.reset(new NJetSelection(cfg, 4, -1));
+
+  genEvent_match.reset(new GenEventMatch(cfg));
 
   // histfolders
   vector<TString> histtags = {"input", "cleaner", "njets", "nominal"};
@@ -74,11 +81,13 @@ bool VBFTaggerTool::Process(){
   sort_by_pt<GenParticle>(*event->genparticles_visibletaus);
   sort_by_pt<GenParticle>(*event->genparticles_all);
   sort_by_pt<GenJet>(*event->genjets);
-  sort_by_pt<Jet>(*event->jets);
+  sort_by_pt<Jet>(*event->jets_ak4chs);
   sort_by_pt<Muon>(*event->muons);
   sort_by_pt<Electron>(*event->electrons);
   sort_by_pt<Tau>(*event->taus);
   fill_histograms("input");
+
+  genEvent_match->process(*event);
 
   // run example cleaner
   cleaner_jet->process(*event);
