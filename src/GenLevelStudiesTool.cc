@@ -22,6 +22,7 @@
 
 #include "LEAF/VBFTagger/include/VBFTaggerEvent.h"
 #include "LEAF/VBFTagger/include/GenLevelStudiesHists.h"
+#include "LEAF/VBFTagger/include/GenLevelStudiesJetsHists.h"
 #include "LEAF/VBFTagger/include/Utils.h"
 #include "LEAF/VBFTagger/include/GenEventMatch.h"
 
@@ -70,6 +71,7 @@ void GenLevelStudiesTool::book_histograms(){
   for(const string & tag : histogram_tags){
     string mytag;
     mytag = tag+"_General"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag));
+    mytag = tag+"_General_Jets"; book_HistFolder(mytag, new GenLevelStudiesJetsHists(mytag));
     mytag = tag+"_Jets";    book_HistFolder(mytag, new JetHists(mytag));
   }
 }
@@ -77,6 +79,7 @@ void GenLevelStudiesTool::book_histograms(){
 void GenLevelStudiesTool::fill_histograms(string tag){
   string mytag;
   mytag = tag+"_General"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_General_Jets"; HistFolder<GenLevelStudiesJetsHists>(mytag)->fill(*event);
   mytag = tag+"_Jets";    HistFolder<JetHists>(mytag)->fill(*event);
 }
 

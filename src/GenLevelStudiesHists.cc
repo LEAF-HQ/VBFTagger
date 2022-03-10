@@ -104,16 +104,23 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   for(size_t i=0; i<event.genparticles_all->size(); i++){
     GenParticle m = event.genparticles_all->at(i);
 
+    // Remove the events containing taus@
+    int tauFlag = 0;
+    for(size_t j=0; j<event.genparticles_all->size(); j++){
+      GenParticle p = event.genparticles_all->at(j);
+      if (abs(p.pdgid()) == 15){
+        tauFlag = 1;
+        break;
+      }
+    }
+    if (tauFlag == 1) continue;
+
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isPrompt), weight);
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isFirstCopy)+2, weight);
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopy)+4, weight);
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopyBeforeFSR)+6, weight);
 
     hist<TH2D>("ParticleStatus")->Fill(m.pdgid(), m.status(), weight);
-
-    if (m.status()!=1 || !m.get_statusflag(GenParticle::isLastCopy)) continue;
-    hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
-    hist<TH1F>("PdgIdZoom")->Fill(m.pdgid(), weight);
 
     if (m.pdgid() == 25 && m.get_statusflag(GenParticle::isLastCopy))  {
       if (!m.get_statusflag(GenParticle::isHardProcess) && !m.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
@@ -136,6 +143,10 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
       hist<TH1F>("4Lmass")->Fill(FourLeptons.M(), weight);
       hist<TH1F>("4Lpt")->Fill(FourLeptons.Pt(), weight);
     }
+
+    if (m.status()!=1 || !m.get_statusflag(GenParticle::isLastCopy)) continue;
+    hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
+    hist<TH1F>("PdgIdZoom")->Fill(m.pdgid(), weight);
 
     if (m.pt() < 1) {
       NumberOfParticles[0] += 1;
