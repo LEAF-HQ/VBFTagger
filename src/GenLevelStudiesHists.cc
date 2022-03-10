@@ -39,7 +39,7 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
   book<TH1F>("NumberOfChargedParticles<1GeV","; Number of charged particles with Pt < 1 GeV; Events",81, 0, 80);
   book<TH1F>("NumberOfChargedParticles>1GeV","; Number of charged particles with Pt > 1 GeV; Events",81, 0, 80);
 
-  int NPdgId = 4000;
+  double NPdgId = 4000;
   book<TH1F>("PdgId","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",2*NPdgId+1, -NPdgId-0.5, NPdgId+0.5);
   hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 + 1,"Quarks");
   hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +11,"Leptons");
@@ -48,11 +48,25 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
   hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +111,"Mesons");
   hist<TH1F>("PdgId")->GetXaxis()->SetBinLabel(NPdgId + 1 +2112,"Baryons");
 
+  book<TH1F>("PdgIdZoom","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",61, -30.5, 30.5);
+  hist<TH1F>("PdgIdZoom")->GetXaxis()->SetBinLabel(30 + 1 + 1,"Quarks");
+  hist<TH1F>("PdgIdZoom")->GetXaxis()->SetBinLabel(30 + 1 +11,"Leptons");
+  hist<TH1F>("PdgIdZoom")->GetXaxis()->SetBinLabel(30 + 1 +23,"Z");
+  hist<TH1F>("PdgIdZoom")->GetXaxis()->SetBinLabel(30 + 1 +25,"H");
+
 
   book<TH1F>("verifH","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",501, 0, 500);
   book<TH1F>("verifZ","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",201, 0, 200);
   book<TH1F>("4Lmass","H->ZZ->4l (M = 125 GeV); Mass (GeV) ; Number of particles",151, 0, 150);
   book<TH1F>("4Lpt","H->ZZ->4l (M = 125 GeV); Pt (GeV) ; Number of particles",300, 0, 800);
+
+  book<TH2D>("ParticleStatusFlag", ";PdgID;Status;Number of particles", 2*NPdgId+1, -NPdgId-0.5, NPdgId+0.5, 8, 0, 8);
+  hist<TH2D>("ParticleStatusFlag")->GetYaxis()->SetBinLabel(1,"isPrompt");
+  hist<TH2D>("ParticleStatusFlag")->GetYaxis()->SetBinLabel(3,"isFirstCopy");
+  hist<TH2D>("ParticleStatusFlag")->GetYaxis()->SetBinLabel(5,"isLastCopy");
+  hist<TH2D>("ParticleStatusFlag")->GetYaxis()->SetBinLabel(7,"isLastCopyBeforeFSR");
+
+  book<TH2D>("ParticleStatus", ";PdgID;Status;Number of particles", 61, -30.5, 30.5, 95, 0, 95);
 
 
 }
@@ -90,8 +104,16 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   for(size_t i=0; i<event.genparticles_all->size(); i++){
     GenParticle m = event.genparticles_all->at(i);
 
-    if (!m.get_statusflag(GenParticle::isHardProcess) && !m.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isPrompt), weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isFirstCopy)+2, weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopy)+4, weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopyBeforeFSR)+6, weight);
+
+    hist<TH2D>("ParticleStatus")->Fill(m.pdgid(), m.status(), weight);
+
+    if (m.status()!=1 || !m.get_statusflag(GenParticle::isLastCopy)) continue;
     hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
+    hist<TH1F>("PdgIdZoom")->Fill(m.pdgid(), weight);
 
     if (m.pdgid() == 25 && m.get_statusflag(GenParticle::isLastCopy))  {
       if (!m.get_statusflag(GenParticle::isHardProcess) && !m.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
