@@ -99,20 +99,20 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   // hist<TH1F>("genmet_phi")->Fill(event.genmet->phi(), weight);
   // hist<TH2D>("genmet_phi_pt")->Fill(event.genmet->phi(), event.genmet->pt(), weight);
 
+  int tauFlag = 0;
+  for(size_t j=0; j<event.genparticles_all->size(); j++){
+    GenParticle p = event.genparticles_all->at(j);
+    if (abs(p.pdgid()) == 15){
+      tauFlag = 1;
+      break;
+    }
+  }
+
   int NumberOfParticles[4] = {0,0,0,0};                                         // counter {<1GeV, >1GeV, charged<1Gev, charged>1GeV}
   TLorentzVector FourLeptons;
   for(size_t i=0; i<event.genparticles_all->size(); i++){
     GenParticle m = event.genparticles_all->at(i);
 
-    // Remove the events containing taus@
-    int tauFlag = 0;
-    for(size_t j=0; j<event.genparticles_all->size(); j++){
-      GenParticle p = event.genparticles_all->at(j);
-      if (abs(p.pdgid()) == 15){
-        tauFlag = 1;
-        break;
-      }
-    }
     if (tauFlag == 1) continue;
 
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isPrompt), weight);
