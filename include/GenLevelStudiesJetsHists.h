@@ -21,9 +21,4 @@ public:
   // Main functions
   void fill(const RecoEvent & event);
 
-
-protected:
-
-  shared_ptr<TH1F> hsumweights, hngenjets, hgenjetpt, hgenjeteta, hgenjetphi, hgenjetm, hgenjetR, hgenjetR_ele, hgenjetR_mu;
-
 };
