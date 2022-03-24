@@ -34,10 +34,10 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
   // book<TH1F>("genmet_phi",      ";#phi(gen. p_{T}^{miss}); Events / bin",  60, -3.5, 3.5);
   // book<TH2D>("genmet_phi_pt",   ";metphi;pt; Events / bin", 60, -3.5, 3.5, 100,    0, 1000);
 
-  book<TH1F>("NumberOfParticles<1GeV","; Number of particles with Pt < 1 GeV; Events",201, 0, 200);
-  book<TH1F>("NumberOfParticles>1GeV","; Number of particles with Pt > 1 GeV; Events",201, 0, 200);
-  book<TH1F>("NumberOfChargedParticles<1GeV","; Number of charged particles with Pt < 1 GeV; Events",81, 0, 80);
-  book<TH1F>("NumberOfChargedParticles>1GeV","; Number of charged particles with Pt > 1 GeV; Events",81, 0, 80);
+  book<TH1F>("NumberOfParticles<1GeV","; Number of particles with Pt < 1 GeV; Events",51, -0.5, 50.5);
+  book<TH1F>("NumberOfParticles>1GeV","; Number of particles with Pt > 1 GeV; Events",51, -0.5, 50.5);
+  book<TH1F>("NumberOfChargedParticles<1GeV","; Number of charged particles with Pt < 1 GeV; Events",51, -0.5, 50.5);
+  book<TH1F>("NumberOfChargedParticles>1GeV","; Number of charged particles with Pt > 1 GeV; Events",51, -0.5, 50.5);
 
   double NPdgId = 4000;
   book<TH1F>("PdgId","H->ZZ->4l (M = 125 GeV); Particle Id ; Number of particles",2*NPdgId+1, -NPdgId-0.5, NPdgId+0.5);
@@ -75,8 +75,8 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
 
 
   double weight = event.weight;
-  int id1 = event.geninfo->id1();
-  int id2 = event.geninfo->id1();
+  // int id1 = event.geninfo->id1();
+  // int id2 = event.geninfo->id1();
   hist<TH1F>("sumweights")->Fill(1, weight);
   //
   // hist<TH1F>("geninfoscalepdf")->Fill(event.geninfo->scale_pdf(), weight);
@@ -99,21 +99,19 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
   // hist<TH1F>("genmet_phi")->Fill(event.genmet->phi(), weight);
   // hist<TH2D>("genmet_phi_pt")->Fill(event.genmet->phi(), event.genmet->pt(), weight);
 
-  int tauFlag = 0;
-  for(size_t j=0; j<event.genparticles_all->size(); j++){
-    GenParticle p = event.genparticles_all->at(j);
-    if (abs(p.pdgid()) == 15){
-      tauFlag = 1;
-      break;
-    }
+  // removing the events containing taus
+  for (size_t k=0; k<event.genparticles_all->size(); k++) {
+    GenParticle t = event.genparticles_all->at(k);
+    if (t.pdgid() == 15) return;
   }
 
-  int NumberOfParticles[4] = {0,0,0,0};                                         // counter {<1GeV, >1GeV, charged<1Gev, charged>1GeV}
+  vector<GenParticle> gen_part_w_pT_lower_than_tresh;
+  vector<GenParticle> charged_gen_part_w_pT_lower_than_tresh;
+  vector<GenParticle> gen_part_w_pT_higher_than_tresh;
+  vector<GenParticle> charged_gen_part_w_pT_higher_than_tresh;
   TLorentzVector FourLeptons;
   for(size_t i=0; i<event.genparticles_all->size(); i++){
     GenParticle m = event.genparticles_all->at(i);
-
-    if (tauFlag == 1) continue;
 
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isPrompt), weight);
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isFirstCopy)+2, weight);
@@ -148,24 +146,25 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
     hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
     hist<TH1F>("PdgIdZoom")->Fill(m.pdgid(), weight);
 
-    if (m.pt() < 1) {
-      NumberOfParticles[0] += 1;
+    if (m.pt() < 1.) {
+      gen_part_w_pT_lower_than_tresh.push_back(m);
       if(abs(m.charge()) == 1) {
-        NumberOfParticles[2] += 1;                                  // If particle is charged, counter +1
+        charged_gen_part_w_pT_lower_than_tresh.push_back(m);                                  // If particle is charged, counter +1
       }
     }
-    if (m.pt() >= 1) {
-      NumberOfParticles[1] += 1;
+
+    if (m.pt() >= 1.) {
+      gen_part_w_pT_higher_than_tresh.push_back(m);
       if(abs(m.charge()) == 1) {
-        NumberOfParticles[3] += 1;                                  // If particle is charged, counter +1
+        charged_gen_part_w_pT_higher_than_tresh.push_back(m);                                  // If particle is charged, counter +1
       }
     }
 
   }
-  hist<TH1F>("NumberOfParticles<1GeV")->Fill(NumberOfParticles[0], weight);
-  hist<TH1F>("NumberOfParticles>1GeV")->Fill(NumberOfParticles[1], weight);
-  hist<TH1F>("NumberOfChargedParticles<1GeV")->Fill(NumberOfParticles[2], weight);
-  hist<TH1F>("NumberOfChargedParticles>1GeV")->Fill(NumberOfParticles[3], weight);
+  hist<TH1F>("NumberOfParticles<1GeV")->Fill(gen_part_w_pT_lower_than_tresh.size(), weight);
+  hist<TH1F>("NumberOfParticles>1GeV")->Fill(gen_part_w_pT_higher_than_tresh.size(), weight);
+  hist<TH1F>("NumberOfChargedParticles<1GeV")->Fill(charged_gen_part_w_pT_lower_than_tresh.size(), weight);
+  hist<TH1F>("NumberOfChargedParticles>1GeV")->Fill(charged_gen_part_w_pT_higher_than_tresh.size(), weight);
 
 
 
