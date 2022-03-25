@@ -7,7 +7,7 @@ from array import array
 from ModuleRunnerBase import *
 from utils import *
 
-# from tdrstyle_all import *
+from tdrstyle_all import *
 # from StatisticFunctions import *
 
 import ROOT
