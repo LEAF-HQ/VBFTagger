@@ -37,7 +37,7 @@ public:
   ~GenParticlesHists() = default;
 
   // Main functions
-  void fill(const RecoEvent & event);
+  void fill(const VBFTaggerEvent & event);
 
 private:
   TString selection;

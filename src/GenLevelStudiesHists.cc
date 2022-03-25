@@ -57,7 +57,7 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
 
 }
 
-void GenLevelStudiesHists::fill(const RecoEvent & event){
+void GenLevelStudiesHists::fill(const VBFTaggerEvent & event){
 
 
   double weight = event.weight;

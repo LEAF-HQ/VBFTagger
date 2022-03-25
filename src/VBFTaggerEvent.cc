@@ -18,6 +18,8 @@
 using namespace std;
 
 VBFTaggerEvent::VBFTaggerEvent(){
+  identifier_VBF1 = -1;
+  identifier_VBF2 = -1;
 }
 
 VBFTaggerEvent::~VBFTaggerEvent(){
@@ -25,8 +27,12 @@ VBFTaggerEvent::~VBFTaggerEvent(){
 
 void VBFTaggerEvent::clear(){
   RecoEvent::clear();
+  identifier_VBF1 = -1;
+  identifier_VBF2 = -1;
 }
 
 void VBFTaggerEvent::reset(){
   RecoEvent::reset();
+  identifier_VBF1 = -1;
+  identifier_VBF2 = -1;
 }

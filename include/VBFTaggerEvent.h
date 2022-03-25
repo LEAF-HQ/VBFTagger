@@ -19,6 +19,16 @@ public:
   ~VBFTaggerEvent();
 
   void clear();
+
   void reset();
+
+  int identifier_VBFjet1() const { return identifier_VBF1;}
+  int identifier_VBFjet2() const { return identifier_VBF2;}
+
+  void set_identifier_VBFjet1(int x) { identifier_VBF1 = x;}
+  void set_identifier_VBFjet2(int x) { identifier_VBF2 = x;}
+
+  int identifier_VBF1;
+  int identifier_VBF2;
 
 };
