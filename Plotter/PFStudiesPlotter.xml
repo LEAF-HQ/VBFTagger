@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE PlotterConfiguration PUBLIC "" "PlotterConfiguration.dtd"[
+
+<!ENTITY User            "anmalara" >
+<!ENTITY ModuleName      "PFStudies" >
+<!ENTITY Year            "UL18" >
+<!ENTITY InputDirectory  "/pnfs/iihe/cms/store/user/&User;/Analyses/VBFTagger/&Year;/&ModuleName;/" >
+
+]>
+
+
+<PlotterConfiguration>
+
+  <FileConfiguration
+    InputDirectory  = "&InputDirectory;"
+    OutputDirectory = "&InputDirectory;/plots/distributions"
+    PreFix          = ""
+    SEDirector      = ""
+  />
+
+  <PlottingConfiguration
+    lumitext   = "MC UL18 (13 TeV)"
+    blind      = "false"
+    logY       = "true"
+    normalize  = "true"
+    singlePDF  = "false"
+    numerator  = ""
+  />
+  <!-- numerator  = "TestData"  -->
+
+  <InputDatasets>
+    <Dataset Name="VBF_HToZZTo4L_M125_standard_UL18"     Stack="false"  Color="633"    Linestyle="1"   Legend="VBF H -> 4L."   Type="MC" />
+    <Dataset Name="GluGluHToZZTo4L_M125_standard_UL18"   Stack="false"  Color="862"    Linestyle="1"   Legend="gg -> H -> 4L." Type="MC" />
+    <!-- <Dataset Name="TestSignal_M1000"   Stack="false"  Color="1"    Linestyle="2"   Legend="Test signal (M = 1000 GeV)"   Type="MC" />
+    <Dataset Name="TestSignal_M2000"   Stack="false"  Color="1"    Linestyle="1"   Legend="Test signal (M = 2000 GeV)"   Type="MC" />
+    <Dataset Name="TestBackground"    Stack="true"   Color="814"  Linestyle="0"   Legend="Test background"              Type="MC" />
+    <Dataset Name="TestData"          Stack="false"  Color="1"    Linestyle="0"   Legend="Test data"                    Type="DATA" /> -->
+  </InputDatasets>
+
+
+<!--
+kWhite    0,
+kBlack    1,
+kYellow   400
+kGreen    416
+kCyan     432
+kBlue     600
+kMagenta  616
+kRed      632
+kOrange   800
+kSpring   820
+kTeal     840
+kAzure    860
+kViolet   880
+kPink     900
+kGray     920
+
+-->
+
+
+
+</PlotterConfiguration>

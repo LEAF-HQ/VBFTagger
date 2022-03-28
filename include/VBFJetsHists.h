@@ -27,21 +27,20 @@
 
 using namespace std;
 
-class PFCandsHists : public BaseHists{
+class VBFJetsHists : public BaseHists{
 
 public:
   // Constructors, destructor
-  PFCandsHists(TString dir_, TString selection_="");
-  PFCandsHists(const PFCandsHists &) = default;
-  PFCandsHists & operator = (const PFCandsHists &) = default;
-  ~PFCandsHists() = default;
+  VBFJetsHists(TString dir_, TString selection_="");
+  VBFJetsHists(const VBFJetsHists &) = default;
+  VBFJetsHists & operator = (const VBFJetsHists &) = default;
+  ~VBFJetsHists() = default;
 
   // Main functions
   void fill(const VBFTaggerEvent & event);
 
 private:
   TString selection;
-  vector<string> type_names;
-  const vector<ParticleType> types = {ParticleType::e, ParticleType::mu, ParticleType::gamma, ParticleType::h, ParticleType::h0, ParticleType::h_HF, ParticleType::egamma_HF, ParticleType::X};
+  bool is_etaprod, is_deta, is_mjj;
 
 };
