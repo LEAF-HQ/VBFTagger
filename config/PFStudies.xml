@@ -24,7 +24,20 @@
     <AdditionalInput>
       <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
       <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
-      <Collection ClassName="PFCandidate" BranchName="pfcands"/>
+      <Collection ClassName="GenParticle" BranchName="genparticles_all" FileName="allgenparticles"/>
+    </AdditionalInput>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="PFCandidate" BranchName="pfcands" FileName="pfcands"/>
+    </AdditionalInput>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="Jet" BranchName="jets_ak4puppi" FileName="extrajets"/>
+      <Collection ClassName="Jet" BranchName="jets_ak8puppi" FileName="extrajets"/>
     </AdditionalInput>
 
   </AdditionalInputs>
