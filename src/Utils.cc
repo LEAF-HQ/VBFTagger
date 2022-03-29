@@ -1,4 +1,3 @@
-#include "LEAF/Analyzer/include/useful_functions.h"
 #include "LEAF/VBFTagger/include/Utils.h"
 
 using namespace std;

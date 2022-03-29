@@ -34,14 +34,14 @@ public:
   // Constructors, destructor
   GenLevelStudiesTool(const Config & cfg);
   ~GenLevelStudiesTool() = default;
-  void ProcessDataset(const Config & cfg) override {LoopEvents<GenLevelStudiesTool, RecoEvent>(cfg, event, *this);};
+  void ProcessDataset(const Config & cfg) override {LoopEvents<GenLevelStudiesTool, VBFTaggerEvent>(cfg, event, *this);};
   virtual bool Process() override;
   void book_histograms();
   void fill_histograms(string);
   void PrintInputs();
 
 private:
-  RecoEvent* event;
+  VBFTaggerEvent* event;
 
   string NameTool = "GenLevelStudiesTool";
   vector<string> histogram_tags = {"input","weight", "cleaner", "njets", "nominal"};
@@ -87,7 +87,7 @@ void GenLevelStudiesTool::fill_histograms(string tag){
 
 GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
-  event = new RecoEvent();
+  event = new VBFTaggerEvent();
   event->reset();
 
   lumiweight_applicator.reset(new LumiWeightApplicator(cfg));

@@ -20,8 +20,8 @@ GenParticle GenEventMatch::FindParticle(RecoEvent& event, int identifier) {
 
 GenParticle GenEventMatch::FindParticle(RecoEvent& event, ParticleID pdgID, GenParticle::StatusFlag status) {
   for(const auto & p : *event.genparticles_all){
-    if (!p.get_statusflag(GenParticle::isHardProcess) && !p.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
-    if (p.pdgid() == pdgID && p.get_statusflag(status)) return p;
+    if (!p.isHardProcess() && !p.fromHardProcessBeforeFSR()) continue;
+    if (p.pdgid() == (int)pdgID && p.get_statusflag(status)) return p;
   }
   return GenParticle();
 }
@@ -32,7 +32,7 @@ std::vector<GenParticle> GenEventMatch::FindMothers(RecoEvent& event, GenParticl
   if (mother_id<0) return mothers;
   for(const auto & p : *event.genparticles_all){
     if (p.identifier() == particle.identifier()) continue;
-    if (!p.get_statusflag(GenParticle::isHardProcess) && !p.get_statusflag(GenParticle::fromHardProcessBeforeFSR)) continue;
+    if (!p.isHardProcess() && !p.fromHardProcessBeforeFSR()) continue;
     if (p.identifier() == mother_id || p.mother_identifier() == mother_id) mothers.push_back(p);
   }
   return mothers;
@@ -53,8 +53,8 @@ bool GenEventMatch::process(RecoEvent& event) {
   // gp_printer->process(event);
   gp_status_printer->process(event);
 
-  std::vector<GenParticle> H_mothers = FindMothers(event, FindParticle(event, ParticleID::H, GenParticle::isFirstCopy));
-  std::vector<GenParticle> H_daughters = FindDaughters(event, FindParticle(event, ParticleID::H, GenParticle::isLastCopy));
+  std::vector<GenParticle> H_mothers = FindMothers(event, FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isFirstCopy));
+  std::vector<GenParticle> H_daughters = FindDaughters(event, FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isLastCopy));
 
   std::vector<string> H_mothers_names;
   for (const auto &m: H_mothers) {

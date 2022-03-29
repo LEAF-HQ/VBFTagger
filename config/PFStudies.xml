@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[
+
+
+<!ENTITY User             "anmalara" >
+<!ENTITY ModuleName       "PFStudies" >
+<!ENTITY OutputDirectory  "/pnfs/iihe/cms/store/user/&User;/Analyses/VBFTagger/Year/&ModuleName;/" >
+
+]>
+
+
+<Configuration OutputDirectory="&OutputDirectory;" PostFix="" SEDirector="" TargetLumi="None" AnalysisTool="&ModuleName;Tool">
+
+  <SubmissionSettings FilesPerJob="1"/>
+  <!-- <SubmissionSettings EventsPerJob="5000"/> -->
+
+  <InputDatasets>
+    <Dataset Name="VBF_HToZZTo4L_M125_standard"      Lumi="None" Year="None" Type="None" Group="None"> <InputFile FileName="None"/> </Dataset>
+    <Dataset Name="GluGluHToZZTo4L_M125_standard"    Lumi="None" Year="None" Type="None" Group="None"> <InputFile FileName="None"/> </Dataset>
+  </InputDatasets>
+
+  <AdditionalInputs>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="GenParticle" BranchName="genparticles_all" FileName="allgenparticles"/>
+    </AdditionalInput>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="PFCandidate" BranchName="pfcands" FileName="pfcands"/>
+    </AdditionalInput>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="Jet" BranchName="jets_ak4puppi" FileName="extrajets"/>
+      <Collection ClassName="Jet" BranchName="jets_ak8puppi" FileName="extrajets"/>
+    </AdditionalInput>
+
+  </AdditionalInputs>
+
+  <AdditionalVariables>
+    <Variable Name="test" Value="testvalue"/>
+  </AdditionalVariables>
+
+</Configuration>

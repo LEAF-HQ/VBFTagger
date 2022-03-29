@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from ModuleRunnerBase import *
 from Submitter.CreateConfigFilesBase import *
 from VBFTagger.Tuplizer.Signals_VBF import *
@@ -28,7 +30,7 @@ def main():
     years       = args.years
 
     years = ['UL18']
-    xmlfilename = 'GenLevelStudiesConfig.xml'
+    #xmlfilename = 'GenLevelStudiesConfig.xml'
 
     AllSamples = SampleContainer()
     Add_Signals_VBFAnalysis(AllSamples)
