@@ -5,7 +5,7 @@
 <PlotterConfiguration>
 
   <FileConfiguration
-    InputDirectory  = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies"
+    InputDirectory  = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/"
     OutputDirectory = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/plots/distributions"
     PreFix          = "TestAnalysis_"
     SEDirector      = "root://t3dcachedb03.psi.ch/"

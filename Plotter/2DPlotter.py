@@ -1,12 +1,26 @@
 import glob, os, ROOT
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
-# ROOT.gStyle.SetOptStat(000112211)
+ROOT.gStyle.SetOptStat(11)
 ROOT.gStyle.SetOptFit(0)
 import numpy as np
 from tdrstyle_all import *
 import tdrstyle_all as TDR
 TDR.extraText  = ""
 TDR.lumi_13TeV = ""
+
+
+def Draw2d(h, opt, axistitles):
+  h.GetXaxis().SetTitle(axistitles[0])
+  h.GetYaxis().SetTitle(axistitles[1])
+  h.GetZaxis().SetTitle(axistitles[2])
+  h.GetYaxis().SetTitleOffset(1.15)
+  h.GetZaxis().SetTitleOffset(1.3)
+  TDR.SetAlternative2DColor(h)
+  TDR.HistCosmetics(h)
+  h.Draw('AXIS')
+  h.Draw(opt)
+  # h.GetZaxis().SetRangeUser(zmin, zmax)
+  ROOT.gPad.RedrawAxis()
 
 
 class MyPlot():
@@ -43,18 +57,22 @@ class MyPlot():
         # TDR.cms_lumi_TeV = TDR.commonScheme["legend"]["Run2"]+" Legacy, "+TDR.commonScheme["lumi"]["Run2"]+" fb^{-1}"
         # TDR.extraText3.append("#bf{Anti-k_{T} (R = 0.4), PF+CHS}")
         # TDR.extraText3.append("#bf{p_{T}^{jet} > 100 GeV}")
-        PlotXMin = -30
-        PlotXMax = 30
-        PlotYMin = 0.0000001
-        PlotYMax = 1.2
-        canv = tdrCanvas("H->4L", PlotXMin, PlotXMax, PlotYMin, PlotYMax, "PdgId", "Number of particles")
-        canv.SetLogy(True)
-        leg = tdrLeg(0.68,0.60,0.89,0.89, textSize = 0.025)
+        NbinX = 8001
+        PlotXMin = -4000.5
+        PlotXMax = 4000.5
+        NbinY = 9
+        PlotYMin = 0
+        PlotYMax = 8
+        ZMin = 0
+        ZMax = 10^7
 
         for na, h in self.hlist.items():
-            tdrDraw(h, "h", lcolor = self.color[na], fstyle=0, marker = 0)
-            ent = h.GetEntries()
-            leg.AddEntry(h, self.legend[na] + ". Entries: " + str(ent), "l")
+            canv = tdrCanvas2d("PdgId & Status")
+            # leg = tdrLeg(0.68,0.60,0.89,0.89, textSize = 0.025)
+            Draw2d(h, "colz", ["PdgID", "Status", "Number"])
+            # ent = h.GetEntries()
+            # leg.AddEntry(h, self.legend[na] + ". Entries: " + str(ent), "l")
+            canv.SaveAs(self.outputPath+str(directory)+"_"+name+na+"2D.pdf")
 
         # for year in self.years+["Run2"]:
         #     color = self.SFs[year]["color"]
@@ -70,10 +88,8 @@ class MyPlot():
         # line_MC.SetLineColor(ROOT.kBlack)
         # line_MC.Draw("same")
 
-        canv.SaveAs(self.outputPath+str(directory)+"_"+str(name)+".pdf")
-
 def main():
-    MyPlot().Plot("weight_General", "PdgId")
+    MyPlot().Plot("weight_General", "ParticleStatusFlag")
 
 if __name__ == '__main__':
     main()
