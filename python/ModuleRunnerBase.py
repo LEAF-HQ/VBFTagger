@@ -15,6 +15,9 @@ class GenericPath:
         self.tuplizer_path   = os.environ['TUPLIZERPATH']
         self.analysis_path   = os.environ['ANALYSISPATH']
         self.config_path     = os.environ['ANALYSISPATHCONFIG']
+        self.pnfs_path       = os.path.join('/pnfs/iihe/cms/store/user/',self.username)
+        self.ntuples_path    = os.path.join(self.pnfs_path,'Tuples')
+        self.analysis_outpath= os.path.join(self.pnfs_path,'Analyses')
 
     def Get(self, path_to):
         return getattr(self,path_to)

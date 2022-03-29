@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from ModuleRunnerBase import *
 from Submitter.CreateConfigFilesBase import *
 from VBFTagger.Tuplizer.Signals_VBF import *

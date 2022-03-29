@@ -71,7 +71,7 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_) : BaseHists(dir_){
 
 }
 
-void GenLevelStudiesHists::fill(const RecoEvent & event){
+void GenLevelStudiesHists::fill(const VBFTaggerEvent & event){
 
 
   double weight = event.weight;
@@ -119,6 +119,7 @@ void GenLevelStudiesHists::fill(const RecoEvent & event){
     hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopyBeforeFSR)+6, weight);
 
     hist<TH2D>("ParticleStatus")->Fill(m.pdgid(), m.status(), weight);
+
     if (!m.isHardProcess() && !m.fromHardProcessBeforeFSR()) continue;
     hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
 

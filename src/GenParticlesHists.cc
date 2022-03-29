@@ -11,9 +11,12 @@ GenParticlesHists::GenParticlesHists(TString dir_, TString selection_) : BaseHis
   size_t n_flags = gen_flags_names.size();
 
   book<TH1F>("sumweights",      ";sum of event weights; Events / bin",      1,  0.5, 1.5);
-  book<TH1F>("number_genparts", ";number of gen part.; Events / bin",     101,  100., 1000);
+  book<TH1F>("number_genparts", ";number of gen part.; Events / bin",     300,  0., 300);
 
-  book<TH1F>("gen_part_pt",     ";p_{T}; Events / bin",                   2000,  0., 500);
+  book<TH1F>("gen_MET_status1", ";genMET (status==1); Events / bin",     100,  0., 1000);
+  book<TH1F>("gen_HT_status1",  ";genHT (status==1); Events / bin",      100,  0., 1000);
+
+  book<TH1F>("gen_part_pt",     ";p_{T}; Events / bin",                   150,  0., 150);
   book<TH1F>("gen_part_eta",    ";#eta; Events / bin",                    100, -5., 5.);
   book<TH1F>("gen_part_phi",    ";#phi; Events / bin",                    70, -3.5, 3.5);
   book<TH1F>("gen_part_m",      ";mass; Events / bin",                    50,   0., 2);
@@ -38,21 +41,26 @@ GenParticlesHists::GenParticlesHists(TString dir_, TString selection_) : BaseHis
 
 }
 
-void GenParticlesHists::fill(const RecoEvent & event){
+void GenParticlesHists::fill(const VBFTaggerEvent & event){
   double weight = event.weight;
   hist<TH1F>("sumweights")->Fill(1, weight);
   hist<TH1F>("number_genparts")->Fill(event.genparticles_all->size(), weight);
 
+  TLorentzVector gen_MET_status1;
+  float gen_HT_status1 = 0;
+
   for(const GenParticle& gp: *event.genparticles_all){
 
-    if (selection=="pt>1" && gp.pt()<1) continue;
+    if (FindInString("setus==1", selection.Data()) && gp.status()!=1) continue;
+    if (FindInString("pt>1", selection.Data()) && gp.pt()<1) continue;
+    if (FindInString("gen_selections", selection.Data()) && !gp.isFinalState()) continue;
+    if (FindInString("gen_selections", selection.Data()) && !gp.isLastCopy()) continue;
+    if (FindInString("gen_selections", selection.Data()) && fabs(gp.pdgid())>1000) continue;
 
-    if (!gp.isFinalState()) continue;
-    if (!gp.isLastCopy()) continue;
-    if (fabs(gp.pdgid())>1000) continue;
+    gen_MET_status1 += gp.p4();
+    gen_HT_status1 += gp.pt();
 
     string pdgid = pdgId2str(fabs(gp.pdgid()));
-    if(FindInVector(gen_ids_names, pdgid) == -1) cout << pdgid << " " << fabs(gp.pdgid()) << endl;
 
     hist<TH1F>("gen_part_pt")->Fill(gp.pt(), weight);
     hist<TH1F>("gen_part_eta")->Fill(gp.eta(), weight);
@@ -81,5 +89,7 @@ void GenParticlesHists::fill(const RecoEvent & event){
       }
     }
   }
+  hist<TH1F>("gen_MET_status1")->Fill(gen_MET_status1.Pt(), weight);
+  hist<TH1F>("gen_HT_status1")->Fill(gen_HT_status1, weight);
 
 }
