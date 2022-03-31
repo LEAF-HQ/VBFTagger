@@ -16,6 +16,8 @@
 #include "LEAF/Analyzer/include/ElectronIds.h"
 #include "LEAF/Analyzer/include/TauIds.h"
 
+#include "LEAF/VBFTagger/include/SelectionModules.h"
+#include "LEAF/Analyzer/include/CleaningModules.h"
 #include "LEAF/Analyzer/include/NJetSelection.h"
 #include "LEAF/Analyzer/include/LumiWeightApplicator.h"
 
@@ -44,13 +46,14 @@ private:
   VBFTaggerEvent* event;
 
   string NameTool = "GenLevelStudiesTool";
-  vector<string> histogram_tags = {"input","weight", "cleaner", "njets", "nominal"};
+  vector<string> histogram_tags = {"input","weight", "cleanedfromleptons", "cleaner", "njets", "nominal"};
 
   unordered_map<string, string> input_strings;
   unordered_map<string, bool> input_bools;
 
   // Modules used in the analysis
   unique_ptr<LumiWeightApplicator> lumiweight_applicator;
+  unique_ptr<GenJetIDLeptonRemoval> gen_jet_lepton_cleaner;
   unique_ptr<GenEventMatch> gen_event_match;
   unique_ptr<JetCleaner> cleaner_jet;
 
@@ -72,7 +75,7 @@ void GenLevelStudiesTool::book_histograms(){
     string mytag;
     mytag = tag+"_General"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag));
     mytag = tag+"_General_Jets"; book_HistFolder(mytag, new GenLevelStudiesJetsHists(mytag));
-    mytag = tag+"_Jets";    book_HistFolder(mytag, new JetHists(mytag));
+    // mytag = tag+"_Jets";    book_HistFolder(mytag, new JetHists(mytag));
   }
 }
 
@@ -80,7 +83,7 @@ void GenLevelStudiesTool::fill_histograms(string tag){
   string mytag;
   mytag = tag+"_General"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
   mytag = tag+"_General_Jets"; HistFolder<GenLevelStudiesJetsHists>(mytag)->fill(*event);
-  mytag = tag+"_Jets";    HistFolder<JetHists>(mytag)->fill(*event);
+  // mytag = tag+"_Jets";    HistFolder<JetHists>(mytag)->fill(*event);
 }
 
 
@@ -93,6 +96,11 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
   lumiweight_applicator.reset(new LumiWeightApplicator(cfg));
 
   gen_event_match.reset(new GenEventMatch(cfg));
+
+  gen_jet_lepton_cleaner.reset(new GenJetIDLeptonRemoval(0.4));
+
+  // MultiID<GenJet> genjet_id = {PtEtaId(10, 5.2), GenJetIDLeptonRemoval(0.4)};
+  // cleaner_genjet.reset(new GenJetCleaner(genjet_id));
 
   MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
   cleaner_jet.reset(new JetCleaner(jet_id));
@@ -108,7 +116,7 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
 bool GenLevelStudiesTool::Process(){
   // cout << "+++ NEW EVENT" << endl;
-
+  cout << event->genparticles_all->size() << endl;
   // order all objecs in pT
   // sort_by_pt<GenParticle>(*event->genparticles_visibletaus);
   // sort_by_pt<GenParticle>(*event->genparticles_all);
@@ -121,6 +129,9 @@ bool GenLevelStudiesTool::Process(){
   fill_histograms("input");
   lumiweight_applicator->process(*event);
   fill_histograms("weight");
+
+  gen_jet_lepton_cleaner->process(*event);
+  fill_histograms("cleanedfromleptons");
 
   // run example cleaner
   cleaner_jet->process(*event);

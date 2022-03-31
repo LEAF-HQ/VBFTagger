@@ -4,7 +4,7 @@ using namespace std;
 
 GenEventMatch::GenEventMatch(const Config& cfg){
 
-  gp_printer.reset(new GenParticlePrinter(cfg));
+  gp_printer.reset(new GenParticlePrinter(cfg, true));
   gp_status_printer.reset(new GenParticleStatusPrinter(cfg));
 
 }
@@ -50,8 +50,8 @@ std::vector<GenParticle> GenEventMatch::FindDaughters(RecoEvent& event, GenParti
 bool GenEventMatch::process(RecoEvent& event) {
   if(event.is_data) return true;
 
-  // gp_printer->process(event);
-  gp_status_printer->process(event);
+  gp_printer->process(event);
+  // gp_status_printer->process(event);
 
   std::vector<GenParticle> H_mothers = FindMothers(event, FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isFirstCopy));
   std::vector<GenParticle> H_daughters = FindDaughters(event, FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isLastCopy));
