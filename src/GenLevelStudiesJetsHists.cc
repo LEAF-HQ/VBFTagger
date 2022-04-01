@@ -49,8 +49,8 @@ void GenLevelStudiesJetsHists::fill(const RecoEvent & event){
   vector<int> treshsizeFilter = {0, 0, 0, 0};
 
   // removing the events containing taus
-  for (size_t k=0; k<event.genparticles_all->size(); k++) {
-    GenParticle t = event.genparticles_all->at(k);
+  for (size_t k=0; k<event.genparticles_stable->size(); k++) {
+    GenParticle t = event.genparticles_stable->at(k);
     if (t.pdgid() == 15) return;
   }
 
@@ -93,11 +93,11 @@ void GenLevelStudiesJetsHists::fill(const RecoEvent & event){
     // loop over all the gen particles to remove leptons from the jets using dR < 0.4
     int leptonFlagJet1 = 0;
     int leptonFlagJet2 = 0;
-    for (size_t k=0; k<event.genparticles_all->size(); k++) {
-      GenParticle gp = event.genparticles_all->at(k);
+    for (size_t k=0; k<event.genparticles_stable->size(); k++) {
+      GenParticle gp = event.genparticles_stable->at(k);
 
       // gen particles have to be stable
-      if (gp.status()!=1 || !gp.get_statusflag(GenParticle::isLastCopy)) continue;
+      if (gp.status()!=1 || !gp.isLastCopy()) continue;
 
       double dR = deltaR(j, gp);
       hist<TH1F>(Title + "jetsdR")->Fill(dR, weight);

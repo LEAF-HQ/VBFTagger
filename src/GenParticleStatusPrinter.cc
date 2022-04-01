@@ -18,21 +18,21 @@ bool GenParticleStatusPrinter::process(RecoEvent & event){
   cout << "Number, Identifier, pdgId, mother, isPrompt, isDecayedLeptonHadron, isTauDecayProduct, isPromptTauDecayProduct, isDirectTauDecayProduct, isDirectPromptTauDecayProduct, isDirectHadronDecayProduct, isHardProcess, fromHardProcess, isHardProcessTauDecayProduct, isDirectHardProcessTauDecayProduct,  fromHardProcessBeforeFSR, isFirstCopy, isLastCopy, isLastCopyBeforeFSR" << endl;
   cout << "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
 
-  for(size_t i=0; i<event.genparticles_all->size(); i++){
+  for(size_t i=0; i<event.genparticles_stable->size(); i++){
     int correct_idx = -1;
-    for(size_t j=0; j<event.genparticles_all->size(); j++){
-      if(event.genparticles_all->at(j).identifier() == (int)i){
+    for(size_t j=0; j<event.genparticles_stable->size(); j++){
+      if(event.genparticles_stable->at(j).identifier() == (int)i){
         correct_idx = j;
         break;
       }
     }
-    GenParticle gp = event.genparticles_all->at(correct_idx);
+    GenParticle gp = event.genparticles_stable->at(correct_idx);
 
     // now find mother using the identifier again
     int motherpdgid = -1;
-    for(size_t j=0; j<event.genparticles_all->size(); j++){
-      if(event.genparticles_all->at(j).identifier() == gp.mother_identifier()){
-        motherpdgid = event.genparticles_all->at(j).pdgid();
+    for(size_t j=0; j<event.genparticles_stable->size(); j++){
+      if(event.genparticles_stable->at(j).identifier() == gp.mother_identifier()){
+        motherpdgid = event.genparticles_stable->at(j).pdgid();
         break;
       }
     }
