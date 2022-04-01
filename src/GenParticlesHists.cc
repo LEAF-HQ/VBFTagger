@@ -44,12 +44,12 @@ GenParticlesHists::GenParticlesHists(TString dir_, TString selection_) : BaseHis
 void GenParticlesHists::fill(const VBFTaggerEvent & event){
   double weight = event.weight;
   hist<TH1F>("sumweights")->Fill(1, weight);
-  hist<TH1F>("number_genparts")->Fill(event.genparticles_all->size(), weight);
+  hist<TH1F>("number_genparts")->Fill(event.genparticles_stable->size(), weight);
 
   TLorentzVector gen_MET_status1;
   float gen_HT_status1 = 0;
 
-  for(const GenParticle& gp: *event.genparticles_all){
+  for(const GenParticle& gp: *event.genparticles_stable){
 
     if (FindInString("setus==1", selection.Data()) && gp.status()!=1) continue;
     if (FindInString("pt>1", selection.Data()) && gp.pt()<1) continue;

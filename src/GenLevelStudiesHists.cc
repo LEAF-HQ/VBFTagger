@@ -100,8 +100,8 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event){
   // hist<TH2D>("genmet_phi_pt")->Fill(event.genmet->phi(), event.genmet->pt(), weight);
 
   // removing the events containing taus
-  for (size_t k=0; k<event.genparticles_all->size(); k++) {
-    GenParticle t = event.genparticles_all->at(k);
+  for (size_t k=0; k<event.genparticles_stable->size(); k++) {
+    GenParticle t = event.genparticles_stable->at(k);
     if (t.pdgid() == 15) return;
   }
 
@@ -110,13 +110,13 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event){
   vector<GenParticle> gen_part_w_pT_higher_than_tresh;
   vector<GenParticle> charged_gen_part_w_pT_higher_than_tresh;
   TLorentzVector FourLeptons;
-  for(size_t i=0; i<event.genparticles_all->size(); i++){
-    GenParticle m = event.genparticles_all->at(i);
+  for(size_t i=0; i<event.genparticles_stable->size(); i++){
+    GenParticle m = event.genparticles_stable->at(i);
 
-    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isPrompt), weight);
-    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isFirstCopy)+2, weight);
-    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopy)+4, weight);
-    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.get_statusflag(GenParticle::isLastCopyBeforeFSR)+6, weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.isPrompt(), weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.isFirstCopy()+2, weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.isLastCopy()+4, weight);
+    hist<TH2D>("ParticleStatusFlag")->Fill(m.pdgid(), m.isLastCopyBeforeFSR()+6, weight);
 
     hist<TH2D>("ParticleStatus")->Fill(m.pdgid(), m.status(), weight);
 
@@ -126,12 +126,12 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event){
     if (m.pdgid() == 25 && m.isLastCopy())  {
       if (!m.isHardProcess() && !m.fromHardProcessBeforeFSR()) continue;
       hist<TH1F>("verifH")->Fill(m.m(), weight);
-      for(size_t j=0; j<event.genparticles_all->size(); j++) {
-        GenParticle z = event.genparticles_all->at(j);
+      for(size_t j=0; j<event.genparticles_stable->size(); j++) {
+        GenParticle z = event.genparticles_stable->at(j);
         if (z.mother_identifier() == m.identifier()) {
           hist<TH1F>("verifZ")->Fill(z.m(), weight);
-          for(size_t k=0; k<event.genparticles_all->size(); k++) {
-            GenParticle l = event.genparticles_all->at(k);
+          for(size_t k=0; k<event.genparticles_stable->size(); k++) {
+            GenParticle l = event.genparticles_stable->at(k);
             if (l.mother_identifier() == z.identifier()) {
               FourLeptons += l.p4();
             }
@@ -145,7 +145,7 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event){
       hist<TH1F>("4Lpt")->Fill(FourLeptons.Pt(), weight);
     }
 
-    if (m.status()!=1 || !m.get_statusflag(GenParticle::isLastCopy)) continue;
+    if (m.status()!=1 || !m.isLastCopy()) continue;
     hist<TH1F>("PdgId")->Fill(m.pdgid(), weight);
     hist<TH1F>("PdgIdZoom")->Fill(m.pdgid(), weight);
 

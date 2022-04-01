@@ -16,7 +16,7 @@ def Add_Signals_VBF(SampleContainer):
         'nevents_weighted':  YearDependentContainer({'UL18': 1877169.5058}),
     }
     # modes = ['standard','pfcands', 'extrajets', 'standard_plus_extrajets', 'standard_plus_pfcands', 'pfcands_plus_extrajets', 'extrajets_plus_pfcands', 'standard_plus_extrajets_plus_pfcands', 'standard_plus_pfcands_plus_extrajets']
-    modes = [['standard'],['pfcands'], ['extrajets'], ['allgenparticles']]
+    modes = [['standard'],['pfcands'], ['extrajets'], ['stablegenparticles']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2ULB, '/store/user/anmalara/Tuples/', get_common_path(), default_info)
 
 
@@ -37,7 +37,7 @@ def Add_Signals_GluGlu(SampleContainer):
         'nevents_generated': YearDependentContainer({'UL18': 940000.0}),
         'nevents_weighted': YearDependentContainer({'UL18': 27138279.5348}),
     }
-    modes = [['standard'],['pfcands'], ['extrajets'], ['allgenparticles']]
+    modes = [['standard'],['pfcands'], ['extrajets'], ['stablegenparticles']]
     Add_Generic_Sample(SampleContainer, name, modes, years, Storage_T2ULB, '/store/user/anmalara/Tuples/', get_common_path(), default_info)
 
     # name = 'GluGluToZH_HToZZTo4L_M125'
