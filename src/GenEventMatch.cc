@@ -12,14 +12,14 @@ GenEventMatch::GenEventMatch(const Config& cfg){
 
 
 GenParticle GenEventMatch::FindParticle(RecoEvent& event, int identifier) {
-  for(const auto & p : *event.genparticles_all) {
+  for(const auto & p : *event.genparticles_stable) {
     if (p.identifier() == identifier) return p;
   }
   return GenParticle();
 }
 
 GenParticle GenEventMatch::FindParticle(RecoEvent& event, ParticleID pdgID, GenParticle::StatusFlag status) {
-  for(const auto & p : *event.genparticles_all){
+  for(const auto & p : *event.genparticles_stable){
     if (!p.isHardProcess() && !p.fromHardProcessBeforeFSR()) continue;
     if (p.pdgid() == (int)pdgID && p.get_statusflag(status)) return p;
   }
@@ -30,7 +30,7 @@ std::vector<GenParticle> GenEventMatch::FindMothers(RecoEvent& event, GenParticl
   std::vector<GenParticle> mothers;
   int mother_id = particle.mother_identifier();
   if (mother_id<0) return mothers;
-  for(const auto & p : *event.genparticles_all){
+  for(const auto & p : *event.genparticles_stable){
     if (p.identifier() == particle.identifier()) continue;
     if (!p.isHardProcess() && !p.fromHardProcessBeforeFSR()) continue;
     if (p.identifier() == mother_id || p.mother_identifier() == mother_id) mothers.push_back(p);
@@ -40,7 +40,7 @@ std::vector<GenParticle> GenEventMatch::FindMothers(RecoEvent& event, GenParticl
 
 std::vector<GenParticle> GenEventMatch::FindDaughters(RecoEvent& event, GenParticle particle) {
   std::vector<GenParticle> daughters;
-  for(const auto & p : *event.genparticles_all){
+  for(const auto & p : *event.genparticles_stable){
     if (p.mother_identifier()==particle.identifier()) daughters.push_back(p);
   }
   return daughters;
@@ -103,7 +103,7 @@ bool GenEventMatch::process(RecoEvent& event) {
 
 
 
-  // for(const auto & gp : event->genparticles_all){
+  // for(const auto & gp : event->genparticles_stable){
   //   cout << "  --> New particle" << endl;
   //
   //   FindParticle(int& ID)

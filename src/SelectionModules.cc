@@ -11,8 +11,8 @@ bool GenJetIDLeptonRemoval::process(GenEvent & event){
   for(size_t i=0; i<event.genjets->size(); i++){
     GenJet gj = event.genjets->at(i);
     bool keep = true;
-    for(size_t j=0; j<event.genparticles_all->size(); j++){
-      GenParticle gt = event.genparticles_all->at(j);
+    for(size_t j=0; j<event.genparticles_stable->size(); j++){
+      GenParticle gt = event.genparticles_stable->at(j);
       if (gt.pdgid()<11 || gt.pdgid()>18) continue;
       if(deltaR(gj, gt) < m_dr){
         keep = false;

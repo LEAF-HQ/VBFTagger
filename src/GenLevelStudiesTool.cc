@@ -73,16 +73,26 @@ void GenLevelStudiesTool::PrintInputs() {
 void GenLevelStudiesTool::book_histograms(){
   for(const string & tag : histogram_tags){
     string mytag;
-    mytag = tag+"_General"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag));
-    mytag = tag+"_General_Jets"; book_HistFolder(mytag, new GenLevelStudiesJetsHists(mytag));
+    mytag = tag+"_GenParticles"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag));
+    mytag = tag+"_GenParticles_Stable"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1"));
+    mytag = tag+"_GenParticles_Stable_pt<1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt<1"));
+    mytag = tag+"_GenParticles_Stable_pt>1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt>1"));
+    mytag = tag+"_GenParticles_Stable_pt<1_selection"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt<1 && gen_selections"));
+    mytag = tag+"_GenParticles_Stable_pt>1_selection"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt>1 && gen_selections"));
+    mytag = tag+"_GenJets"; book_HistFolder(mytag, new GenLevelStudiesJetsHists(mytag));
     // mytag = tag+"_Jets";    book_HistFolder(mytag, new JetHists(mytag));
   }
 }
 
 void GenLevelStudiesTool::fill_histograms(string tag){
   string mytag;
-  mytag = tag+"_General"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_General_Jets"; HistFolder<GenLevelStudiesJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParticles"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParticles_Stable"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParticles_Stable_pt<1"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParticles_Stable_pt>1"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParticles_Stable_pt<1_selection"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParticles_Stable_pt>1_selection"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenJets"; HistFolder<GenLevelStudiesJetsHists>(mytag)->fill(*event);
   // mytag = tag+"_Jets";    HistFolder<JetHists>(mytag)->fill(*event);
 }
 
@@ -116,7 +126,7 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
 bool GenLevelStudiesTool::Process(){
   // cout << "+++ NEW EVENT" << endl;
-  cout << event->genparticles_all->size() << endl;
+  cout << event->genparticles_stable->size() << endl;
   // order all objecs in pT
   // sort_by_pt<GenParticle>(*event->genparticles_visibletaus);
   // sort_by_pt<GenParticle>(*event->genparticles_stable);
