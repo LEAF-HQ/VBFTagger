@@ -24,7 +24,7 @@
     <AdditionalInput>
       <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
       <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
-      <Collection ClassName="GenParticle" BranchName="genparticles_all" FileName="allgenparticles"/>
+      <Collection ClassName="GenParticle" BranchName="genparticles_stable" FileName="genparticles_stable"/>
     </AdditionalInput>
 
     <AdditionalInput>
