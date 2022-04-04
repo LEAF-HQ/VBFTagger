@@ -138,7 +138,7 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
 
 bool PFStudiesTool::Process(){
 
-  sort_by_pt<GenParticle>(*event->genparticles_all);
+  sort_by_pt<GenParticle>(*event->genparticles_stable);
   sort_by_pt<GenJet>(*event->genjets);
   sort_by_pt<Jet>(*event->jets_ak4chs);
   sort_by_pt<PFCandidate>(*event->pfcands);

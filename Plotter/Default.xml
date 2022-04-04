@@ -5,9 +5,9 @@
 <PlotterConfiguration>
 
   <FileConfiguration
-    InputDirectory  = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/"
-    OutputDirectory = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/plots/distributions"
-    PreFix          = "TestAnalysis_"
+    InputDirectory  = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../WorkingArea/VBFTagger/UL18/GenLevelStudies/"
+    OutputDirectory = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../WorkingArea/VBFTagger/UL18/GenLevelStudies/plots/distributions"
+    PreFix          = ""
     SEDirector      = "root://t3dcachedb03.psi.ch/"
   />
 
@@ -15,15 +15,15 @@
     lumitext   = "59.83 fb^{-1} (13 TeV)"
     blind      = "false"
     logY       = "true"
-    normalize  = "false"
+    normalize  = "true"
     singlePDF  = "false"
     numerator  = ""
   />
   <!-- numerator  = "TestData"  -->
 
   <InputDatasets>
-    <Dataset Name="VBF_HToZZTo4L_M125_UL18"   Stack="false"  Color="1"    Linestyle="0"   Legend="VBF H -> 4L. Events: 477000"   Type="MC" />
-    <Dataset Name="GluGluHToZZTo4L_M125_UL18"   Stack="false"  Color="600"    Linestyle="0"   Legend="GluGlu H -> 4L. Events: 940000"   Type="MC" />
+    <Dataset Name="VBF_HToZZTo4L_M125_standard_UL18"   Stack="false"  Color="1"    Linestyle="0"   Legend="VBF H -> 4L. Events: 477000"   Type="MC" />
+    <Dataset Name="GluGluHToZZTo4L_M125_standard_UL18"   Stack="false"  Color="600"    Linestyle="0"   Legend="GluGlu H -> 4L. Events: 940000"   Type="MC" />
     <!-- <Dataset Name="TestSignal_M1000"   Stack="false"  Color="1"    Linestyle="2"   Legend="Test signal (M = 1000 GeV)"   Type="MC" />
     <Dataset Name="TestSignal_M2000"   Stack="false"  Color="1"    Linestyle="1"   Legend="Test signal (M = 2000 GeV)"   Type="MC" />
     <Dataset Name="TestBackground"    Stack="true"   Color="814"  Linestyle="0"   Legend="Test background"              Type="MC" />

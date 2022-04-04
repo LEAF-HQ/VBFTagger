@@ -24,6 +24,7 @@
 
 #include "LEAF/VBFTagger/include/VBFTaggerEvent.h"
 #include "LEAF/VBFTagger/include/GenLevelStudiesHists.h"
+#include "LEAF/VBFTagger/include/GenLevelStudiesPrunedHists.h"
 #include "LEAF/VBFTagger/include/GenLevelStudiesJetsHists.h"
 #include "LEAF/VBFTagger/include/Utils.h"
 #include "LEAF/VBFTagger/include/GenEventMatch.h"
@@ -46,7 +47,7 @@ private:
   VBFTaggerEvent* event;
 
   string NameTool = "GenLevelStudiesTool";
-  vector<string> histogram_tags = {"input","weight", "cleanedfromleptons", "cleaner", "njets", "nominal"};
+  vector<string> histogram_tags = {"input", "weight", "cleanedfromleptons", "cleaner", "njets", "nominal"};
 
   unordered_map<string, string> input_strings;
   unordered_map<string, bool> input_bools;
@@ -54,7 +55,7 @@ private:
   // Modules used in the analysis
   unique_ptr<LumiWeightApplicator> lumiweight_applicator;
   unique_ptr<GenJetIDLeptonRemoval> gen_jet_lepton_cleaner;
-  unique_ptr<GenEventMatch> gen_event_match;
+  // unique_ptr<GenEventMatch> gen_event_match;
   unique_ptr<JetCleaner> cleaner_jet;
 
   // Selections used in the analysis
@@ -71,29 +72,87 @@ void GenLevelStudiesTool::PrintInputs() {
 }
 
 void GenLevelStudiesTool::book_histograms(){
+  vector<string> particlesTresh = {"", "partPt>0.2", "partPt>1"};
+  vector<string> jetsTresh = {"", "jetPt>10", "jetPt>20", "jetPt>30"};
+  vector<string> insideLJ = {"", "Inside", "Outside"};
+  vector<string> chargeState = {"", "charged", "neutral"};
   for(const string & tag : histogram_tags){
     string mytag;
-    mytag = tag+"_GenParticles"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag));
-    mytag = tag+"_GenParticles_Stable"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1"));
-    mytag = tag+"_GenParticles_Stable_pt<1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt<1"));
-    mytag = tag+"_GenParticles_Stable_pt>1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt>1"));
-    mytag = tag+"_GenParticles_Stable_pt<1_selection"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt<1 && gen_selections"));
-    mytag = tag+"_GenParticles_Stable_pt>1_selection"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && pt>1 && gen_selections"));
-    mytag = tag+"_GenJets"; book_HistFolder(mytag, new GenLevelStudiesJetsHists(mytag));
-    // mytag = tag+"_Jets";    book_HistFolder(mytag, new JetHists(mytag));
+    // mytag = tag+"_GenLevel"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag));
+    // mytag = tag+"_GenLevel_Stable"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1"));
+    mytag = tag+"_GenLevel_Stable_pt<1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && partPt<1"));
+    mytag = tag+"_GenLevel_Stable_pt>1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && partPt>1"));
+    mytag = tag+"_GenLevel_Stable_pt<1_selection"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && partPt<1 && gen_selections"));
+    mytag = tag+"_GenLevel_Stable_pt>1_selection"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "status==1 && partPt>1 && gen_selections"));
+
+    for (const string & ptresh : particlesTresh) {
+      for (const string & jtresh : jetsTresh) {
+        for (const string & inLJ : insideLJ) {
+          for (const string & cha : chargeState) {
+            string sel = ptresh+"_"+jtresh+"_"+inLJ+"_"+cha;
+            mytag = tag+"_GenLevel_"+sel; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, sel));
+          }
+        }
+      }
+    }
+    // mytag = tag+"_GenLevel_partPt>0.2"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2"));
+    // mytag = tag+"_GenLevel_partPt>0.2_Inside"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && In"));
+    // mytag = tag+"_GenLevel_partPt>0.2_Outside"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && Out"));
+    // mytag = tag+"_GenLevel_partPt>0.2_charged"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && charge!=0"));
+    // mytag = tag+"_GenLevel_partPt>0.2_Inside_charged"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && In && charge!=0"));
+    // mytag = tag+"_GenLevel_partPt>0.2_Outside_charged"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && Out && charge!=0"));
+    // mytag = tag+"_GenLevel_partPt>0.2_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && charge==0"));
+    // mytag = tag+"_GenLevel_partPt>0.2_Inside_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && In && charge==0"));
+    // mytag = tag+"_GenLevel_partPt>0.2_Outside_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>0.2 && Out && charge==0"));
+    // mytag = tag+"_GenLevel_partPt>1"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1"));
+    // mytag = tag+"_GenLevel_partPt>1_Inside"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && In"));
+    // mytag = tag+"_GenLevel_partPt>1_Outside"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && Out"));
+    // mytag = tag+"_GenLevel_partPt>1_charged"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && charge!=0"));
+    // mytag = tag+"_GenLevel_partPt>1_Inside_charged"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && In && charge!=0"));
+    // mytag = tag+"_GenLevel_partPt>1_Outside_charged"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && Out && charge!=0"));
+    // mytag = tag+"_GenLevel_partPt>1_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && charge==0"));
+    // mytag = tag+"_GenLevel_partPt>1_Inside_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && In && charge==0"));
+    // mytag = tag+"_GenLevel_partPt>1_Outside_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && Out && charge==0"));
+
+    // mytag = tag+"_Pruned_GenLevel"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag));
+    mytag = tag+"_Pruned_GenLevel_Stable"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1"));
+    mytag = tag+"_Pruned_GenLevel_Stable_pt<1"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt<1"));
+    mytag = tag+"_Pruned_GenLevel_Stable_pt>1"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt>1"));
+    mytag = tag+"_Pruned_GenLevel_Stable_pt<1_selection"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt<1 && gen_selections"));
+    mytag = tag+"_Pruned_GenLevel_Stable_pt>1_selection"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt>1 && gen_selections"));
   }
 }
 
 void GenLevelStudiesTool::fill_histograms(string tag){
+  vector<string> particlesTresh = {"", "partPt>0.2", "partPt>1"};
+  vector<string> jetsTresh = {"", "jetPt>10", "jetPt>20", "jetPt>30"};
+  vector<string> insideLJ = {"", "Inside", "Outside"};
+  vector<string> chargeState = {"", "charged", "neutral"};
   string mytag;
-  mytag = tag+"_GenParticles"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParticles_Stable"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParticles_Stable_pt<1"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParticles_Stable_pt>1"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParticles_Stable_pt<1_selection"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParticles_Stable_pt>1_selection"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenJets"; HistFolder<GenLevelStudiesJetsHists>(mytag)->fill(*event);
-  // mytag = tag+"_Jets";    HistFolder<JetHists>(mytag)->fill(*event);
+  // mytag = tag+"_GenLevel"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  //mytag = tag+"_GenLevel_Stable"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenLevel_Stable_pt<1"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenLevel_Stable_pt>1"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenLevel_Stable_pt<1_selection"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenLevel_Stable_pt>1_selection"; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+
+  for (const string & ptresh : particlesTresh) {
+    for (const string & jtresh : jetsTresh) {
+      for (const string & inLJ : insideLJ) {
+        for (const string & cha : chargeState) {
+          string sel = ptresh+"_"+jtresh+"_"+inLJ+"_"+cha;
+          mytag = tag+"_GenLevel_"+sel; HistFolder<GenLevelStudiesHists>(mytag)->fill(*event);
+        }
+      }
+    }
+  }
+
+  // mytag = tag+"_Pruned_GenLevel"; HistFolder<GenLevelStudiesPrunedHists>(mytag)->fill(*event);
+  mytag = tag+"_Pruned_GenLevel_Stable"; HistFolder<GenLevelStudiesPrunedHists>(mytag)->fill(*event);
+  mytag = tag+"_Pruned_GenLevel_Stable_pt<1"; HistFolder<GenLevelStudiesPrunedHists>(mytag)->fill(*event);
+  mytag = tag+"_Pruned_GenLevel_Stable_pt>1"; HistFolder<GenLevelStudiesPrunedHists>(mytag)->fill(*event);
+  mytag = tag+"_Pruned_GenLevel_Stable_pt<1_selection"; HistFolder<GenLevelStudiesPrunedHists>(mytag)->fill(*event);
+  mytag = tag+"_Pruned_GenLevel_Stable_pt>1_selection"; HistFolder<GenLevelStudiesPrunedHists>(mytag)->fill(*event);
 }
 
 
@@ -105,7 +164,7 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
   lumiweight_applicator.reset(new LumiWeightApplicator(cfg));
 
-  gen_event_match.reset(new GenEventMatch(cfg));
+  // gen_event_match.reset(new GenEventMatch(cfg));
 
   gen_jet_lepton_cleaner.reset(new GenJetIDLeptonRemoval(0.4));
 
@@ -125,11 +184,11 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
 
 bool GenLevelStudiesTool::Process(){
-  // cout << "+++ NEW EVENT" << endl;
-  cout << event->genparticles_stable->size() << endl;
+  cout << "+++ NEW EVENT" << endl;
+  // cout << event->genparticles_stable->size() << endl;
   // order all objecs in pT
   // sort_by_pt<GenParticle>(*event->genparticles_visibletaus);
-  // sort_by_pt<GenParticle>(*event->genparticles_stable);
+  sort_by_pt<GenParticle>(*event->genparticles_stable);
   sort_by_pt<GenJet>(*event->genjets);
   // sort_by_pt<Jet>(*event->jets);
   // sort_by_pt<Muon>(*event->muons);
@@ -154,7 +213,7 @@ bool GenLevelStudiesTool::Process(){
   // fill one set of histograms called "nominal", which is necessary for PostAnalyzer scripts
   fill_histograms("nominal");
 
-  gen_event_match->process(*event);
+  // gen_event_match->process(*event);
 
 
   // store events passing the full selection for the next step

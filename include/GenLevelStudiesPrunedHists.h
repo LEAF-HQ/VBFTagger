@@ -29,14 +29,14 @@
 
 using namespace std;
 
-class GenLevelStudiesHists : public BaseHists{
+class GenLevelStudiesPrunedHists : public BaseHists{
 
 public:
   // Constructors, destructor
-  GenLevelStudiesHists(TString dir_, TString selection_="");
-  GenLevelStudiesHists(const GenLevelStudiesHists &) = default;
-  GenLevelStudiesHists & operator = (const GenLevelStudiesHists &) = default;
-  ~GenLevelStudiesHists() = default;
+  GenLevelStudiesPrunedHists(TString dir_, TString selection_="");
+  GenLevelStudiesPrunedHists(const GenLevelStudiesPrunedHists &) = default;
+  GenLevelStudiesPrunedHists & operator = (const GenLevelStudiesPrunedHists &) = default;
+  ~GenLevelStudiesPrunedHists() = default;
 
   // Main functions
   void fill(const VBFTaggerEvent & event);
@@ -46,13 +46,11 @@ private:
   vector<string> gen_ids_names;
 
   const vector<ParticleID> gen_ids = {
-    ParticleID::unknown,
     // ParticleID::u, ParticleID::d, ParticleID::s, ParticleID::c, ParticleID::b, ParticleID::t,
     ParticleID::e, ParticleID::mu, ParticleID::v_e, ParticleID::v_mu, ParticleID::v_tau,
     ParticleID::photon, ParticleID::Z, ParticleID::W, ParticleID::H,
     ParticleID::pi_0, ParticleID::pi_plus, ParticleID::kaon_0_L, ParticleID::kaon_0_S, ParticleID::kaon_plus,
-    // ParticleID::delta_plus_plus, ParticleID::delta_plus, ParticleID::delta_0, 
-    ParticleID::lambda, ParticleID::proton
+    ParticleID::delta_plus_plus, ParticleID::delta_plus, ParticleID::delta_0, ParticleID::lambda, ParticleID::proton
   };
 
   const vector<string> gen_flags_names = {
