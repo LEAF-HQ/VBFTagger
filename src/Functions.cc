@@ -1,4 +1,5 @@
-#include "LEAF/VBFTagger/include/ParticlesFinder.h"
+#include "LEAF/Analyzer/include/useful_functions.h"
+#include "LEAF/VBFTagger/include/Functions.h"
 
 using namespace std;
 
@@ -23,4 +24,18 @@ std::vector<GenParticle> DaughtersFinder(const VBFTaggerEvent& event, GenParticl
     if (p.mother_identifier()==particle.identifier()) daughters.push_back(p);
   }
   return daughters;
+}
+
+double Zeppenfeld1(const VBFTaggerEvent& event, GenParticle p) {
+  auto j1 = event.genjets->at(0);
+  auto j2 = event.genjets->at(1);
+  double z = fabs(p.eta()-(j1.eta()+j2.eta()) /2);
+  return z;
+}
+
+double Zeppenfeld2(const VBFTaggerEvent& event, GenParticle p) {
+  auto j1 = event.genjets->at(0);
+  auto j2 = event.genjets->at(1);
+  double z = fabs(p.eta()-(j1.eta()+j2.eta()) /2)/deltaEta(j1, j2);
+  return z;
 }

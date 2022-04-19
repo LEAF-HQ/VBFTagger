@@ -13,22 +13,24 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_, TString selection_): Ba
   book<TH1F>("sumweights",                    ";sum of event weights; Events / bin",                                              1,  0.5, 1.5);
 
   // book all the jets histograms
-  book<TH1F>("ngenjets",                      ";N_{genjets} w/ P_{t} > GeV; Events / bin",                                        21, -0.5, 20.5);
-  book<TH1F>("jetsPT",                        ";P_{t};Number of jets",                                                            251, -0.5, 500.5);
-  book<TH1F>("jetsEta" ,                      ";#eta; Number of jets",                                                            100, -7, 7);
-  book<TH1F>("jetsPhi" ,                      ";#phi; Number of jets",                                                            50, -4, 4);
-  book<TH1F>("jetsMass" ,                     ";Mass (GeV); Number of jets",                                                      101, -0.5, 50.5);
-  book<TH1F>("jetsVSpartsdR",                 ";#DeltaR (genjets, genparticles);Events / bin",                              101, -0.5, 20.5);
-  book<TH1F>("jetsHt" ,                       ";H_{t};Events / bin",                                                              201, -0.5, 1000.5);
-  book<TH1F>("dEtaLJ" ,                       ";|#Delta #eta|_{leading jets};Events / bin",                                       71, -0.5, 15.5);
-  book<TH1F>("dRLJ",                          ";|#Delta R|_{leading jets};Events / bin",                                          101, -0.5, 20.5);
-  book<TH1F>("LJMass" ,                       ";2 leading jets mass (GeV); Events",                                               301, -0.5, 2000.5);
+  book<TH1F>("gen_jet_number",                      ";N_{genjets}; Events / bin",                                        21, -0.5, 20.5);
+  book<TH1F>("gen_jet_Pt",                        ";P_{t};Number of jets",                                                            251, -0.5, 500.5);
+  book<TH1F>("gen_jet_Eta" ,                      ";#eta; Number of jets",                                                            100, -7, 7);
+  book<TH1F>("gen_jet_Phi" ,                      ";#phi; Number of jets",                                                            50, -4, 4);
+  book<TH1F>("gen_jet_Mass" ,                     ";Mass (GeV); Number of jets",                                                      101, -0.5, 50.5);
+  book<TH1F>("gen_jet_VS_gen_part_dR",                 ";#DeltaR (genjets, genparticles);Events / bin",                              101, -0.5, 20.5);
+  book<TH1F>("gen_jet_Ht" ,                       ";H_{t};Events / bin",                                                              201, -0.5, 1000.5);
+  book<TH1F>("gen_LJ_dEta" ,                       ";|#Delta #eta|_{leading jets};Events / bin",                                       71, -0.5, 15.5);
+  book<TH1F>("gen_LJ_dR",                          ";|#Delta R|_{leading jets};Events / bin",                                          101, -0.5, 20.5);
+  book<TH1F>("gen_LJ_Mass" ,                       ";M(jj) (GeV); Events",                                               301, -0.5, 2000.5);
+
+  // book<TH1F>("gen_LJ_CMF_Mass",                    ";M(jj) (GeV); Events",                                               301, -0.5, 2000.5);
 
   // book all the particles histograms
-  book<TH1F>("number_genparts",               ";number of gen part.; Events / bin",                                               1000,  0., 1000);
-  book<TH1F>("number_charged_genparts",       ";number of charged gen part.; Events / bin",                                       600,  0., 600);
-  book<TH1F>("number_neutral_genparts",       ";number of neutral gen part.; Events / bin",                                       600,  0., 600);
-  book<TH1F>("charged_neutral_ratio",         ";charged/neutral; Events / bin",                                                   1000,      0.,      10);
+  book<TH1F>("gen_part_number",               ";number of gen part.; Events / bin",                                               500,  0., (selection=="Mjj>200__")? 1000: 500);
+  book<TH1F>("gen_part_number_charged",       ";number of charged gen part.; Events / bin",                                       400,  0., (selection=="Mjj>200__")? 600: 400);
+  book<TH1F>("gen_part_number_neutral",       ";number of neutral gen part.; Events / bin",                                       300,  0., (selection=="Mjj>200__")? 600: 300);
+  book<TH1F>("gen_part_charged_neutral_ratio",         ";charged/neutral; Events / bin",                                                   400,      0.,      4);
 
   book<TH1F>("gen_part_pdgid",                ";pdgid; Events / bin",                                                             n_pdgids, 0, n_pdgids);
   book<TH1F>("gen_part_statusFlag",           ";status flag; Events / bin",                                                       n_flags, 0, n_flags);
@@ -39,9 +41,12 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_, TString selection_): Ba
   book<TH1F>("gen_part_m",                    ";Mass; Events / bin",                                                              50,   0., 2);
   book<TH1F>("gen_part_e",                    ";Energy; Events / bin",                                                            50,   0., 1500);
   book<TH1F>("gen_part_charge",               ";Charge; Events / bin",                                                            3,  -1.5, 1.5);
-  book<TH1F>("gen_part_Ht",                   ";Ht; Events / bin",                                                                1001, -0.5, 1000.5);
+  book<TH1F>("gen_part_Ht",                   ";Ht; Events / bin",                                                                351, -0.5, 700.5);
 
-  book<TH1F>("genMET",                        ";genMET (status==1); Events / bin",                                                100,  0., 1000);
+  book<TH1F>("gen_part_MET",                        ";genMET ; Events / bin",                                                     100,  0., 1000);
+
+  book<TH1F>("gen_part_z1",                   ";z;  Events / bin",                                                                 100, 0, 10);
+  book<TH1F>("gen_part_z2",                   ";z;  Events / bin",                                                                 100, 0, 10);
 
 
   book<TH2F>("gen_part_pdgid_vs_statusFlag",  ";pdgid; status flag", n_pdgids, 0, n_pdgids, n_flags, 0, n_flags);
@@ -60,7 +65,7 @@ GenLevelStudiesHists::GenLevelStudiesHists(TString dir_, TString selection_): Ba
 void GenLevelStudiesHists::fill(const VBFTaggerEvent & event) {
 
   // removing the events containing taus
-  for (const GenParticle& t: *event.genparticles_stable) {if (t.pdgid() == 15) return;}
+  for (const GenParticle& t: *event.genparticles_stable) {if (fabs(t.pdgid()) == 15) return;}
 
   // declare all the variables needed
   double weight = event.weight;
@@ -69,48 +74,56 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event) {
   vector<GenParticle> all_particles, charged_particles, neutral_particles;
   vector<GenJet> nJets;
   TLorentzVector genMET;
+  // bool modif = false;
   GenJet j1, j2;
 
   // fill the histograms that don't need loop
   hist<TH1F>("sumweights")->Fill(1, weight);
-  hist<TH1F>("number_genparts")->Fill(event.genparticles_stable->size(), weight);
+
+  // fill histograms for the 2 leading jets
+  if (event.genjets->size() > 1) {
+    j1 = event.genjets->at(0);
+    j2 = event.genjets->at(1);
+    eta_min = std::min(j1.eta(), j2.eta());
+    eta_max = std::max(j1.eta(), j2.eta());
+    dEta = deltaEta(j1, j2);
+    TLorentzVector v = j1.p4() + j2.p4();
+    if (FindInString("Mjj>200", selection.Data()) && v.M()<200) return;
+    hist<TH1F>("gen_LJ_dEta")->Fill(dEta, weight);
+    hist<TH1F>("gen_LJ_dR")->Fill(deltaR(j1, j2), weight);
+    hist<TH1F>("gen_LJ_Mass")->Fill(v.M(), weight);
+  }
 
   // loop over the jets
   for (size_t i=0; i<event.genjets->size(); i++) {
     GenJet gj = event.genjets->at(i);
 
-    if (FindInString("jetPt>10", selection.Data()) && gj.pt()<10) continue;
-    if (FindInString("jetPt>20", selection.Data()) && gj.pt()<20) continue;
-    if (FindInString("jetPt>30", selection.Data()) && gj.pt()<30) continue;
+    // if (FindInString("jetPt>10", selection.Data()) && gj.pt()<10) continue;
+    // if (FindInString("jetPt>20", selection.Data()) && gj.pt()<20) continue;
+    // if (FindInString("jetPt>30", selection.Data()) && gj.pt()<30) continue;
+    if (FindInString("Mjj>200", selection.Data()) && event.genjets->size()<2) return;
 
+    // modif = true;
     nJets.push_back(gj);
     Ht += gj.pt();
 
     // filling basic histograms
-    hist<TH1F>("jetsPT")->Fill(gj.pt(), weight);
-    hist<TH1F>("jetsEta")->Fill(gj.eta(), weight);
-    hist<TH1F>("jetsPhi")->Fill(gj.phi(), weight);
-    hist<TH1F>("jetsMass")->Fill(gj.m(), weight);
-
-    // fill histograms for the 2 leading jets
-    if (event.genjets->size() > 1 && i==0) {
-      j1 = event.genjets->at(i);
-      j2 = event.genjets->at(i+1);
-      eta_min = std::min(j1.eta(), j2.eta());
-      eta_max = std::max(j1.eta(), j2.eta());
-      dEta = deltaEta(j1, j2);
-      TLorentzVector v = j1.p4() + j2.p4();
-      hist<TH1F>("dEtaLJ")->Fill(dEta, weight);
-      hist<TH1F>("dRLJ")->Fill(deltaR(j1, j2), weight);
-      hist<TH1F>("LJMass")->Fill(v.M(), weight);
-    }
+    hist<TH1F>("gen_jet_Pt")->Fill(gj.pt(), weight);
+    hist<TH1F>("gen_jet_Eta")->Fill(gj.eta(), weight);
+    hist<TH1F>("gen_jet_Phi")->Fill(gj.phi(), weight);
+    hist<TH1F>("gen_jet_Mass")->Fill(gj.m(), weight);
 
   // end of the loop on the jets
   }
 
   //fill histograms after the loop
-  hist<TH1F>("ngenjets")->Fill(nJets.size(), weight);
-  hist<TH1F>("jetsHt")->Fill(Ht, weight);
+  // if (modif) {
+  //   hist<TH1F>("gen_jet_number")->Fill(nJets.size(), weight);
+  //   hist<TH1F>("gen_jet_Ht")->Fill(Ht, weight);
+  // }
+
+  hist<TH1F>("gen_jet_number")->Fill(nJets.size(), weight);
+  hist<TH1F>("gen_jet_Ht")->Fill(Ht, weight);
 
   // loop on the particles
   for (const GenParticle& gp: *event.genparticles_stable) {
@@ -124,13 +137,16 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event) {
     if (FindInString("gen_selections", selection.Data()) && fabs(gp.pdgid())>1000) continue;
     if (FindInString("charged", selection.Data()) && gp.charge()==0) continue;
     if (FindInString("neutral", selection.Data()) && gp.charge()!=0) continue;
+    if (FindInString("Mjj>200", selection.Data()) && event.genjets->size()<2) return;
 
     if (event.genjets->size()>1) {
       bool is_within = eta_min < gp.eta() && gp.eta() < eta_max;
       double dR_from_LJ = std::min(deltaR(gp, j1), deltaR(gp, j2));
-      hist<TH1F>("jetsVSpartsdR")->Fill(dR_from_LJ, weight);
+      hist<TH1F>("gen_jet_VS_gen_part_dR")->Fill(dR_from_LJ, weight);
       if (FindInString("Inside", selection.Data()) && !is_within) continue;
       if (FindInString("Outside", selection.Data()) && is_within) continue;
+      hist<TH1F>("gen_part_z1")->Fill(Zeppenfeld1(event, gp), weight);
+      hist<TH1F>("gen_part_z2")->Fill(Zeppenfeld2(event, gp), weight);
     }
 
     all_particles.push_back(gp);
@@ -170,11 +186,12 @@ void GenLevelStudiesHists::fill(const VBFTaggerEvent & event) {
     }
   // end of the loop on the particles
   }
-  hist<TH1F>("number_charged_genparts")->Fill(charged_particles.size(), weight);
-  hist<TH1F>("number_neutral_genparts")->Fill(neutral_particles.size(), weight);
+  hist<TH1F>("gen_part_number")->Fill(all_particles.size()-4, weight);
+  hist<TH1F>("gen_part_number_charged")->Fill(charged_particles.size()-4, weight);
+  hist<TH1F>("gen_part_number_neutral")->Fill(neutral_particles.size(), weight);
   if (neutral_particles.size()!=0) {
-    hist<TH1F>("charged_neutral_ratio")->Fill(charged_particles.size()*1./neutral_particles.size(), weight);
+    hist<TH1F>("gen_part_charged_neutral_ratio")->Fill((charged_particles.size()-4)*1./neutral_particles.size(), weight);
   }
-  hist<TH1F>("genMET")->Fill(genMET.Pt(), weight);
+  hist<TH1F>("gen_part_MET")->Fill(genMET.Pt(), weight);
   hist<TH1F>("gen_part_Ht")->Fill(partHt, weight);
 }
