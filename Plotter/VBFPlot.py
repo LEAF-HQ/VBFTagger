@@ -11,15 +11,19 @@ TDR.lumi_13TeV = ""
 
 class MyPlot():
     def __init__(self):
-        self.inputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/"
-        self.outputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/plots/distributions/"
-        self.fname  = ["MC__VBF_HToZZTo4L_M125_UL18.root",
-                       "MC__GluGluHToZZTo4L_M125_UL18.root"
+        self.inputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../WorkingArea/VBFTagger/UL18/GenLevelStudies/"
+        self.outputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../WorkingArea/VBFTagger/UL18/GenLevelStudies/plots/distributions/Plotter_Specific_Hists/"
+        self.fname  = ["MC__VBF_HToZZTo4L_M125_standard_UL18.root",
+                       "MC__GluGluHToZZTo4L_M125_standard_UL18.root"
                        ]
-        self.color = {"VBF_HToZZTo4L": ROOT.kRed,
-                      "GluGluHToZZTo4L": ROOT.kBlue}
-        self.legend = {"VBF_HToZZTo4L": "VBF",
-                       "GluGluHToZZTo4L": "GluGlu"}
+        self.color = {"VBF_HToZZTo4L": ROOT.kRed+1,
+                      "GluGluHToZZTo4L": ROOT.kAzure+2}
+
+        self.style = {'VBF_HToZZTo4L': ROOT.kSolid,
+                      'GluGluHToZZTo4L': ROOT.kDashed}
+
+        self.legend = {"VBF_HToZZTo4L": "VBF H",
+                       "GluGluHToZZTo4L": "gg->ggH"}
         # self.dirname = ["input", "weight", "cleaner", "njets", "nominal"]
         # self.dirname2 = ["General", "Jets"]
 
@@ -32,7 +36,7 @@ class MyPlot():
             hist = f_.Get(str(directory)+"/"+str(name))
             hist.Scale(1./hist.Integral())
             hist.SetDirectory(0)
-            hname = i.replace("MC__","").replace("_M125_UL18.root","")
+            hname = i.replace("MC__","").replace("_M125_standard_UL18.root","")
             self.hlist[hname] = hist
             f_.Close()
 
@@ -43,16 +47,18 @@ class MyPlot():
         # TDR.cms_lumi_TeV = TDR.commonScheme["legend"]["Run2"]+" Legacy, "+TDR.commonScheme["lumi"]["Run2"]+" fb^{-1}"
         # TDR.extraText3.append("#bf{Anti-k_{T} (R = 0.4), PF+CHS}")
         # TDR.extraText3.append("#bf{p_{T}^{jet} > 100 GeV}")
-        PlotXMin = -30
-        PlotXMax = 30
-        PlotYMin = 0.0000001
-        PlotYMax = 1.2
-        canv = tdrCanvas("H->4L", PlotXMin, PlotXMax, PlotYMin, PlotYMax, "PdgId", "Number of particles")
+        refhist = self.hlist["VBF_HToZZTo4L"]
+        print(refhist)
+        PlotXMin = refhist.GetBinLowEdge(1)
+        PlotXMax = refhist.GetBinLowEdge(refhist.GetNbinsX()+1)
+        PlotYMin = 0.0001
+        PlotYMax = 1
+        canv = tdrCanvas("H->4L", PlotXMin, PlotXMax, PlotYMin, PlotYMax, refhist.GetXaxis().GetTitle(), refhist.GetYaxis().GetTitle())
         canv.SetLogy(True)
-        leg = tdrLeg(0.68,0.60,0.89,0.89, textSize = 0.025)
+        leg = tdrLeg(0.50,0.8,0.89,0.89, textSize = 0.03)
 
         for na, h in self.hlist.items():
-            tdrDraw(h, "h", lcolor = self.color[na], fstyle=0, marker = 0)
+            tdrDraw(h, "h", lcolor = self.color[na], lstyle=self.style[na], fstyle=0, marker = 0)
             ent = h.GetEntries()
             leg.AddEntry(h, self.legend[na] + ". Entries: " + str(ent), "l")
 
@@ -69,11 +75,19 @@ class MyPlot():
         # line_MC.SetLineStyle(ROOT.kDotted)
         # line_MC.SetLineColor(ROOT.kBlack)
         # line_MC.Draw("same")
-
-        canv.SaveAs(self.outputPath+str(directory)+"_"+str(name)+".pdf")
+        outname = self.outputPath+str(name)+".pdf"
+        if os.path.exists(outname):
+            os.remove(outname)
+        canv.SaveAs(outname)
 
 def main():
-    MyPlot().Plot("weight_General", "PdgId")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_jet_number")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_jet_Pt")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_jet_Eta")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_jet_Ht")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_LJ_dEta")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_LJ_dR")
+    MyPlot().Plot("nominal_GenLevel_Mjj>200__", "gen_LJ_Mass")
 
 if __name__ == '__main__':
     main()
