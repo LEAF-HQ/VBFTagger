@@ -18,21 +18,36 @@
 using namespace std;
 
 VBFTaggerEvent::VBFTaggerEvent(){
-  identifier_VBF1 = -1;
-  identifier_VBF2 = -1;
+  VBF_genjets = new vector<GenJet>;
+  m_identifier_VBFgenparticle1 = -1;
+  m_identifier_VBFgenparticle2 = -1;
+  m_identifier_VBFjet1 = -1;
+  m_identifier_VBFjet2 = -1;
+  m_higgs_decay = Decay::nodecay;
 }
 
 VBFTaggerEvent::~VBFTaggerEvent(){
+  delete VBF_genjets;
 }
 
 void VBFTaggerEvent::clear(){
   RecoEvent::clear();
-  identifier_VBF1 = -1;
-  identifier_VBF2 = -1;
+  delete VBF_genjets;
+  VBF_genjets = 0;
+  m_identifier_VBFgenparticle1 = -1;
+  m_identifier_VBFgenparticle2 = -1;
+  m_identifier_VBFjet1 = -1;
+  m_identifier_VBFjet2 = -1;
+  m_higgs_decay = Decay::nodecay;
 }
 
 void VBFTaggerEvent::reset(){
   RecoEvent::reset();
-  identifier_VBF1 = -1;
-  identifier_VBF2 = -1;
+  delete VBF_genjets;
+  VBF_genjets = new vector<GenJet>;
+  m_identifier_VBFgenparticle1 = -1;
+  m_identifier_VBFgenparticle2 = -1;
+  m_identifier_VBFjet1 = -1;
+  m_identifier_VBFjet2 = -1;
+  m_higgs_decay = Decay::nodecay;
 }

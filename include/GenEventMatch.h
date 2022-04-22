@@ -9,33 +9,22 @@
 #include "LEAF/VBFTagger/include/GenParticleStatusPrinter.h"
 
 
-class GenEventMatch: public AnalysisModule<RecoEvent> {
+class GenEventMatch: public AnalysisModule<VBFTaggerEvent> {
 public:
   explicit GenEventMatch(const Config& cfg);
   virtual ~GenEventMatch() = default;
 
-  virtual bool process(RecoEvent & event) override;
+  virtual bool process(VBFTaggerEvent & event) override;
 
-  GenParticle FindParticle(RecoEvent& event, int );
-  GenParticle FindParticle(RecoEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::StatusFlag::isLastCopy);
-  std::vector<GenParticle> FindMothers(RecoEvent&, GenParticle);
-  std::vector<GenParticle> FindDaughters(RecoEvent&, GenParticle);
+  GenParticle FindParticle(VBFTaggerEvent& event, int );
+  GenParticle FindParticle(VBFTaggerEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::StatusFlag::isLastCopy);
+  std::vector<GenParticle> FindMothers(VBFTaggerEvent&, GenParticle);
+  std::vector<GenParticle> FindDaughters(VBFTaggerEvent&, GenParticle);
 
-  template<typename T>
-  std::vector<T> ParticlesInJet(const Particle  & jet, const std::vector<T> & particles, double deltarmin=0.6){
-    std::vector<T> results;
-    for(const auto & pi : particles){
-      double dr = deltaR(pi, jet);
-      if(dr < deltarmin && &pi != &jet) {
-        deltarmin = dr;
-        results.push_back(pi);
-      }
-    }
-    return results;
-  }
+
 
 protected:
-
+  bool skipMatching;
   unique_ptr<GenParticlePrinter> gp_printer;
   unique_ptr<GenParticleStatusPrinter> gp_status_printer;
 };
@@ -43,7 +32,7 @@ protected:
 template<class T>
 ostream& operator<<(ostream& os, const std::vector<T>& vec)
 {
- for (const auto& x: vec) {
+  for (const auto& x: vec) {
     os << x << " ";
   }
   return os;

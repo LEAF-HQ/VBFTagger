@@ -39,7 +39,7 @@ config_per_year = {
 year = 'UL18'
 stage = 'mini'
 submit = True
-#submit = False
+# submit = False
 nevt_per_job = 100000
 
 
@@ -56,7 +56,7 @@ def main():
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
         # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
-        Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=True)
+        # Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=True)
         # Tuplizer.PrintDASCrossSection(sample=sample, year=year, recalculate=True)
     # create_default_config(allsamples=AllSamples, year='UL17', configoutname= os.path.join(os.environ['LEAFPATH'], 'LQDM', 'config', 'Default.xml'))
 
