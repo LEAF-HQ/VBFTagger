@@ -123,11 +123,11 @@ void GenLevelStudiesTool::book_histograms(){
     // mytag = tag+"_GenLevel_partPt>1_Outside_neutral"; book_HistFolder(mytag, new GenLevelStudiesHists(mytag, "partPt>1 && Out && charge==0"));
 
     // mytag = tag+"_Pruned_GenLevel"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag));
-    mytag = tag+"_Pruned_GenLevel_Stable"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1"));
-    mytag = tag+"_Pruned_GenLevel_Stable_pt<1"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt<1"));
-    mytag = tag+"_Pruned_GenLevel_Stable_pt>1"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt>1"));
-    mytag = tag+"_Pruned_GenLevel_Stable_pt<1_selection"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt<1 && gen_selections"));
-    mytag = tag+"_Pruned_GenLevel_Stable_pt>1_selection"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt>1 && gen_selections"));
+    // mytag = tag+"_Pruned_GenLevel_Stable"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1"));
+    // mytag = tag+"_Pruned_GenLevel_Stable_pt<1"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt<1"));
+    // mytag = tag+"_Pruned_GenLevel_Stable_pt>1"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt>1"));
+    // mytag = tag+"_Pruned_GenLevel_Stable_pt<1_selection"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt<1 && gen_selections"));
+    // mytag = tag+"_Pruned_GenLevel_Stable_pt>1_selection"; book_HistFolder(mytag, new GenLevelStudiesPrunedHists(mytag, "status==1 && pt>1 && gen_selections"));
   }
 }
 
@@ -181,10 +181,10 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
   cleaner_LJpart.reset(new GenLJCleaner(0.4));
 
-  GenID<GenJet> genjet_id = {PtEtaId(20, 100)};
+  GenID<GenJet> genjet_id = {PtEtaId(20, 5.2)};
   cleaner_genjet.reset(new GenJetCleaner(genjet_id));
 
-  GenID<GenParticle> gen_particle_id = {PtEtaId(0.2, 100)};
+  GenID<GenParticle> gen_particle_id = {PtEtaId(0.2, 5.2)};
   cleaner_genpart.reset(new GenParticleCleaner(gen_particle_id));
 
   // MultiID<Jet> jet_id = {PtEtaId(20, 2.5), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};

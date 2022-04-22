@@ -24,7 +24,7 @@
 
 #include "LEAF/VBFTagger/include/VBFTaggerEvent.h"
 #include "LEAF/VBFTagger/include/Utils.h"
-#include "LEAF/VBFTagger/include/ParticlesFinder.h"
+#include "LEAF/VBFTagger/include/Functions.h"
 
 
 using namespace std;
@@ -49,9 +49,10 @@ private:
     ParticleID::unknown,
     // ParticleID::u, ParticleID::d, ParticleID::s, ParticleID::c, ParticleID::b, ParticleID::t,
     ParticleID::e, ParticleID::mu, ParticleID::v_e, ParticleID::v_mu, ParticleID::v_tau,
-    ParticleID::photon, ParticleID::Z, ParticleID::W, ParticleID::H,
-    ParticleID::pi_0, ParticleID::pi_plus, ParticleID::kaon_0_L, ParticleID::kaon_0_S, ParticleID::kaon_plus,
-    // ParticleID::delta_plus_plus, ParticleID::delta_plus, ParticleID::delta_0, 
+    ParticleID::photon,
+    // ParticleID::Z, ParticleID::W, ParticleID::H, ParticleID::pi_0,
+    ParticleID::pi_plus, ParticleID::kaon_0_L, ParticleID::kaon_0_S, ParticleID::kaon_plus,
+    // ParticleID::delta_plus_plus, ParticleID::delta_plus, ParticleID::delta_0,
     ParticleID::lambda, ParticleID::proton
   };
 
