@@ -19,7 +19,7 @@ public:
   GenParticle FindParticle(VBFTaggerEvent& event, int );
   GenParticle FindParticle(VBFTaggerEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::StatusFlag::isLastCopy);
   std::vector<GenParticle> FindMothers(VBFTaggerEvent&, GenParticle);
-  std::vector<GenParticle> FindDaughters(VBFTaggerEvent&, GenParticle);
+  std::vector<GenParticle> FindDaughters(VBFTaggerEvent&, GenParticle, bool check_PhaseSpace);
 
 
 

@@ -18,3 +18,9 @@ ROOT.gStyle.SetOptFit(0)
 def PrintFormattedLine(listArgs=[], space=10):
     for x in listArgs: print x, " "*(space-len(str(x)) if space-len(str(x))>0 else 2*space-len(str(x))),
     print "\t"
+
+
+def CreateEfficiencyPlot(num,den):
+    eff = num.Clone(num.GetName()+'Efficiency')
+    eff.Divide(eff,den,1,1,'B')
+    return eff

@@ -40,8 +40,8 @@ VBFJetsHists::VBFJetsHists(TString dir_, TString selection_) : BaseHists(dir_), 
   book<TH1F>("jet_n_muons",         ";# muo.; Events / bin",              50,      0.,     10);
   book<TH1F>("jet_n_electrons",     ";# ele.; Events / bin",              50,      0.,     10);
 
-  book<TH1F>("jet1_pt",            ";#p_{T, jet1}; Events / bin",         50,      0.,   1000);
-  book<TH1F>("jet2_pt",            ";#p_{T, jet2}; Events / bin",         50,      0.,   1000);
+  book<TH1F>("jet1_pt",            ";#p_{T, jet1}; Events / bin",        100,      0.,    500);
+  book<TH1F>("jet2_pt",            ";#p_{T, jet2}; Events / bin",        100,      0.,    500);
   book<TH2F>("jet1_vs_jet2_pt",    ";#p_{T, jet1}; #p_{T, jet2}",         50,      0.,   1000,     50,      0.,   1000);
 
   book<TH1F>("jet1_eta",            ";#eta_{jet1}; Events / bin",        100,     -5.0,     5.0);

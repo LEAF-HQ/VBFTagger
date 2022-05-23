@@ -14,7 +14,7 @@ bool XOR_pairs(Decay input1, Decay input2, Decay reference1, Decay reference2) {
 }
 
 GenEventMatch::GenEventMatch(const Config& cfg){
-  skipMatching = !((cfg.dataset_type() == "MC" ) && FindInString("VBF", cfg.dataset_name().Data()));
+  skipMatching = !((cfg.dataset_type() == "MC" ));
   gp_printer.reset(new GenParticlePrinter(cfg));
   gp_status_printer.reset(new GenParticleStatusPrinter(cfg));
 }
@@ -99,10 +99,14 @@ std::vector<GenParticle> GenEventMatch::FindMothers(VBFTaggerEvent& event, GenPa
   return mothers;
 }
 
-std::vector<GenParticle> GenEventMatch::FindDaughters(VBFTaggerEvent& event, GenParticle particle) {
+std::vector<GenParticle> GenEventMatch::FindDaughters(VBFTaggerEvent& event, GenParticle particle, bool check_PhaseSpace) {
   std::vector<GenParticle> daughters;
   for(const auto & gp : *event.genparticles_pruned){
-    if (gp.mother_identifier()==particle.identifier()) daughters.push_back(gp);
+    if (gp.mother_identifier()==particle.identifier()){
+      if (check_PhaseSpace && gp.pt()<2) continue;
+      if (check_PhaseSpace && fabs(gp.eta())>3) continue;
+      daughters.push_back(gp);
+    }
   }
   return daughters;
 }
@@ -135,8 +139,11 @@ bool GenEventMatch::process(VBFTaggerEvent& event) {
   // gp_printer->process(event);
   // gp_status_printer->process(event);
 
-  std::vector<GenParticle> H_mothers_all = FindMothers(event, FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isFirstCopy));
-  std::vector<GenParticle> H_daughters = FindDaughters(event, FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isLastCopy));
+  event.gen_higgs->push_back(FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isFirstCopy));
+  event.gen_higgs->push_back(FindParticle(event, ParticleID::H, GenParticle::StatusFlag::isLastCopy));
+
+  std::vector<GenParticle> H_mothers_all = FindMothers(event, (*event.gen_higgs).at(0));
+  for (const auto &dd: FindDaughters(event, (*event.gen_higgs).at(1), false)) event.gen_higgs_Z->push_back(dd);
   std::vector<GenParticle> H_mothers;
   std::vector<bool> VBF_jets_to_use((*event.genjets).size(), false);
 
@@ -199,51 +206,41 @@ bool GenEventMatch::process(VBFTaggerEvent& event) {
 
   if (H_mothers.size()<2) { for(unsigned i = 0; i <= 2-H_mothers.size(); i++ ) {GenParticle m; H_mothers.push_back(m);}}
 
-  std::vector<GenParticle> h_daughters_daughters;
   std::vector<string> H_daughters_names;
   std::vector<string> H_daughters_dauthers_names;
-  for (const auto &d: H_daughters) {
+  for (const auto &d: *(event.gen_higgs_Z)) {
     H_daughters_names.push_back(pdgId2str(d.pdgid()));
-    for (const auto &dd: FindDaughters(event, d)) {
-      h_daughters_daughters.push_back(dd);
+    for (const auto &dd: FindDaughters(event, d, false)) {
+      event.gen_higgs_leptons->push_back(dd);
       H_daughters_dauthers_names.push_back(pdgId2str(dd.pdgid()));
     }
   }
-  if (H_daughters.size()!=2) throw std::runtime_error("Unexpected number of Higgs daughters.");
-  if (h_daughters_daughters.size()!=4) throw std::runtime_error("Unexpected number of Higgs sub-daughters.");
+
+  if ((*event.gen_higgs_Z).size()!=2) throw std::runtime_error("Unexpected number of Higgs daughters.");
+  if ((*event.gen_higgs_leptons).size()!=4) throw std::runtime_error("Unexpected number of Higgs sub-daughters.");
 
   event.set_identifier_VBFgenparticle1(H_mothers.at(0).identifier());
   event.set_identifier_VBFgenparticle2(H_mothers.at(1).identifier());
 
-  Decay H_decay_0 = GetDecayMode(H_daughters[0].pdgid(),H_daughters[1].pdgid());
-  Decay H_decay_1 = GetDecayMode(h_daughters_daughters[0].pdgid(),h_daughters_daughters[1].pdgid());
-  Decay H_decay_2 = GetDecayMode(h_daughters_daughters[2].pdgid(),h_daughters_daughters[3].pdgid());
-  event.set_higgs_decay(H_decay_0);
+  Decay H_decay_0 = GetDecayMode((*event.gen_higgs_Z).at(0).pdgid(),(*event.gen_higgs_Z).at(1).pdgid());
+  Decay H_decay_1 = GetDecayMode((*event.gen_higgs_leptons).at(0).pdgid(),(*event.gen_higgs_leptons).at(1).pdgid());
+  Decay H_decay_2 = GetDecayMode((*event.gen_higgs_leptons).at(2).pdgid(),(*event.gen_higgs_leptons).at(3).pdgid());
+  event.set_gen_higgs_decay(H_decay_0);
 
   if (H_decay_0 == Decay::ZZ) {
-    if (XOR_pairs(H_decay_1, H_decay_2,      Decay::tautau, Decay::tautau)) event.set_higgs_decay(Decay::ZZtautautautau);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::mumu))   event.set_higgs_decay(Decay::ZZmumumumu);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::ee))     event.set_higgs_decay(Decay::ZZeeee);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::vv,     Decay::vv))     event.set_higgs_decay(Decay::ZZvvvv);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::mumu))   event.set_higgs_decay(Decay::ZZeemumu);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::tautau)) event.set_higgs_decay(Decay::ZZeetautau);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::vv))     event.set_higgs_decay(Decay::ZZeevv);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::tautau)) event.set_higgs_decay(Decay::ZZmumutautau);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::vv))     event.set_higgs_decay(Decay::ZZmumuvv);
-    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::tautau, Decay::vv))     event.set_higgs_decay(Decay::ZZtautauvv);
-    // else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::qq))     event.set_higgs_decay(Decay::ZZqqll);
-    // else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::qq))     event.set_higgs_decay(Decay::ZZqqll);
-    // else if (XOR_pairs(H_decay_1, H_decay_2, Decay::tautau, Decay::qq))     event.set_higgs_decay(Decay::ZZqqll);
-    // else if (XOR_pairs(H_decay_1, H_decay_2, Decay::qq,     Decay::qq))     event.set_higgs_decay(Decay::ZZqqqq);
+    if (XOR_pairs(H_decay_1, H_decay_2,      Decay::tautau, Decay::tautau)) event.set_gen_higgs_decay(Decay::ZZtautautautau);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::mumu))   event.set_gen_higgs_decay(Decay::ZZmumumumu);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::ee))     event.set_gen_higgs_decay(Decay::ZZeeee);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::vv,     Decay::vv))     event.set_gen_higgs_decay(Decay::ZZvvvv);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::mumu))   event.set_gen_higgs_decay(Decay::ZZeemumu);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::tautau)) event.set_gen_higgs_decay(Decay::ZZeetautau);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::vv))     event.set_gen_higgs_decay(Decay::ZZeevv);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::tautau)) event.set_gen_higgs_decay(Decay::ZZmumutautau);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::vv))     event.set_gen_higgs_decay(Decay::ZZmumuvv);
+    else if (XOR_pairs(H_decay_1, H_decay_2, Decay::tautau, Decay::vv))     event.set_gen_higgs_decay(Decay::ZZtautauvv);
     else throw runtime_error("Unexpected HZZ decay mode.");
-    // } else if (H_decay_0 == Decay::WW) {
-    //   if (XOR_pairs(H_decay_1, H_decay_2,      Decay::ve,     Decay::ve)) event.set_higgs_decay(Decay::WWveve);
-    //   else if (XOR_pairs(H_decay_1, H_decay_2, Decay::mumu,   Decay::mumu))   event.set_higgs_decay(Decay::WWvevmu);
-    //   else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::ee))     event.set_higgs_decay(Decay::WWvevtau);
-    //   // else if (XOR_pairs(H_decay_1, H_decay_2, Decay::vv,     Decay::vv))     event.set_higgs_decay(Decay::WWqqqq);
-    //   // else if (XOR_pairs(H_decay_1, H_decay_2, Decay::ee,     Decay::mumu))   event.set_higgs_decay(Decay::WWvlqq);
-    //   else throw runtime_error("Unexpected HWW decay mode.");
   } else throw runtime_error("Unexpected Higgs decay mode.");
+
 
   return true;
 }

@@ -13,10 +13,10 @@ VBFGenJetsHists::VBFGenJetsHists(TString dir_, TString selection_) : BaseHists(d
 
   book<TH1F>("sumweights",        ";sum of event weights; Events / bin",  1,       0.5,     1.5);
   book<TH1F>("n_genjets",         ";number of gen jets ; Events / bin",   6,      -0.5,     5.5);
-  book<TH1F>("higgs_decay",       ";higgs_decay ; Events / bin",   n_higgs_decay, 0, n_higgs_decay);
+  book<TH1F>("gen_higgs_decay",   ";gen_higgs_decay; Events / bin", n_higgs_decay, 0, n_higgs_decay);
 
   for(size_t i=1; i<=n_higgs_decay; i++) {
-    hist<TH1F>("higgs_decay")->GetXaxis()->SetBinLabel(i,higgs_decay_names[i-1].c_str());
+    hist<TH1F>("gen_higgs_decay")->GetXaxis()->SetBinLabel(i,higgs_decay_names[i-1].c_str());
   }
 
   book<TH1F>("jet_pt",            ";p_{T}; Events / bin",                 50,      0.,   1000);
@@ -40,7 +40,7 @@ void VBFGenJetsHists::fill(const VBFTaggerEvent & event){
   double weight = event.weight;
   hist<TH1F>("sumweights")->Fill(1, weight);
   hist<TH1F>("n_genjets")->Fill((*event.VBF_genjets).size(), weight);
-  hist<TH1F>("higgs_decay")->Fill(decay2str(event.higgs_decay()).c_str(), weight);
+  hist<TH1F>("gen_higgs_decay")->Fill(decay2str(event.gen_higgs_decay()).c_str(), weight);
 
   for(unsigned index_jet1 = 0; index_jet1 < (*event.VBF_genjets).size(); index_jet1++ ){
     const GenJet jet = (*event.VBF_genjets).at(index_jet1);

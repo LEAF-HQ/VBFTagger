@@ -47,6 +47,7 @@ nevt_per_job = 100000
 
 def main():
     for samplename, sample in AllSamples.items():
+        # if 'pfcands' in samplename: continue
         print(green('--> Working on sample: \'%s\'' % (samplename)))
         Tuplizer = TuplizeRunner(sample=sample, stage=stage, year=year, config=config_per_year[year], workarea=workarea, submit=submit)
         # Tuplizer.CountEvents(check_missing=True)

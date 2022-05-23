@@ -31,6 +31,12 @@ private:
 };
 
 
+class GenLeptonPhaseSpaceSelection: public Selection<VBFTaggerEvent> {
+public:
+  explicit GenLeptonPhaseSpaceSelection(const Config & cfg);
+  virtual bool passes(VBFTaggerEvent & event) override;
+};
+
 
 class VBFJetDefinition: public AnalysisModule<VBFTaggerEvent> {
 public:
@@ -40,4 +46,12 @@ public:
 
 private:
   float min_jet_pt;
+};
+
+
+class Higgs4LeptonsFinder: public AnalysisModule<VBFTaggerEvent> {
+public:
+  explicit Higgs4LeptonsFinder(const Config& cfg);
+  virtual ~Higgs4LeptonsFinder() = default;
+  virtual bool process(VBFTaggerEvent & event) override;
 };

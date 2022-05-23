@@ -28,6 +28,7 @@
 #include "LEAF/VBFTagger/include/VBFGenJetsHists.h"
 #include "LEAF/VBFTagger/include/PFCandsHists.h"
 #include "LEAF/VBFTagger/include/VBFJetsHists.h"
+#include "LEAF/VBFTagger/include/VBFEventHists.h"
 
 using namespace std;
 
@@ -47,7 +48,7 @@ private:
   VBFTaggerEvent* event;
 
   string NameTool = "GenLevelStudiesTool";
-  vector<string> histogram_tags = {"input", "matching", "phasespace", "low_pt", "mid_pt", "nominal"};
+  vector<string> histogram_tags = {"input", "matching", "phasespace", "low_pt", "nominal"};
   unordered_map<string, string> m_name_type;
 
   unordered_map<string, string> input_strings;
@@ -62,8 +63,9 @@ private:
   unique_ptr<TauCleaner> tau_cleaner;
 
   unique_ptr<VBFJetDefinition> VBFJet_definition_low_pt;
-  unique_ptr<VBFJetDefinition> VBFJet_definition_mid_pt;
-  unique_ptr<VBFJetDefinition> VBFJet_definition_high_pt;
+  unique_ptr<VBFJetDefinition> VBFJet_definition;
+
+  unique_ptr<Higgs4LeptonsFinder> Higgs4Leptons_finder;
 
   // Selections used in the analysis
   unique_ptr<NTauSelection> ntaus_selection;
@@ -86,7 +88,7 @@ void PFStudiesTool::book_histograms(){
     TString mytag;
     mytag = tag+"_VBFGenJets";                  book_HistFolder(mytag, new VBFGenJetsHists(mytag));
     mytag = tag+"_GenParts";                    book_HistFolder(mytag, new GenParticlesHists(mytag, "", false));
-    if (tag == "matching" || tag == "phasespace") continue;
+    if (tag == "inputp" || tag == "matching" || tag == "phasespace") continue;
     mytag = tag+"_GenParts_stable";             book_HistFolder(mytag, new GenParticlesHists(mytag, ""));
     mytag = tag+"_GenParts_pt200MeV";           book_HistFolder(mytag, new GenParticlesHists(mytag, "pt>0.2"));
     mytag = tag+"_GenParts_pt1GeV";             book_HistFolder(mytag, new GenParticlesHists(mytag, "pt>1"));
@@ -113,17 +115,18 @@ void PFStudiesTool::book_histograms(){
     mytag = tag+"_Jets_opp";                    book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0"));
     mytag = tag+"_Jets_opp_deta";               book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0 && deta>1.4"));
     mytag = tag+"_Jets_opp_deta_mjj";           book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0 && deta>1.4 && mjj>200"));
+    mytag = tag+"_VBFEvent";                    book_HistFolder(mytag, new VBFEventHists(mytag));
   }
 }
 
 void PFStudiesTool::fill_histograms(TString tag){
   TString mytag;
-  mytag = tag+"_VBFGenJets";            HistFolder<VBFGenJetsHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParts";              HistFolder<GenParticlesHists>(mytag)->fill(*event);
-  if (tag == "matching" || tag == "phasespace") return;
-  mytag = tag+"_GenParts_stable";       HistFolder<GenParticlesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParts_pt200MeV";     HistFolder<GenParticlesHists>(mytag)->fill(*event);
-  mytag = tag+"_GenParts_pt1GeV";       HistFolder<GenParticlesHists>(mytag)->fill(*event);
+  mytag = tag+"_VBFGenJets";        HistFolder<VBFGenJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParts";          HistFolder<GenParticlesHists>(mytag)->fill(*event);
+  if (tag == "inputp" || tag == "matching" || tag == "phasespace") return;
+  mytag = tag+"_GenParts_stable";   HistFolder<GenParticlesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParts_pt200MeV"; HistFolder<GenParticlesHists>(mytag)->fill(*event);
+  mytag = tag+"_GenParts_pt1GeV";   HistFolder<GenParticlesHists>(mytag)->fill(*event);
   for(const TString & tag_ : { "_PFCands",
   "_PFCands_pt1", "_PFCands_pt1_UEin","_PFCands_pt1_UEout","_PFCands_pt1_charged","_PFCands_pt1_neutral",
   "_PFCands_pt1_UEin_charged","_PFCands_pt1_UEin_neutral","_PFCands_pt1_UEout_charged","_PFCands_pt1_UEout_neutral",
@@ -131,10 +134,12 @@ void PFStudiesTool::fill_histograms(TString tag){
   "_PFCands_pt0p2_UEin_charged","_PFCands_pt0p2_UEin_neutral","_PFCands_pt0p2_UEout_charged","_PFCands_pt0p2_UEout_neutral"}) {
     HistFolder<PFCandsHists>(tag+tag_)->fill(*event);
   }
-  mytag = tag+"_Jets";                  HistFolder<VBFJetsHists>(mytag)->fill(*event);
-  mytag = tag+"_Jets_opp";              HistFolder<VBFJetsHists>(mytag)->fill(*event);
-  mytag = tag+"_Jets_opp_deta";         HistFolder<VBFJetsHists>(mytag)->fill(*event);
-  mytag = tag+"_Jets_opp_deta_mjj";     HistFolder<VBFJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_Jets";              HistFolder<VBFJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_Jets_opp";          HistFolder<VBFJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_Jets_opp_deta";     HistFolder<VBFJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_Jets_opp_deta_mjj"; HistFolder<VBFJetsHists>(mytag)->fill(*event);
+  mytag = tag+"_VBFEvent";          HistFolder<VBFEventHists>(mytag)->fill(*event);
+
 }
 
 
@@ -166,8 +171,9 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   njets_selection.reset(new NJetSelection(cfg, 2, -1));
 
   VBFJet_definition_low_pt.reset(new VBFJetDefinition(cfg, 20));
-  VBFJet_definition_mid_pt.reset(new VBFJetDefinition(cfg, 30));
-  VBFJet_definition_high_pt.reset(new VBFJetDefinition(cfg, 50));
+  VBFJet_definition.reset(new VBFJetDefinition(cfg, 50));
+
+  Higgs4Leptons_finder.reset(new Higgs4LeptonsFinder(cfg));
 
   book_histograms();
   PrintInputs();
@@ -177,6 +183,8 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
 
 
 bool PFStudiesTool::Process(){
+
+  bool pass_definition;
 
   sort_by_pt<GenParticle>(*event->genparticles_stable);
   sort_by_pt<GenJet>(*event->genjets);
@@ -191,8 +199,9 @@ bool PFStudiesTool::Process(){
   jet_cleaner->process(*event);
   pfcand_cleaner->process(*event);
   tau_cleaner->process(*event);
-  genEvent_match->process(*event);
-
+  pass_definition = genEvent_match->process(*event);
+  if(!pass_definition) return false;
+  
   if (event->genjets->size()<2) return false;
   if(!nogentau_selection->passes(*event)) return false;
   // if (event->VBF_genjets->size()!=2) return false;
@@ -202,17 +211,14 @@ bool PFStudiesTool::Process(){
   if(!njets_selection->passes(*event)) return false;
   fill_histograms("phasespace");
 
+  Higgs4Leptons_finder->process(*event);
 
-  bool pass_definition;
+
   pass_definition = VBFJet_definition_low_pt->process(*event);
   if(!pass_definition) return false;
   fill_histograms("low_pt");
 
-  pass_definition = VBFJet_definition_mid_pt->process(*event);
-  if(!pass_definition) return false;
-  fill_histograms("mid_pt");
-
-  pass_definition = VBFJet_definition_high_pt->process(*event);
+  pass_definition = VBFJet_definition->process(*event);
   if(!pass_definition) return false;
 
 

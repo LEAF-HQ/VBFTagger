@@ -11,8 +11,8 @@ PFCandsHists::PFCandsHists(TString dir_, TString selection_) : BaseHists(dir_), 
 
   book<TH1F>("sumweights",            ";sum of event weights; Events / bin",     1,      0.5,      1.5);
   book<TH1F>("n_pfcands",             ";number of pf cands ; Events / bin",    100,      0.,    (selection=="")? 1000: 100);
-  book<TH1F>("n_pfcands_density",     ";density of pf cands ; Events / bin",    60,      0.,     isLowpt? 100: 30);
-  book<TH1F>("n_pfcands_density2",    ";density of pf cands ; Events / bin",    60,      0.,     isLowpt? 100: 30);
+  book<TH1F>("n_pfcands_density",     ";density of pf cands ; Events / bin",   120,      0.,     isLowpt? 100: 30);
+  book<TH1F>("n_pfcands_density2",    ";density of pf cands ; Events / bin",   120,      0.,     isLowpt? 100: 30);
   book<TH1F>("n_pfcands_density3",    ";density of pf cands ; Events / bin",    10,      0.,      30);
   book<TH1F>("n_charged_pfcands",     ";# charged pf cands ; Events / bin",     50,      0.,    (selection=="")? 1000: 50);
   book<TH1F>("n_neutral_pfcands",     ";# neutral pf cands ; Events / bin",     50,      0.,    (selection=="")? 1000: 50);
@@ -28,16 +28,16 @@ PFCandsHists::PFCandsHists(TString dir_, TString selection_) : BaseHists(dir_), 
   book<TH1F>("pf_cand_charge",        ";charge; Events / bin",                   3,     -1.5,      1.5);
 
   book<TH1F>("pf_cand_type",          ";type; Events / bin",               n_types,      0,  n_types);
-  book<TH1F>("pf_cand_puppi_w",       ";puppi weight; Events / bin",            20,      0.,       1.);
-  book<TH1F>("pf_cand_puppi_w_nolep", ";puppi weight (no lep.); Events / bin",  20,      0.,       1.);
+  book<TH1F>("pf_cand_puppi_w",       ";puppi weight; Events / bin",            22,     -0.05,     1.05);
+  book<TH1F>("pf_cand_puppi_w_nolep", ";puppi weight (no lep.); Events / bin",  22,     -0.05,     1.05);
   book<TH1F>("pf_cand_fromPV",        ";fromPV ; Events / bin",                  4,     -0.5,      3.5);
 
   book<TH1F>("pf_cand_calo_frac",     ";calo. frac.; Events / bin",             20,      0,        1);
   book<TH1F>("pf_cand_hcal_frac",     ";hcal. frac.; Events / bin",             20,      0,        1);
   book<TH1F>("pf_cand_is_iso_ch_had", ";IsIsoChHad; Events / bin",               2,      0,        2);
 
-  book<TH1F>("pf_cand_dz",            ";dz; Events / bin",                     100,     -0.10,     0.10);
-  book<TH1F>("pf_cand_dxy",           ";dxy; Events / bin",                    100,     -0.10,     0.10);
+  book<TH1F>("pf_cand_dz",            ";dz; Events / bin",                     100,     -0.05,     0.05);
+  book<TH1F>("pf_cand_dxy",           ";dxy; Events / bin",                    100,     -0.05,     0.05);
 
   book<TH1F>("pf_cand_dz_err",        ";dz^{err}; Events / bin",                50,      0,        0.05);
   book<TH1F>("pf_cand_dxy_err",       ";dxy_{err}; Events / bin",               50,      0,        0.05);
@@ -48,39 +48,42 @@ PFCandsHists::PFCandsHists(TString dir_, TString selection_) : BaseHists(dir_), 
 
   book<TH1F>("pf_cand_DR_from_jet",   ";DR from tagged jet; Events / bin",     160,      0,        8);
   book<TH1F>("Zeppenfeld1",           ";Zeppenfeld1; Events / bin",            100,      0,       10);
-  book<TH1F>("Zeppenfeld2",           ";Zeppenfeld2; Events / bin",             50,      0,        5);
-  book<TH1F>("Zeppenfeld3",           ";Zeppenfeld3; Events / bin",             50,      0,        5);
+  book<TH1F>("Zeppenfeld2",           ";Zeppenfeld2; Events / bin",             50,      0,        2);
+  book<TH1F>("Zeppenfeld3",           ";Zeppenfeld3; Events / bin",             50,      0,        2);
 
   book<TH2F>("pf_cand_pt_vs_eta",             ";p_{T}; #eta",                   50,      0.,      50,      100,    -5.,       5.);
   book<TH2F>("pf_cand_eta_vs_phi",            ";#eta; #phi",                   100,     -5.,       5.,      70,    -3.5,      3.5);
 
+  book<TH2F>("n_pfcands_vs_type",       ";number of pf cands ; type",          100,      0.,   10000,    n_types,   0,  n_types);
+  book<TH2F>("HT_pfcands_vs_type",            ";H_{T} from PF ; type",         100,      0.,   10000,    n_types,   0,  n_types);
 
-  book<TH2F>("n_pfcands_vs_type",       ";number of pf cands ; type",          100,      0.,   10000,    n_types,    0,  n_types);
-  book<TH2F>("HT_pfcands_vs_type",            ";H_{T} from PF ; type",         100,      0.,   10000,    n_types,    0,  n_types);
+  book<TH2F>("pf_cand_pt_vs_type",            ";p_{T}; type",                   50,      0.,      50,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_eta_vs_type",           ";#eta; type",                   100,     -5.,       5.,   n_types,   0,  n_types);
+  book<TH2F>("pf_cand_phi_vs_type",           ";#phi; type",                    70,     -3.5,      3.5,  n_types,   0,  n_types);
+  book<TH2F>("pf_cand_m_vs_type",             ";mass; type",                    50,      0.,       2,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_e_vs_type",             ";Energy; type",                  50,      0.,     500,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_charge_vs_type",        ";charge; type",                   3,     -1.5,      1.5,  n_types,   0,  n_types);
+  book<TH2F>("pf_cand_puppi_w_vs_type",       ";puppi weight; type",            22,     -0.05,     1.05, n_types,   0,  n_types);
+  book<TH2F>("pf_cand_puppi_w_nolep_vs_type", ";puppi weight (no lep.); type",  22,     -0.05,     1.05, n_types,   0,  n_types);
+  book<TH2F>("pf_cand_fromPV_vs_type",        ";fromPV; type",                   4,     -0.5,      3.5,  n_types,   0,  n_types);
+  book<TH2F>("pf_cand_calo_frac_vs_type",     ";calo. frac.; type",             20,      0.,       1,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_hcal_frac_vs_type",     ";hcal. frac.; type",             20,      0.,       1,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_is_iso_ch_had_vs_type", ";IsIsoChHad; type",               2,      0.,       2,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_dz_vs_type",            ";dz; type",                     100,     -0.10,     0.10, n_types,   0,  n_types);
+  book<TH2F>("pf_cand_dxy_vs_type",           ";dxy; type",                    100,     -0.10,     0.10, n_types,   0,  n_types);
+  book<TH2F>("pf_cand_dz_err_vs_type",        ";dz^{err}; type",                50,      0,        0.05, n_types,   0,  n_types);
+  book<TH2F>("pf_cand_dxy_err_vs_type",       ";dxy_{err}; type",               50,      0,        0.05, n_types,   0,  n_types);
+  book<TH2F>("pf_cand_vertex_x_vs_type",      ";ass. vertex pos(x); type",     500,     -1.,       1,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_vertex_y_vs_type",      ";ass. vertex pos(y); type",     500,     -1.,       1,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_vertex_z_vs_type",      ";ass. vertex pos(z); type",     400,     -20.,     20,    n_types,   0,  n_types);
 
-  book<TH2F>("pf_cand_pt_vs_type",            ";p_{T}; type",                   50,      0.,      50,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_eta_vs_type",           ";#eta; type",                   100,     -5.,       5.,   n_types,    0,  n_types);
-  book<TH2F>("pf_cand_phi_vs_type",           ";#phi; type",                    70,     -3.5,      3.5,  n_types,    0,  n_types);
-  book<TH2F>("pf_cand_m_vs_type",             ";mass; type",                    50,      0.,       2,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_e_vs_type",             ";Energy; type",                  50,      0.,     500,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_charge_vs_type",        ";charge; type",                   3,     -1.5,      1.5,  n_types,    0,  n_types);
-  book<TH2F>("pf_cand_puppi_w_vs_type",       ";puppi weight; type",            20,      0.,       1.,   n_types,    0,  n_types);
-  book<TH2F>("pf_cand_puppi_w_nolep_vs_type", ";puppi weight (no lep.); type",  20,      0.,       1.,   n_types,    0,  n_types);
-  book<TH2F>("pf_cand_calo_frac_vs_type",     ";calo. frac.; type",             20,      0.,       1,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_hcal_frac_vs_type",     ";hcal. frac.; type",             20,      0.,       1,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_is_iso_ch_had_vs_type", ";IsIsoChHad; type",               2,      0.,       2,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_dz_vs_type",            ";dz; type",                     100,     -0.10,     0.10, n_types,    0,  n_types);
-  book<TH2F>("pf_cand_dxy_vs_type",           ";dxy; type",                    100,     -0.10,     0.10, n_types,    0,  n_types);
-  book<TH2F>("pf_cand_dz_err_vs_type",        ";dz^{err}; type",                50,      0,        0.05, n_types,    0,  n_types);
-  book<TH2F>("pf_cand_dxy_err_vs_type",       ";dxy_{err}; type",               50,      0,        0.05, n_types,    0,  n_types);
-  book<TH2F>("pf_cand_vertex_x_vs_type",      ";ass. vertex pos(x); type",     500,     -1.,       1,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_vertex_y_vs_type",      ";ass. vertex pos(y); type",     500,     -1.,       1,    n_types,    0,  n_types);
-  book<TH2F>("pf_cand_vertex_z_vs_type",      ";ass. vertex pos(z); type",     400,     -20.,     20,    n_types,    0,  n_types);
+  book<TH2F>("pf_cand_vertex_z2_vs_type",     ";ass. vertex pos(z); type",     400,    -100.,    100,    n_types,   0,  n_types);
+  book<TH2F>("pf_cand_vertex_z_vs_eta",       ";ass. vertex pos(z); type",     400,    -100.,    100,      100,    -5.,       5.);
 
 
   for(size_t i=1; i<=n_types; i++) {
     hist<TH1F>("pf_cand_type")->GetXaxis()->SetBinLabel(i,type_names[i-1].c_str());
-    for ( const auto& name : {"pt", "eta", "phi", "m", "e", "charge", "puppi_w", "puppi_w_nolep", "calo_frac", "hcal_frac", "is_iso_ch_had", "dz", "dxy", "dz_err", "dxy_err", "vertex_x", "vertex_y", "vertex_z"}){
+    for ( const auto& name : {"pt", "eta", "phi", "m", "e", "charge", "puppi_w", "puppi_w_nolep", "calo_frac", "hcal_frac", "is_iso_ch_had", "dz", "dxy", "dz_err", "dxy_err", "vertex_x", "vertex_y", "vertex_z", "vertex_z"}){
       TString name_ = "pf_cand_"; name_+= name; name_ += "_vs_type";
       hist<TH2F>(name_)->GetYaxis()->SetBinLabel(i,type_names[i-1].c_str());
     }
@@ -137,11 +140,16 @@ void PFCandsHists::fill(const VBFTaggerEvent & event){
   eta_average = (eta_min+eta_max)/2;
 
   for(const PFCandidate& cand: *event.pfcands){
-    // float pfweight = cand.puppiweight();
-    float pfweight = 1;
+    if ((*event.gen_higgs_leptons).size()!=0){
+      auto lep = closestParticle(cand, *event.gen_higgs_leptons);
+      if (deltaR(*lep, cand)<0.4) continue;
+    }
+
+    // float pf_weight = cand.puppiweight();
+    float pf_weight = 1;
 
     double DR_from_tagged_jet = -1;
-    double pt_pfcand = cand.pt()*pfweight;
+    double pt_pfcand = cand.pt()*pf_weight;
 
     if (FindInString("pt>1",   selection.Data()) && (pt_pfcand)<1)   continue;
     if (FindInString("pt>0.2", selection.Data()) && (pt_pfcand)<0.2) continue;
@@ -152,7 +160,8 @@ void PFCandsHists::fill(const VBFTaggerEvent & event){
 
     bool is_within;
     if (eta_min+0.4 < cand.eta() && cand.eta() < eta_max-0.4) is_within = true;
-    if (eta_min-0.4 > cand.eta() || cand.eta() > eta_max+0.4) is_within = false;
+    else if (eta_min-0.4 > cand.eta() || cand.eta() > eta_max+0.4) is_within = false;
+    else is_within = false;
 
     if (FindInString("UE", selection.Data())) {
       DR_from_tagged_jet = std::min(dR1, dR2);
@@ -190,8 +199,8 @@ void PFCandsHists::fill(const VBFTaggerEvent & event){
     hist<TH1F>("pf_cand_pt")->Fill(pt_pfcand, weight);
     hist<TH1F>("pf_cand_eta")->Fill(cand.eta(), weight);
     hist<TH1F>("pf_cand_phi")->Fill(cand.phi(), weight);
-    hist<TH1F>("pf_cand_m")->Fill(cand.m()*pfweight, weight);
-    hist<TH1F>("pf_cand_e")->Fill(cand.e()*pfweight, weight);
+    hist<TH1F>("pf_cand_m")->Fill(cand.m()*pf_weight, weight);
+    hist<TH1F>("pf_cand_e")->Fill(cand.e()*pf_weight, weight);
     hist<TH1F>("pf_cand_charge")->Fill(cand.charge(), weight);
 
     hist<TH1F>("pf_cand_type")->Fill(type.c_str(), weight);
@@ -221,11 +230,12 @@ void PFCandsHists::fill(const VBFTaggerEvent & event){
     hist<TH2F>("pf_cand_pt_vs_type")->Fill(pt_pfcand, type.c_str(), weight);
     hist<TH2F>("pf_cand_eta_vs_type")->Fill(cand.eta(), type.c_str(), weight);
     hist<TH2F>("pf_cand_phi_vs_type")->Fill(cand.phi(), type.c_str(), weight);
-    hist<TH2F>("pf_cand_m_vs_type")->Fill(cand.m()*pfweight, type.c_str(), weight);
-    hist<TH2F>("pf_cand_e_vs_type")->Fill(cand.e()*pfweight, type.c_str(), weight);
+    hist<TH2F>("pf_cand_m_vs_type")->Fill(cand.m()*pf_weight, type.c_str(), weight);
+    hist<TH2F>("pf_cand_e_vs_type")->Fill(cand.e()*pf_weight, type.c_str(), weight);
     hist<TH2F>("pf_cand_charge_vs_type")->Fill(cand.charge(), type.c_str(), weight);
     hist<TH2F>("pf_cand_puppi_w_vs_type")->Fill(cand.puppiweight(), type.c_str(), weight);
     hist<TH2F>("pf_cand_puppi_w_nolep_vs_type")->Fill(cand.puppiweight_nolep(), type.c_str(), weight);
+    hist<TH2F>("pf_cand_fromPV_vs_type")->Fill(cand.fromPV(), type.c_str(), weight);
     hist<TH2F>("pf_cand_calo_frac_vs_type")->Fill(cand.calo_frac(), type.c_str(), weight);
     hist<TH2F>("pf_cand_hcal_frac_vs_type")->Fill(cand.hcal_frac(), type.c_str(), weight);
     hist<TH2F>("pf_cand_is_iso_ch_had_vs_type")->Fill(cand.is_iso_ch_had(), type.c_str(), weight);
@@ -236,6 +246,9 @@ void PFCandsHists::fill(const VBFTaggerEvent & event){
     hist<TH2F>("pf_cand_vertex_x_vs_type")->Fill(cand.vertex_x(), type.c_str(), weight);
     hist<TH2F>("pf_cand_vertex_y_vs_type")->Fill(cand.vertex_y(), type.c_str(), weight);
     hist<TH2F>("pf_cand_vertex_z_vs_type")->Fill(cand.vertex_z(), type.c_str(), weight);
+
+    hist<TH2F>("pf_cand_vertex_z2_vs_type")->Fill(cand.vertex_z(), type.c_str(), weight);
+    hist<TH2F>("pf_cand_vertex_z_vs_eta")->Fill(cand.vertex_z(), cand.eta(), weight);
   }
 
   for(size_t i=0; i<type_names.size(); i++) {

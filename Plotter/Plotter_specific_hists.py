@@ -35,13 +35,13 @@ class Plotter_Specific_Hists(GenericPath):
         self.selection = self.histfolder+'_PFCands_pt'+pt+extraSelection
 
         self.samples   = ['VBF_HToZZTo4L_M125','GluGluHToZZTo4L_M125']
-        self.folders_no = ['', '_UEin', '_UEout', '_charged', '_neutral']
+        # self.folders_no = ['', '_UEin', '_UEout', '_charged', '_neutral']
+        self.folders_no = ['_UEin', '_UEout', '_charged', '_neutral']
         self.folders_UE = ['in_charged', 'in_neutral', 'out_charged', 'out_neutral']
 
         self.folders = [self.selection+x for x in (self.folders_UE if 'UE' in extraSelection else self.folders_no)]
         self.histnames = ['n_pfcands', 'n_pfcands_density', 'n_pfcands_density2', 'n_pfcands_density3', 'n_charged_pfcands', 'n_neutral_pfcands', 'UEin_UEout_ratio',
                           'HT_pfcands', 'pf_cand_pt', 'pf_cand_eta', 'pf_cand_puppi_w',
-                          'pf_cand_dz', 'pf_cand_dxy', 'pf_cand_dz_err', 'pf_cand_dxy_err',
                           'Zeppenfeld1', 'Zeppenfeld2', 'Zeppenfeld3',
                           ]
         # self.folders   = ['njets_Jets', 'nominal_Jets_opp_deta_mjj']
@@ -76,8 +76,8 @@ class Plotter_Specific_Hists(GenericPath):
                     hname = sample+folder+name
                     self.hists[hname] = f_.Get(folder+'/'+name)
                     self.hists[hname].SetDirectory(0)
-                    if "n_" in name and "pfcands" in name:
-                        self.hists[hname].Rebin(3)
+                    #if "n_" in name and "pfcands" in name:
+                     #   self.hists[hname].Rebin(3)
                     if self.hists[hname].Integral()!=0:
                         self.hists[hname].Scale(1./self.hists[hname].Integral())
             f_.Close()
@@ -93,14 +93,20 @@ class Plotter_Specific_Hists(GenericPath):
             if name == 'n_pfcands' : PlotXMax = 100
             PlotYMin = 0.0001
             PlotYMax = 1 if doLog else 0.2
+            if not doLog:
+                if any(x in name for x in ['density2', 'HT']):
+                    PlotYMax = 0.6
             TDR.lumi_13TeV = self.year
             canv = tdrCanvas(name, PlotXMin, PlotXMax, PlotYMin, PlotYMax, refHist.GetXaxis().GetTitle(), refHist.GetYaxis().GetTitle())
             canv.SetLogy(doLog)
             leg = tdrLeg(0.48,0.65,0.89,0.89, textSize = 0.03)
             for sample in self.samples:
                 for folder in self.folders:
+                    if 'UEin_UEout_ratio' in name and 'UE' in folder: continue
+                    if 'n_charged_pfcands' in name and 'neutral' in folder: continue
                     h = self.hists[sample+folder+name]
-                    tdrDraw(h, 'hist', lcolor = self.style[folder.replace(self.histfolder+'_','').replace('pt0p2','pt1')]-(int(self.style[sample])-1), lstyle=ROOT.kSolid, fstyle=0, marker = 0)
+                    # tdrDraw(h, 'hist', lcolor = self.style[folder.replace(self.histfolder+'_','').replace('pt0p2','pt1')]-(int(self.style[sample])-1), lstyle=ROOT.kSolid, fstyle=0, marker = 0)
+                    tdrDraw(h, 'hist', lcolor = self.style[folder.replace(self.histfolder+'_','').replace('pt0p2','pt1')]-(int(self.style[sample])-1), lstyle=self.style[sample], fstyle=0, marker = 0)
                     leg.AddEntry(h, ConvertNameForLegend(sample)+': '+ConvertNameForLegend(folder), 'l')
 
             fname = self.outputdir+'/'+self.selection+'_'+name+'.pdf'
