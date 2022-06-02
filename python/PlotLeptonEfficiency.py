@@ -32,7 +32,7 @@ class PlotLeptonEfficiency(GenericPath):
         self.module    = module
         TDR.lumi_13TeV = str(round(float(self.lumi_map[year]['lumi_fb']),1))+' fb^{-1}' if TDR.extraText!='Simulation' else 'MC '+year
         self.inputdir  = os.path.join(self.analysis_outpath, self.analysis, self.year, self.module)
-        self.outputdir = os.path.join(self.inputdir, 'plots','efficiency')
+        self.outputdir = os.path.join(self.modules_outpath,  self.analysis, self.year, self.module, 'plots','efficiency')
         self.objects   = ['e','#mu']
         self.Samples   = ['VBF_HToZZTo4L_M125']
         self.Samples   = ['VBF_HToZZTo4L_M125', 'GluGluHToZZTo4L_M125']
@@ -41,6 +41,7 @@ class PlotLeptonEfficiency(GenericPath):
     def LoadHistos(self):
         self.histos = {}
         for sample in self.Samples:
+            # file_ = ROOT.TFile(os.path.join(self.inputdir,'MC__'+sample+'_standard_'+self.year+'.root'))
             file_ = ROOT.TFile(os.path.join(self.inputdir,'MC__'+sample+'.root'))
             for obj in self.objects:
                 folders = ['clean_1','clean_2','clean_3','clean_4','clean_5','clean_6']
@@ -56,7 +57,7 @@ class PlotLeptonEfficiency(GenericPath):
         for sample in self.Samples:
             for obj in self.objects:
                 isMu = '#mu' in obj
-                canv = tdrCanvas('canv_'+sample+obj, 0, 200, 0.6 if isMu else 0., 1.15 if isMu else 1.4, 'p_{T} [GeV]','Efficiency')
+                canv = tdrCanvas('canv_'+sample+obj, 0, 200, 0.6 if isMu else 0., 1.15 if isMu else 1.35, 'p_{T} [GeV]','Efficiency')
                 leg = tdrLeg(0.23,0.20,0.95,0.5, 0.045, 42, ROOT.kBlack)
                 leg.SetNColumns(1)
                 line = rt.TLine(0,1,200,1)
