@@ -48,12 +48,12 @@ private:
   const vector<ParticleID> gen_ids = {
     ParticleID::unknown,
     // ParticleID::u, ParticleID::d, ParticleID::s, ParticleID::c, ParticleID::b, ParticleID::t,
-    ParticleID::e, ParticleID::mu, ParticleID::v_e, ParticleID::v_mu, ParticleID::v_tau,
+    ParticleID::e, ParticleID::mu, ParticleID::tau, ParticleID::v_e, ParticleID::v_mu, ParticleID::v_tau,
     ParticleID::photon,
     // ParticleID::Z, ParticleID::W, ParticleID::H, ParticleID::pi_0,
     ParticleID::pi_plus, ParticleID::kaon_0_L, ParticleID::kaon_0_S, ParticleID::kaon_plus,
     // ParticleID::delta_plus_plus, ParticleID::delta_plus, ParticleID::delta_0,
-    ParticleID::lambda, ParticleID::proton
+    ParticleID::lambda, ParticleID::proton, ParticleID::neutron,
   };
 
   const vector<string> gen_flags_names = {

@@ -33,9 +33,19 @@ private:
     double m_dr;
 };
 
-// class GenJetInvMassTreshold : public AnalysisModule<GenEvent> {
+
+class RemoveParticlesFromJets : public AnalysisModule<GenEvent> {
+public:
+    RemoveParticlesFromJets(const double & dr_);
+    virtual bool process(GenEvent & event) override;
+
+private:
+    double m_dr;
+};
+
+// class GenLJInvMassTreshold : public AnalysisModule<GenEvent> {
 // public:
-//     GenJetInvMassTreshold(const double& tresh_);
+//     GenLJInvMassTreshold(const double& tresh_);
 //     virtual bool process(GenEvent & event) override;
 //
 // private:

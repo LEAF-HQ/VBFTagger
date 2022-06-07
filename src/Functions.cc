@@ -26,6 +26,19 @@ std::vector<GenParticle> DaughtersFinder(const VBFTaggerEvent& event, GenParticl
   return daughters;
 }
 
+
+// std::vector<GenParticle> Decay_Products_Finder(const VBFTaggerEvent& event, GenParticle higgs, std::vector<GenParticle> daughters) {
+//   vector<GenParticle> direct_daughters = DaughtersFinder(event, higgs);
+//   if (direct_daughters.empty()==false) {
+//     for (const auto & part : direct_daughters) {
+//       daughters.push_back(part);
+//       return Decay_Products_Finder(event, part, daughters);
+//     }
+//   }
+//   else {return daughters;}
+// }
+
+
 double Zeppenfeld1(const VBFTaggerEvent& event, GenParticle p) {
   auto j1 = event.genjets->at(0);
   auto j2 = event.genjets->at(1);
@@ -33,9 +46,20 @@ double Zeppenfeld1(const VBFTaggerEvent& event, GenParticle p) {
   return z;
 }
 
-double Zeppenfeld2(const VBFTaggerEvent& event, GenParticle p) {
-  auto j1 = event.genjets->at(0);
-  auto j2 = event.genjets->at(1);
-  double z = fabs(p.eta()-(j1.eta()+j2.eta()) /2)/deltaEta(j1, j2);
-  return z;
-}
+// double Zeppenfeld2(const VBFTaggerEvent& event, GenParticle p) {
+//   auto j1 = event.genjets->at(0);
+//   auto j2 = event.genjets->at(1);
+//   double z = fabs(p.eta()-(j1.eta()+j2.eta()) /2)/deltaEta(j1, j2);
+//   return z;
+// }
+
+
+// bool FindParticleInVector(std::vector<GenParticle> vec, GenParticle p) {
+//   for (const auto & gp : vec) {
+//     if (gp == p) {
+//       return true;
+//       break;
+//     }
+//     return false;
+//   }
+// }

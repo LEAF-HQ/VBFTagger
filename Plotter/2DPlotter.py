@@ -25,10 +25,10 @@ def Draw2d(h, opt, axistitles):
 
 class MyPlot():
     def __init__(self):
-        self.inputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/"
-        self.outputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../VBFTagger/UL18/GenLevelStudies/plots/distributions/"
-        self.fname  = ["MC__VBF_HToZZTo4L_M125_UL18.root",
-                       "MC__GluGluHToZZTo4L_M125_UL18.root"
+        self.inputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../WorkingArea/VBFTagger/UL18/GenLevelStudies/"
+        self.outputPath = "/user/dadelatt/CMSSW_10_6_28/src/LEAF/../../../WorkingArea/VBFTagger/UL18/GenLevelStudies/plots/distributions/"
+        self.fname  = ["MC__VBF_HToZZTo4L_M125_standard_UL18.root",
+                       "MC__GluGluHToZZTo4L_M125_standard_UL18.root"
                        ]
         self.color = {"VBF_HToZZTo4L": ROOT.kRed,
                       "GluGluHToZZTo4L": ROOT.kBlue}
@@ -46,7 +46,7 @@ class MyPlot():
             hist = f_.Get(str(directory)+"/"+str(name))
             hist.Scale(1./hist.Integral())
             hist.SetDirectory(0)
-            hname = i.replace("MC__","").replace("_M125_UL18.root","")
+            hname = i.replace("MC__","").replace("_M125_standard_UL18.root","")
             self.hlist[hname] = hist
             f_.Close()
 
@@ -67,12 +67,14 @@ class MyPlot():
         ZMax = 10^7
 
         for na, h in self.hlist.items():
-            canv = tdrCanvas2d("PdgId & Status")
+            canv = tdrCanvas2d("Density inside vs outside leading jets")
             # leg = tdrLeg(0.68,0.60,0.89,0.89, textSize = 0.025)
-            Draw2d(h, "colz", ["PdgID", "Status", "Number"])
+            h.GetZaxis().SetRangeUser(0, 0.003)
+            Draw2d(h, "colz", ["Density inside", "Density outside", "Number of events"])
+
             # ent = h.GetEntries()
             # leg.AddEntry(h, self.legend[na] + ". Entries: " + str(ent), "l")
-            canv.SaveAs(self.outputPath+str(directory)+"_"+name+na+"2D.pdf")
+            canv.SaveAs(self.outputPath+str(directory)+"_"+name+"_"+self.legend[na]+"_2D.pdf")
 
         # for year in self.years+["Run2"]:
         #     color = self.SFs[year]["color"]
@@ -89,7 +91,8 @@ class MyPlot():
         # line_MC.Draw("same")
 
 def main():
-    MyPlot().Plot("weight_General", "ParticleStatusFlag")
+    MyPlot().Plot("nominal_GenLevel", "gen_part_dIn_vs_dOut")
+    # MyPlot().Plot("cleaner_GenLevel", "gen_part_dIn_vs_dOut")
 
 if __name__ == '__main__':
     main()

@@ -49,16 +49,32 @@ bool GenLJCleaner::process(GenEvent & event){
   return true;
 }
 
-// GenJetInvMassTreshold::GenJetInvMassTreshold(const double & tresh_): tresh(tresh_) {}
-// bool GenJetInvMassTreshold::process(GenEvent & event) {
-//   vector<GenJet> jets_new;
-//   vector<GenParticle> particles_new;
-//   GenJet j1, j2;
-//   TLorentzVector v;
+
+RemoveParticlesFromJets::RemoveParticlesFromJets(const double & dr_): m_dr(dr_) {}
+bool RemoveParticlesFromJets::process(GenEvent & event) {
+  // throw away particles that are closer than m_dr to a jet
+  vector<GenParticle> new_vect;
+  for (const GenParticle& p : *event.genparticles_stable) {
+    bool keep = true;
+    for (const GenJet & j : *event.genjets) {
+      if (deltaR(j,p)<m_dr) {
+        keep = false;
+        break;
+      }
+    }
+    if (keep) new_vect.emplace_back(p);
+  }
+  swap(new_vect, *event.genparticles_stable);
+  return true;
+}
+
+// GenLJInvMassTreshold::GenLJInvMassTreshold(const double & tresh_): tresh(tresh_) {}
+// bool GenLJInvMassTreshold::process(GenEvent & event) {
 //   if (event.genjets->size()>1) {
-//     j1 = event.genjets->at(0);
-//     j2 = event.genejts->at(1);
-//     v = j1.p4() + j2.p4();
-//     if (v.M()>tresh) {}
+//     GenJet j1 = event.genjets->at(0);
+//     GenJet j2 = event.genjets->at(1);
+//     TLorentzVector v = j1.p4() + j2.p4();
+//     if (v.M()>tresh) return true;
 //   }
+//   return false;
 // }
