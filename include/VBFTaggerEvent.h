@@ -39,6 +39,8 @@ public:
   vector<GenParticle>* gen_higgs;
   vector<GenParticle>* gen_higgs_Z;
   vector<GenParticle>* gen_higgs_leptons;
+  vector<GenParticle>* gen_higgs_decays;
+  vector<GenParticle>* gen_non_higgs_decays;
 
   vector<GenJet>* VBF_genjets;
   vector<Muon>* H_muons;

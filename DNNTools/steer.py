@@ -6,12 +6,23 @@ from DNNRunner import DNNRunner
 
 # All constants to be used
 user             = os.environ['USER']
-input_base_path  = '/pnfs/iihe/cms/store/user/'+user+'/Analyses/VBFTagger/year/PFStudies'
-output_base_path = '/user/anmalara/WorkingArea/DNNOutputs'
+# input_base_path  = '/pnfs/iihe/cms/store/user/'+user+'/Analyses/VBFTagger/year/PFStudies'
+# input_base_path = '/user/'+user+'/WorkingArea/DNNOutputs/DNN/root/GenLevelStudies'
+input_base_path = '/user/'+user+'/WorkingArea/DNNOutputs/DNN/root/PFStudies'
+output_base_path = '/user/'+user+'/WorkingArea/DNNOutputs'
 
 samples = {
-    'VBF':    SampleSettings(filename='MC__VBF_HToZZTo4L_M125_standard_year.root', samplename='VBF', category='VBF'),
-    'GluGlu': SampleSettings(filename='MC__GluGluHToZZTo4L_M125_standard_year.root', samplename='GluGlu', category='GluGlu'),
+    'VBF_M125':    SampleSettings(filename='MC__VBF_HToZZTo4L_M125_standard_year.root', samplename='VBF_M125', category='VBF'),
+    'VBF_M120':    SampleSettings(filename='MC__VBF_HToZZTo4L_M120_standard_year.root', samplename='VBF_M120', category='VBF'),
+    'VBF_M124':    SampleSettings(filename='MC__VBF_HToZZTo4L_M124_standard_year.root', samplename='VBF_M124', category='VBF'),
+    'VBF_M126':    SampleSettings(filename='MC__VBF_HToZZTo4L_M126_standard_year.root', samplename='VBF_M126', category='VBF'),
+    'VBF_M130':    SampleSettings(filename='MC__VBF_HToZZTo4L_M130_standard_year.root', samplename='VBF_M130', category='VBF'),
+    'GluGlu_M125': SampleSettings(filename='MC__GluGluHToZZTo4L_M125_standard_year.root', samplename='GluGlu_M125', category='GluGlu'),
+    'GluGlu_M120': SampleSettings(filename='MC__GluGluHToZZTo4L_M120_standard_year.root', samplename='GluGlu_M120', category='GluGlu'),
+    'GluGlu_M124': SampleSettings(filename='MC__GluGluHToZZTo4L_M124_standard_year.root', samplename='GluGlu_M124', category='GluGlu'),
+    'GluGlu_M126': SampleSettings(filename='MC__GluGluHToZZTo4L_M126_standard_year.root', samplename='GluGlu_M126', category='GluGlu'),
+    'GluGlu_M130': SampleSettings(filename='MC__GluGluHToZZTo4L_M130_standard_year.root', samplename='GluGlu_M130', category='GluGlu'),
+
 }
 
 dnnparameters = OrderedDict()
@@ -22,7 +33,7 @@ dnnparameters['classes'] = {'VBF':1, 'GluGlu':0}
 dnnparameters['regularization_method'] =  'dropout'
 dnnparameters['regularization_rate'] = 0.01
 dnnparameters['batchnorm'] =  False
-dnnparameters['epochs'] =  30
+dnnparameters['epochs'] =  2
 dnnparameters['learningrate'] =  0.00050
 dnnparameters['runonfraction'] =  1.00
 dnnparameters['eqweight'] = False
@@ -34,32 +45,18 @@ dnnparameters['optimizer'] = 'adam' #'adamax'
 dnnparameters['metrics'] = ['accuracy']
 
 def main():
-    Classifier = DNNRunner(dnnparameters=dnnparameters, year='UL18', input_base_path=input_base_path, output_base_path=output_base_path, samples=samples)
-    # Classifier.CreateConverter()
-    # Classifier.ConvertRootToInputs.Convert()
-    # Classifier.CreateInputProcessor()
-    # Classifier.PreprocessInputs.Process()
-    # Classifier.CreatePlotter()
-    # Classifier.Plotter.Plot()
-    Classifier.CreateTraining()
-    Classifier.LoadInputs()
-    Classifier.Training.Train()
-    # Classifier.PreprocessInputs(maxfiles_per_sample=None)
-    # Classifier.PlotInputs(filepostfix='', plotfoldername='DNNInputDistributions')
-    # Classifier.TrainNetwork()
-    # Classifier.MakePrediction(filepostfix='')
-
-    # # First network
-    # # =============
-    # TrainNetwork(parameters)
-    # PredictExternal(parameters, inputfolder='input/'+classtag, outputfolder='output/'+tag, filepostfix='')
-    # PlotPerformance(parameters, inputfolder='input/'+classtag, outputfolder='output/'+tag, filepostfix='', use_best_model=False, usesignals=[2,4])
-    # PlotPerformance(parameters, inputfolder='input/'+classtag, outputfolder='output/'+tag, filepostfix='', plotfolder='Plots/'+tag, use_best_model=True, usesignals=[2,4])
-    # PlotInputs(parameters, inputfolder='output/'+tag+'/cut', filepostfix='_pass_best', plotfolder='Plots/'+tag+'/InputDistributions/pass')
-    # PlotInputs(parameters, inputfolder='output/'+tag+'/cut', filepostfix='_fail_best', plotfolder='Plots/'+tag+'/InputDistributions/fail')
-    # ExportModel(parameters, inputfolder='input/', outputfolder='output/', use_best_model=True)
-    # RankNetworks(outputfolder='output/')
-
+    years = ['UL17', 'UL18']
+    years = ['RunII']
+    for year in years:
+        Classifier = DNNRunner(dnnparameters=dnnparameters, input_base_path=input_base_path, output_base_path=output_base_path, year=year, samples=samples)
+        # Classifier.CreateConverter()
+        # Classifier.ConvertRootToInputs.Convert()
+        # Classifier.CreateInputProcessor()
+        # Classifier.PreprocessInputs.Process()
+        # Classifier.CreatePlotter()
+        # Classifier.DoPlots()
+        Classifier.CreateTraining()
+        Classifier.Training.Train()
 
 
 if __name__ == '__main__':

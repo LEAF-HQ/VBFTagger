@@ -17,3 +17,13 @@ class PreprocessInputs(PreprocessInputsBase):
         self.scalers = {}
         self.scalers['standard'] = ColumnTransformer(list((col+'st',preprocessing.StandardScaler(), [col]) for col in  self.inputs['train'].columns.tolist()))
         self.scalers['standard'].fit(self.inputs['train'])
+
+    def Process(self):
+        self.GetInputs(format='pkl')
+        self.RemoveNanInf()
+        self.SampleEvents(fraction=self.runonfraction)
+        self.Split()
+        self.FitScalers()
+        self.Transform()
+        self.RemoveNanInf()
+        self.Save()

@@ -18,22 +18,22 @@ public:
 
   GenParticle FindParticle(VBFTaggerEvent& event, int );
   GenParticle FindParticle(VBFTaggerEvent&, ParticleID , GenParticle::StatusFlag status= GenParticle::StatusFlag::isLastCopy);
+  GenParticle FindMother(VBFTaggerEvent&, int);
   std::vector<GenParticle> FindMothers(VBFTaggerEvent&, GenParticle);
   std::vector<GenParticle> FindDaughters(VBFTaggerEvent&, GenParticle, bool check_PhaseSpace);
+
+  bool isHiggsDecay(VBFTaggerEvent&, const GenParticle&);
+  void ClearGenParticles(VBFTaggerEvent&);
+
+  void DoMotherMatching(VBFTaggerEvent&);
+  void DoDecayMatching(VBFTaggerEvent&);
 
 
 
 protected:
   bool skipMatching;
+  bool skipMotherMatching;
   unique_ptr<GenParticlePrinter> gp_printer;
+  unique_ptr<GenParticlePrinter> gp_printer_stable;
   unique_ptr<GenParticleStatusPrinter> gp_status_printer;
 };
-
-template<class T>
-ostream& operator<<(ostream& os, const std::vector<T>& vec)
-{
-  for (const auto& x: vec) {
-    os << x << " ";
-  }
-  return os;
-}

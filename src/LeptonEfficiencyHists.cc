@@ -26,6 +26,7 @@ void LeptonEfficiencyHists::fill(const VBFTaggerEvent & event) {
 
   for (const auto &gp: *(event.gen_higgs_leptons)) {
     int pdgid = abs(gp.pdgid());
+    if (pdgid != (int)ParticleID::e && pdgid != (int)ParticleID::mu) continue;
     TString name = pdgId2str(pdgid);
     hist<TH1F>("gen_"+name)->Fill(1, weight);
     hist<TH1F>("gen_"+name+"_pt")->Fill(gp.pt(), weight);
@@ -38,7 +39,7 @@ void LeptonEfficiencyHists::fill(const VBFTaggerEvent & event) {
       auto closest_lep = closestParticle(gp, *event.electrons);
       if (closest_lep != nullptr) dr_min = deltaR(gp, *closest_lep);
     }
-    if (pdgid== (int)ParticleID::mu) {
+    if (pdgid == (int)ParticleID::mu) {
       auto closest_lep = closestParticle(gp, *event.muons);
       if (closest_lep != nullptr) dr_min = deltaR(gp, *closest_lep);
     }

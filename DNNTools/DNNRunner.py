@@ -3,17 +3,16 @@ from DNNTools.DNNRunnerBase import DNNRunnerBase
 
 
 class DNNRunner(DNNRunnerBase):
-    def __init__(self, dnnparameters, year, input_base_path, output_base_path, samples):
+    def __init__(self, dnnparameters, input_base_path, output_base_path, year, samples):
         self.dnnparameters = dnnparameters
-        self.year = year
-        self.input_base_path  = input_base_path.replace('year',self.year)
-        self.output_base_path = output_base_path.replace('year',self.year)
+        self.input_base_path  = input_base_path
+        self.output_base_path = output_base_path
         _samples = {}
         for (key, value) in samples.items():
             _val = value
-            _val['filename'] = _val['filename'].replace('year',self.year)
-            _samples[key.replace('year',self.year)] = _val
-        DNNRunnerBase.__init__(self, self.dnnparameters, self.year, _samples)
+            _val['filename'] = _val['filename'].replace('year',year)
+            _samples[key.replace('year',year)] = _val
+        DNNRunnerBase.__init__(self, self.dnnparameters, _samples)
 
         self.DefinePaths()
 
@@ -34,8 +33,7 @@ class DNNRunner(DNNRunnerBase):
 
     def DefinePaths(self):
         paths = {
-            # 'root':    self.input_base_path,
-            'root':    os.path.join(self.output_base_path, 'DNN', 'root'),
+            'root':    os.path.join(self.input_base_path),
             'raw':     os.path.join(self.output_base_path, 'DNN', 'raw'),
             'preproc': os.path.join(self.output_base_path, 'DNN', 'preproc'),
             'input':   os.path.join(self.output_base_path, 'DNN', 'input'),
@@ -54,7 +52,12 @@ class DNNRunner(DNNRunnerBase):
 
     def CreatePlotter(self):
         from Plotter import Plotter
+        self.EnsureInputsLoaded()
         self.Plotter = Plotter(self.filepath['preproc'], os.path.join(self.filepath['preproc'],'InputDistributions'), classes=self.dnnparameters['classes'])
+
+    def DoPlots(self):
+        self.Plotter.Plot(self.inputs, self.frac)
+
 
     def CreateTraining(self):
         from Training import Training

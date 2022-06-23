@@ -21,6 +21,8 @@ VBFTaggerEvent::VBFTaggerEvent(){
   gen_higgs = new vector<GenParticle>;
   gen_higgs_Z = new vector<GenParticle>;
   gen_higgs_leptons = new vector<GenParticle>;
+  gen_higgs_decays = new vector<GenParticle>;
+  gen_non_higgs_decays = new vector<GenParticle>;
   VBF_genjets = new vector<GenJet>;
   H_muons = new vector<Muon>;
   H_electrons = new vector<Electron>;
@@ -36,6 +38,8 @@ VBFTaggerEvent::~VBFTaggerEvent(){
   delete gen_higgs;
   delete gen_higgs_Z;
   delete gen_higgs_leptons;
+  delete gen_higgs_decays;
+  delete gen_non_higgs_decays;
   delete VBF_genjets;
   delete H_muons;
   delete H_electrons;
@@ -47,6 +51,8 @@ void VBFTaggerEvent::clear(){
   delete gen_higgs;
   delete gen_higgs_Z;
   delete gen_higgs_leptons;
+  delete gen_higgs_decays;
+  delete gen_non_higgs_decays;
   delete VBF_genjets;
   delete H_muons;
   delete H_electrons;
@@ -54,6 +60,8 @@ void VBFTaggerEvent::clear(){
   gen_higgs = 0;
   gen_higgs_Z = 0;
   gen_higgs_leptons = 0;
+  gen_higgs_decays = 0;
+  gen_non_higgs_decays = 0;
   VBF_genjets = 0;
   H_muons = 0;
   H_electrons = 0;
@@ -70,6 +78,8 @@ void VBFTaggerEvent::reset(){
   delete gen_higgs;
   delete gen_higgs_Z;
   delete gen_higgs_leptons;
+  delete gen_higgs_decays;
+  delete gen_non_higgs_decays;
   delete VBF_genjets;
   delete H_muons;
   delete H_electrons;
@@ -77,6 +87,8 @@ void VBFTaggerEvent::reset(){
   gen_higgs = new vector<GenParticle>;
   gen_higgs_Z = new vector<GenParticle>;
   gen_higgs_leptons = new vector<GenParticle>;
+  gen_higgs_decays = new vector<GenParticle>;
+  gen_non_higgs_decays = new vector<GenParticle>;
   VBF_genjets = new vector<GenJet>;
   H_muons = new vector<Muon>;
   H_electrons = new vector<Electron>;

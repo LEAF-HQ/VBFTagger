@@ -24,18 +24,19 @@ class ConvertRootToInputs(ConvertRootToInputsBase):
                 col_names.append('jet_%s_%i' % (v.replace('m_',''), i))
 
         for var in ['pt', 'eta', 'phi', 'm']:
-            var_names.append(('Events.gen_higgs.m_%s[1]' % var , 0., 1))
-            col_names.append('gen_higgs_'+var)
-            for i in range(2):
-                var_names.append(('Events.gen_higgs_Z.m_%s[%i]' % (var, i), 0., 1))
-                col_names.append('gen_Z%i_%s' % (i, var))
-            for i in range(4):
-                var_names.append(('Events.gen_higgs_leptons.m_%s[%i]' % (var, i), 0., 1))
-                col_names.append('gen_lep%i_%s' % (i, var))
-            for i in range(30):
-                var_names.append(('Events.gen_higgs_decays.m_%s[%i]' % (var, i), 0., 1))
-                col_names.append('gen_higgs_decays%i_%s' % (i, var))
-            for i in range(50):
+            # var_names.append(('Events.gen_higgs.m_%s[1]' % var , 0., 1))
+            # col_names.append('gen_higgs_'+var)
+            # for i in range(2):
+            #     var_names.append(('Events.gen_higgs_Z.m_%s[%i]' % (var, i), 0., 1))
+            #     col_names.append('gen_Z%i_%s' % (i, var))
+            # for i in range(4):
+            #     var_names.append(('Events.gen_higgs_leptons.m_%s[%i]' % (var, i), 0., 1))
+            #     col_names.append('gen_lep%i_%s' % (i, var))
+            # for i in range(30):
+            #     var_names.append(('Events.gen_higgs_decays.m_%s[%i]' % (var, i), 0., 1))
+            #     col_names.append('gen_higgs_decays%i_%s' % (i, var))
+            # for i in range(50):
+            for i in range(100):
                 var_names.append(('Events.gen_non_higgs_decays.m_%s[%i]' % (var, i), 0., 1))
                 col_names.append('gen_non_higgs_decays%i_%s' % (i, var))
 

@@ -5,7 +5,7 @@ from Submitter.CreateConfigFilesBase import *
 from VBFTagger.Tuplizer.Signals_VBF import *
 from Utils import *
 
-class ConfigFileHandles(VariablesBase, CreateConfigFilesBase):
+class CreateConfigFiles(VariablesBase, CreateConfigFilesBase):
     def __init__(self, xmlfilename, years, AllSamples):
         VariablesBase.__init__(self)
         CreateConfigFilesBase.__init__(self, xmlfilename=xmlfilename, xmlfilepath=self.config_path, years=years, AllSamples=AllSamples)
@@ -16,10 +16,6 @@ class ConfigFileHandles(VariablesBase, CreateConfigFilesBase):
         self.modifyConfigAttribute('JER_Version', ROOT.JERC_Info[year]['JER_Version'])
 
 
-def CreateConfigFiles(xmlfilename, years, AllSamples):
-    CFH = ConfigFileHandles(xmlfilename, years = years, AllSamples=AllSamples)
-    CFH.modifyAllSettings()
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('xmlfilename', type=str, help='Name of the XML file')
@@ -29,13 +25,15 @@ def main():
     xmlfilename = args.xmlfilename
     years       = args.years
 
-    years = ['UL18']
+    years = ['UL16postVFP', 'UL17', 'UL18']
+    # years = ['UL18']
     #xmlfilename = 'GenLevelStudiesConfig.xml'
 
     AllSamples = SampleContainer()
     Add_Signals_VBFAnalysis(AllSamples)
 
-    CreateConfigFiles(xmlfilename=xmlfilename, years=years, AllSamples=AllSamples)
+    CCF = CreateConfigFiles(xmlfilename= xmlfilename, years = years, AllSamples=AllSamples)
+    CCF.modifyAllSettings()
 
 if __name__ == '__main__':
     main()

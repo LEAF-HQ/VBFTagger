@@ -29,6 +29,7 @@
 #include "LEAF/VBFTagger/include/PFCandsHists.h"
 #include "LEAF/VBFTagger/include/VBFJetsHists.h"
 #include "LEAF/VBFTagger/include/VBFEventHists.h"
+#include "LEAF/VBFTagger/include/LeptonEfficiencyHists.h"
 
 using namespace std;
 
@@ -43,13 +44,16 @@ public:
   void book_histograms();
   void fill_histograms(TString);
   void PrintInputs();
+  void sort_objects();
+  void clean_objects();
+  bool select_Nobjects();
+  void study_LeptonID();
 
 private:
   VBFTaggerEvent* event;
 
   string NameTool = "GenLevelStudiesTool";
-  vector<string> histogram_tags = {"input", "matching", "phasespace", "low_pt", "nominal"};
-  unordered_map<string, string> m_name_type;
+  vector<string> histogram_tags = {"input", "notau", "phasespace", "checkpointgenlevel", "VBFSelection", "low_pt", "nominal"};
 
   unordered_map<string, string> input_strings;
   unordered_map<string, bool> input_bools;
@@ -58,19 +62,26 @@ private:
   unique_ptr<GenJetCleaner> cleaner_genjet;
   unique_ptr<GenEventMatch> genEvent_match;
   unique_ptr<LumiWeightApplicator> lumiweight_applicator;
+
+  std::vector<unique_ptr<MuonCleaner>> muo_cleaners;
+  std::vector<unique_ptr<ElectronCleaner>> ele_cleaners;
+
+  unique_ptr<MuonCleaner> muo_cleaner;
+  unique_ptr<ElectronCleaner> ele_cleaner;
+  unique_ptr<TauCleaner> tau_cleaner;
   unique_ptr<JetCleaner> jet_cleaner;
   unique_ptr<PFCandCleaner> pfcand_cleaner;
-  unique_ptr<TauCleaner> tau_cleaner;
+
+  unique_ptr<Higgs4LeptonsFinder> Higgs4Leptons_finder;
 
   unique_ptr<VBFJetDefinition> VBFJet_definition_low_pt;
   unique_ptr<VBFJetDefinition> VBFJet_definition;
 
-  unique_ptr<Higgs4LeptonsFinder> Higgs4Leptons_finder;
-
   // Selections used in the analysis
-  unique_ptr<NTauSelection> ntaus_selection;
   unique_ptr<NJetSelection> njets_selection;
+  unique_ptr<NTauSelection> ntaus_selection;
   unique_ptr<NoGenTauSelection> nogentau_selection;
+  unique_ptr<GenLeptonPhaseSpaceSelection> genLeptonPhaseSpace_selection;
 
 };
 
@@ -88,7 +99,7 @@ void PFStudiesTool::book_histograms(){
     TString mytag;
     mytag = tag+"_VBFGenJets";                  book_HistFolder(mytag, new VBFGenJetsHists(mytag));
     mytag = tag+"_GenParts";                    book_HistFolder(mytag, new GenParticlesHists(mytag, "", false));
-    if (tag == "inputp" || tag == "matching" || tag == "phasespace") continue;
+    if (tag == "input" || tag == "notau" || tag == "phasespace" || tag == "VBFSelection") continue;
     mytag = tag+"_GenParts_stable";             book_HistFolder(mytag, new GenParticlesHists(mytag, ""));
     mytag = tag+"_GenParts_pt200MeV";           book_HistFolder(mytag, new GenParticlesHists(mytag, "pt>0.2"));
     mytag = tag+"_GenParts_pt1GeV";             book_HistFolder(mytag, new GenParticlesHists(mytag, "pt>1"));
@@ -123,7 +134,7 @@ void PFStudiesTool::fill_histograms(TString tag){
   TString mytag;
   mytag = tag+"_VBFGenJets";        HistFolder<VBFGenJetsHists>(mytag)->fill(*event);
   mytag = tag+"_GenParts";          HistFolder<GenParticlesHists>(mytag)->fill(*event);
-  if (tag == "inputp" || tag == "matching" || tag == "phasespace") return;
+  if (tag == "input" || tag == "notau" || tag == "phasespace" || tag == "VBFSelection") return;
   mytag = tag+"_GenParts_stable";   HistFolder<GenParticlesHists>(mytag)->fill(*event);
   mytag = tag+"_GenParts_pt200MeV"; HistFolder<GenParticlesHists>(mytag)->fill(*event);
   mytag = tag+"_GenParts_pt1GeV";   HistFolder<GenParticlesHists>(mytag)->fill(*event);
@@ -154,8 +165,41 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
 
   genEvent_match.reset(new GenEventMatch(cfg));
 
-
   lumiweight_applicator.reset(new LumiWeightApplicator(cfg));
+
+  MultiID<Muon> muon_id_base = {PtEtaId(3, 2.5)};
+  MultiID<Electron> electron_id_base = {PtEtaId(5, 2.5), ElectronDetectorHolesID()};
+  MultiID<Muon> muo_id = {muon_id_base, MuonID(Muon::IDCutBasedLoose), MuonID(Muon::IsoPFLoose)};
+  MultiID<Electron> ele_id = {electron_id_base, ElectronID(Electron::IDMVAIsoLoose)};
+  std::vector<MultiID<Muon>> muon_ids;
+  muon_ids.push_back(muon_id_base);
+  muon_ids.push_back({muon_id_base, MuonID(Muon::IDCutBasedLoose)});
+  muon_ids.push_back({muon_id_base, MuonID(Muon::IDCutBasedTight)});
+  muon_ids.push_back({muon_id_base, MuonID(Muon::IDCutBasedLoose), MuonID(Muon::IsoPFLoose)});
+  muon_ids.push_back({muon_id_base, MuonID(Muon::IDCutBasedTight), MuonID(Muon::IsoPFLoose)});
+  muon_ids.push_back({muon_id_base, MuonID(Muon::IDCutBasedTight), MuonID(Muon::IsoPFTight)});
+
+  std::vector<MultiID<Electron>> electron_ids;
+  electron_ids.push_back(electron_id_base);
+  electron_ids.push_back({electron_id_base, ElectronID(Electron::IDCutBasedLoose)});
+  electron_ids.push_back({electron_id_base, ElectronID(Electron::IDCutBasedTight)});
+  electron_ids.push_back({electron_id_base, ElectronID(Electron::IDMVAIsoLoose)});
+  electron_ids.push_back({electron_id_base, ElectronID(Electron::IDMVAIsoEff90)});
+  electron_ids.push_back({electron_id_base, ElectronID(Electron::IDMVANonIsoLoose)});
+
+  if (electron_ids.size()!=muon_ids.size()) throw std::runtime_error("Muon and Electron ids are different in number.");
+
+  for (size_t i = 0; i < muon_ids.size(); i++) {
+    muo_cleaners.emplace_back(new MuonCleaner(muon_ids.at(i)));
+    ele_cleaners.emplace_back(new ElectronCleaner(electron_ids.at(i)));
+    TString mytag = "LeptonEfficiency_"+to_string(i); book_HistFolder(mytag, new LeptonEfficiencyHists(mytag));
+  }
+
+  muo_cleaner.reset(new MuonCleaner(muo_id));
+  ele_cleaner.reset(new ElectronCleaner(ele_id));
+
+  MultiID<Tau> tau_id = {TauID(Tau::DeepTauVsJetVVVLoose), TauID(Tau::DeepTauVsEleVVVLoose), TauID(Tau::DeepTauVsMuVLoose)};
+  tau_cleaner.reset(new TauCleaner(tau_id));
 
   MultiID<Jet> jet_id = {PtEtaId(20, 5.2), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
   jet_cleaner.reset(new JetCleaner(jet_id));
@@ -163,58 +207,84 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   MultiID<PFCandidate> pfcand_id = {PtEtaId(0.2, 5.2)};
   pfcand_cleaner.reset(new PFCandCleaner(pfcand_id));
 
-  MultiID<Tau> tau_id = {TauID(Tau::DeepTauVsJetVVVLoose), TauID(Tau::DeepTauVsEleVVVLoose), TauID(Tau::DeepTauVsMuVLoose)};
-  tau_cleaner.reset(new TauCleaner(tau_id));
-
+  genLeptonPhaseSpace_selection.reset(new GenLeptonPhaseSpaceSelection(cfg));
+  njets_selection.reset(new NJetSelection(cfg, 2, -1));
   ntaus_selection.reset(new NTauSelection(cfg, -1, 0));
   nogentau_selection.reset(new NoGenTauSelection(cfg));
-  njets_selection.reset(new NJetSelection(cfg, 2, -1));
+
+
+  Higgs4Leptons_finder.reset(new Higgs4LeptonsFinder(cfg));
 
   VBFJet_definition_low_pt.reset(new VBFJetDefinition(cfg, 20));
   VBFJet_definition.reset(new VBFJetDefinition(cfg, 50));
-
-  Higgs4Leptons_finder.reset(new Higgs4LeptonsFinder(cfg));
 
   book_histograms();
   PrintInputs();
 }
 
+void PFStudiesTool::study_LeptonID(){
+  vector<Muon> original_muons = *event->muons;
+  vector<Electron> original_electrons = *event->electrons;
+
+  for (size_t i = 0; i < muo_cleaners.size(); i++) {
+    *event->muons = original_muons;
+    *event->electrons = original_electrons;
+    muo_cleaners.at(i)->process(*event);
+    ele_cleaners.at(i)->process(*event);
+    HistFolder<LeptonEfficiencyHists>("LeptonEfficiency_"+to_string(i))->fill(*event);
+  }
+  *event->muons = original_muons;
+  *event->electrons = original_electrons;
+}
 
 
-
-bool PFStudiesTool::Process(){
-
-  bool pass_definition;
-
+void PFStudiesTool::sort_objects(){
   sort_by_pt<GenParticle>(*event->genparticles_stable);
   sort_by_pt<GenJet>(*event->genjets);
   sort_by_pt<Jet>(*event->jets_ak4chs);
   sort_by_pt<PFCandidate>(*event->pfcands);
+}
 
+void PFStudiesTool::clean_objects(){
+  cleaner_genjet->process(*event);
+  muo_cleaner->process(*event);
+  ele_cleaner->process(*event);
+  tau_cleaner->process(*event);
+  jet_cleaner->process(*event);
+  pfcand_cleaner->process(*event);
+}
+
+bool PFStudiesTool::select_Nobjects(){
+  if (event->genjets->size()<2) return false;
+  if(!ntaus_selection->passes(*event)) return false;
+  if(!njets_selection->passes(*event)) return false;
+  return true;
+}
+
+bool PFStudiesTool::Process(){
+
+  sort_objects();
+  study_LeptonID();
   fill_histograms("input");
 
   lumiweight_applicator->process(*event);
 
-  cleaner_genjet->process(*event);
-  jet_cleaner->process(*event);
-  pfcand_cleaner->process(*event);
-  tau_cleaner->process(*event);
-  pass_definition = genEvent_match->process(*event);
-  if(!pass_definition) return false;
-  
-  if (event->genjets->size()<2) return false;
-  if(!nogentau_selection->passes(*event)) return false;
-  // if (event->VBF_genjets->size()!=2) return false;
-  fill_histograms("matching");
-
-  if(!ntaus_selection->passes(*event)) return false;
-  if(!njets_selection->passes(*event)) return false;
+  clean_objects();
+  if (!select_Nobjects()) return false;
+  genEvent_match->process(*event);
   fill_histograms("phasespace");
+  if(!genLeptonPhaseSpace_selection->passes(*event)) return false;
+  fill_histograms("checkpointgenlevel");
+
+  // if (event->VBF_genjets->size()!=2) return false;
+  if(!nogentau_selection->passes(*event)) return false;
+  fill_histograms("notau");
 
   Higgs4Leptons_finder->process(*event);
+  fill_histograms("VBFSelection");
 
 
-  pass_definition = VBFJet_definition_low_pt->process(*event);
+  bool pass_definition = VBFJet_definition_low_pt->process(*event);
   if(!pass_definition) return false;
   fill_histograms("low_pt");
 
