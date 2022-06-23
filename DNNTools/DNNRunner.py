@@ -53,10 +53,10 @@ class DNNRunner(DNNRunnerBase):
     def CreatePlotter(self):
         from Plotter import Plotter
         self.EnsureInputsLoaded()
-        self.Plotter = Plotter(self.filepath['preproc'], os.path.join(self.filepath['preproc'],'InputDistributions'), classes=self.dnnparameters['classes'])
+        self.Plotter = Plotter(classes=self.dnnparameters['classes'])
 
     def DoPlots(self):
-        self.Plotter.Plot(self.inputs, self.frac)
+        self.Plotter.PlotDF(df=self.inputs, outdir=os.path.join(self.filepath['preproc'],'InputDistributions'))
 
 
     def CreateTraining(self):

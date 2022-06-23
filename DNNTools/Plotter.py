@@ -1,8 +1,8 @@
 from DNNTools.PlotterBase import *
 
 class Plotter(PlotterBase):
-    def __init__(self, inputdir, outdir, classes):
-        PlotterBase.__init__(self, inputdir=inputdir, outdir=outdir)
+    def __init__(self, classes):
+        PlotterBase.__init__(self)
         self.classes = classes
 
     def DefineCommonStyle(self):
