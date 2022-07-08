@@ -2,7 +2,7 @@ from DNNTools.ConvertRootToInputsBase import *
 
 class ConvertRootToInputs(ConvertRootToInputsBase):
     def __init__(self, inputdir, outdir, samples):
-        chunksize = 1000
+        chunksize = 10000
         run_on = '2'
         run_on = 'htcondor'
         treename = 'AnalysisTree'
@@ -18,10 +18,10 @@ class ConvertRootToInputs(ConvertRootToInputsBase):
     def DefineVariables(self):
         var_names = []
         col_names = []
-        for v in ['m_pt', 'm_eta', 'm_phi', 'm_m']:
-            for i in range(2):
-                var_names.append(('Events.jets_ak4chs.%s[%i]' % (v, i), 0., 1))
-                col_names.append('jet_%s_%i' % (v.replace('m_',''), i))
+        # for v in ['m_pt', 'm_eta', 'm_phi', 'm_m']:
+        #     for i in range(2):
+        #         var_names.append(('Events.jets_ak4chs.%s[%i]' % (v, i), 0., 1))
+        #         col_names.append('jet_%s_%i' % (v.replace('m_',''), i))
 
         for var in ['pt', 'eta', 'phi', 'm']:
             # var_names.append(('Events.gen_higgs.m_%s[1]' % var , 0., 1))

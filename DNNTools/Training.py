@@ -5,22 +5,15 @@ class Training(TrainingBase):
         TrainingBase.__init__(self, DNNparams=DNNparams, inputdir=inputdir, outputdir=outputdir)
         self.modes = ['train','val','test']
 
-    def LoadInputs(self, format='csv'):
-        import numpy as np
-        import pandas as pd
-        from DNNTools.DNNutils import LoadPandas
-        self.inputs = {}
-        self.index = {}
-        self.labels = {}
-        self.weights = {}
-        for mode in self.modes:
-            self.inputs[mode]  = LoadPandas(os.path.join(self.inputdir, 'input_%s_%s.%s' %(mode,self.frac,format) ))
-            self.inputs[mode]  = self.inputs[mode].filter(regex='non_higgs')
-            self.index[mode]   = self.inputs[mode].index
-            self.inputs[mode]  = self.inputs[mode].to_numpy()
-            self.labels[mode]  = np.load(os.path.join(self.inputdir, 'label_%s_%s.npy' %(mode,self.frac) ))
-            self.weights[mode] = pd.read_pickle(os.path.join(self.inputdir, 'weights_%s_%s.pkl' %(mode,self.frac) )).to_numpy()
-            self.weights[mode] = LoadPandas(os.path.join(self.inputdir, 'weights_%s_%s.%s' %(mode,self.frac,format)))
+    def LoadInputs(self, df_inputs, df_labels, df_weights):
+        from DNNTools.DNNutils import FromNumpyToOneHotEncoder
+        print('Loading for Training')
+        self.inputs  = df_inputs
+        self.weights = df_weights
+        self.labels  = {}
+        for name, df in df_labels.items():
+            self.labels[name] = FromNumpyToOneHotEncoder(df)
+        print('Loaded for Training')
 
     def MakeModel(self):
         from DNNTools.Models import SequentialModel
@@ -34,4 +27,4 @@ class Training(TrainingBase):
     def SavePredictions(self, format='csv'):
         from DNNTools.DNNutils import SavePandas
         for mode in self.modes:
-            SavePandas(self.predictions[mode], os.path.join(self.outputdir,'prediction_%s_%s.%s' %(mode,self.frac,format)))
+            SavePandas(self.predictions[mode], os.path.join(self.modelpath,'predictions_%s_%s.%s' %(mode,self.frac,format)))
