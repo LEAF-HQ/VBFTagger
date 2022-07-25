@@ -2,7 +2,7 @@ from DNNTools.TrainingBase import *
 
 class Training(TrainingBase):
     def __init__(self, DNNparams={}, inputdir='', outputdir=''):
-        TrainingBase.__init__(self, DNNparams=DNNparams, inputdir=inputdir, outputdir=outputdir)
+        TrainingBase.__init__(self, DNNparams=DNNparams, inputdir=inputdir, outputdir=outputdir, do_weights=DNNparams['eqweight'])
         self.modes = ['train','val','test']
 
     def LoadInputs(self, df_inputs, df_labels, df_weights):
@@ -21,10 +21,17 @@ class Training(TrainingBase):
 
     def DefineCallbacks(self):
         from DNNTools.CallBacksBase import PlotOnTrainingBase
-        self.callbacks = DefineCallbacksBase(self.modelpath)
+        from keras.callbacks import History
+        # self.callbacks = DefineCallbacksBase(self.modelpath)
+        self.callbacks = [History()]
         self.callbacks.append(PlotOnTrainingBase(modelPath=self.modelpath, eachEpoch=True))
 
     def SavePredictions(self, format='csv'):
         from DNNTools.DNNutils import SavePandas
         for mode in self.modes:
             SavePandas(self.predictions[mode], os.path.join(self.modelpath,'predictions_%s_%s.%s' %(mode,self.frac,format)))
+
+    def UpdatePredictions(self):
+        self.LoadModel()
+        self.Predict(column_basename='score', columns=[i for i in range(self.labels['train'].shape[1])])
+        self.SavePredictions()

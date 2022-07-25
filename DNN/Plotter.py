@@ -40,7 +40,12 @@ class Plotter(PlotterBase):
     def PlotPerformance(self, predictions, weights, labels, outdir):
         print(blue('--> Plotting performance'))
         # for class i, the score of the i'th node should be used: 'score_%i' % (i) for the "summary ROC curve".
-        self.PlotROCSummary(df=predictions, weights=weights, labels=labels, outdir=outdir)
+        rocs = self.PlotROCSummary(df=predictions, weights=weights, labels=labels, outdir=outdir)
+        import json
+        print(blue('--> Saving json: '+os.path.join(outdir, 'ROC_summary.json')))
+        info = dict((x['legendtext'],x['auc']) for x in rocs.values())
+        with open(os.path.join(outdir, 'ROC_summary.json'),'w') as f:
+            f.write(json.dumps(info, indent=2))
         # for colname in predictions.columns:
         #     if not 'score' in colname: continue
         #     self.PlotROCSingleVariable(df=predictions, variable_name=colname, outdir=outdir)

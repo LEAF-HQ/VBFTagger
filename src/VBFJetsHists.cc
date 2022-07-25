@@ -73,18 +73,30 @@ void VBFJetsHists::fill(const VBFTaggerEvent & event){
     Jet jet2_matched;
     TLorentzVector jj_matched;
 
-    if (is_etaprod || is_deta || is_mjj) { if(jet.identifier()!= event.identifier_VBFjet1() && jet.identifier()!= event.identifier_VBFjet2()) continue;}
+    if (is_etaprod || is_deta || is_mjj) {
+      if ((*event.VBF_jets).size()!=0){
+        if(jet.identifier()!= event.VBF_jets->at(0).identifier() && jet.identifier()!= event.VBF_jets->at(1).identifier()) {
+          continue;
+        }
+      }
+    }
 
     bool found_match = false;
     for(unsigned index = 0; index < event.jets_ak4chs->size(); index++ ){
       Jet jet2 = event.jets_ak4chs->at(index);
       if (jet2.identifier() == jet.identifier()) continue;
 
-      if (is_etaprod || is_deta || is_mjj) { if(jet2.identifier()!= event.identifier_VBFjet1() && jet2.identifier()!= event.identifier_VBFjet2()) continue;}
+      if (is_etaprod || is_deta || is_mjj) {
+        if ((*event.VBF_jets).size()!=0){
+          if(jet2.identifier()!= event.VBF_jets->at(0).identifier() && jet2.identifier()!= event.VBF_jets->at(1).identifier()) {
+            continue;
+          }
+        }
+      }
 
       TLorentzVector jj = jet.p4() + jet2.p4();
       if (is_etaprod && jet2.eta()*jet.eta()>0) continue;
-      if (is_deta    && fabs(jet2.eta()-jet.eta())<1.4) continue;
+      if (is_deta    && deltaEta(jet,jet2)<1.4) continue;
       if (is_mjj     && jj.M()<200) continue;
       found_match = true;
       n_matched_jets++;

@@ -121,16 +121,9 @@ void PFCandsHists::fill(const VBFTaggerEvent & event){
   hist<TH1F>("sumweights")->Fill(1, weight);
 
   if (FindInString("UE", selection.Data())){
-    if (event.identifier_VBFjet1()<0) return;
-    if (event.identifier_VBFjet2()<0) return;
-    for(unsigned index = 0; index < event.jets_ak4chs->size(); index++ ) {
-      if(event.jets_ak4chs->at(index).identifier()== event.identifier_VBFjet1()) {
-        jet1 = event.jets_ak4chs->at(index);
-      }
-      if(event.jets_ak4chs->at(index).identifier()== event.identifier_VBFjet2()) {
-        jet2 = event.jets_ak4chs->at(index);
-      }
-    }
+    if (event.VBF_jets->size()!=2) return;
+    jet1 = event.VBF_jets->at(0);
+    jet2 = event.VBF_jets->at(1);
   }
 
   eta_min = std::min(jet1.eta(), jet2.eta());

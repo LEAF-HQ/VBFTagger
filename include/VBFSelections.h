@@ -55,3 +55,11 @@ public:
   virtual ~Higgs4LeptonsFinder() = default;
   virtual bool process(VBFTaggerEvent & event) override;
 };
+
+
+class PFUESelector: public AnalysisModule<VBFTaggerEvent> {
+public:
+  explicit PFUESelector(const Config& cfg);
+  virtual ~PFUESelector() = default;
+  virtual bool process(VBFTaggerEvent & event) override;
+};

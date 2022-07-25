@@ -16,7 +16,7 @@ class ModuleRunner(VariablesBase):
         self.MRB = {}
         for year in years:
             self.MRB[year] = ModuleRunnerBase(year, ModuleName)
-        self.ncores = 1
+        self.ncores = 3
         print(self)
 
     def __str__(self):
@@ -60,7 +60,7 @@ class ModuleRunner(VariablesBase):
 
     def Merge(self):
         self.RunAnalyser(options='f')
-        self.RunAnalyser(options='p')
+        # self.RunAnalyser(options='p')
 
     def RunLocal(self,ncores=4):
         import glob, sys
@@ -84,10 +84,11 @@ class ModuleRunner(VariablesBase):
         commands = []
         for group, samples in self.groups.items():
             for sample in samples:
-                for mode in ['','_standard_RunII']:
+                # for mode in ['','_standard_RunII']:
+                for mode in ['_standard_RunII']:
                     new_file = os.path.join(runII_dir,'MC__'+sample+mode+'.root')
                     command = ['hadd', '-f', new_file]
                     for year in self.years:
                         command.append(new_file.replace('RunII',year))
                     commands.append(command)
-        # parallelize(commands, ncores=16, remove_temp_files=False)
+        parallelize(commands, ncores=4, remove_temp_files=False)

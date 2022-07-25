@@ -62,6 +62,8 @@ private:
   unique_ptr<GenEventMatch> genEvent_match;
   unique_ptr<LumiWeightApplicator> lumiweight_applicator;
 
+  unique_ptr<JetCleaner> jet_cleaner;
+
   // Selections used in the analysis
   unique_ptr<NJetSelection> njets_selection;
   unique_ptr<GenLeptonPhaseSpaceSelection> genLeptonPhaseSpace_selection;
@@ -112,6 +114,8 @@ GenLevelStudiesTool::GenLevelStudiesTool(const Config & cfg) : BaseTool(cfg){
 
   lumiweight_applicator.reset(new LumiWeightApplicator(cfg));
 
+  MultiID<Jet> jet_id = {PtEtaId(20, 5.2), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
+  jet_cleaner.reset(new JetCleaner(jet_id));
   genLeptonPhaseSpace_selection.reset(new GenLeptonPhaseSpaceSelection(cfg));
   njets_selection.reset(new NJetSelection(cfg, 2, -1));
 
@@ -128,6 +132,7 @@ void GenLevelStudiesTool::sort_objects(){
 
 void GenLevelStudiesTool::clean_objects(){
   cleaner_genjet->process(*event);
+  jet_cleaner->process(*event);
 }
 
 bool GenLevelStudiesTool::select_Nobjects(){

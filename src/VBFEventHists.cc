@@ -13,18 +13,32 @@ VBFEventHists::VBFEventHists(TString dir_, TString selection_) : BaseHists(dir_)
   book<TH1F>("number_of_ele",     ";number of electrons ; Events / bin", 11,      -0.5,    10.5);
   book<TH1F>("number_of_muo",     ";number of muons ; Events / bin",     11,      -0.5,    10.5);
   book<TH1F>("number_of_lep",     ";number of leptons ; Events / bin",   11,      -0.5,    10.5);
-
   book<TH2F>("number_of_elevsmuo",";number of electrons; number of muons",5,      -0.5,     4.5,     5,      -0.5,    4.5);
-  
-  max_index = 2;
 
+  book<TH1F>("number_of_PF_Higgs", ";# of PF from Higgs; Events / bin", 101,      -0.5,   100);
+  book<TH1F>("number_of_PF_VBF", ";# of PF from VBF-like jets; Events / bin", 101,-0.5,   100);
+  book<TH1F>("number_of_PF_UE_charged", ";# of PF from UE (ch); Events / bin",101, -0.5,  100);
+  book<TH1F>("number_of_PF_UE_neutrals", ";# of PF from UE (neu); Events / bin",101,-0.5, 100);
+
+  for (const TString& name: {"H", "Z1", "Z2"}){
+    book<TH1F>(name+"_pt",       ";#p_{T, "+name+"}; Events / bin",    100,      0.,    500);
+    book<TH1F>(name+"_eta",      ";#eta_{"+name+"}; Events / bin",     100,     -5.0,     5.0);
+    book<TH1F>(name+"_phi",      ";#phi_{"+name+"}; Events / bin",     100,     -4.0,     4.0);
+    book<TH1F>(name+"_mass",     ";mass_{"+name+"}; Events / bin",     100,      0,     150.0);
+    book<TH1F>(name+"_chi2",     ";chi2_{"+name+"}; Events / bin",     100,      0,      10.0);
+  }
+  book<TH2F>("Z1_vs_Z2_mass",    ";mass_{Z1}; mass_{Z2}; Events / bin",100,      0,     130.0,   100,      0,     130.0);
+
+  book<TH1F>("HZZ_chi2",         ";chi2_{HZZ}; Events / bin",          100,      0,      10.0);
+
+  max_index = 2;
   for (const TString& lep: {"jet", "ele", "muo", "lep"}){
     TString name;
-      for(int i=1; i<=max_index; i++){
+    for(int i=1; i<=max_index; i++){
       name = lep+to_string(i);
       book<TH1F>(name+"_pt",       ";#p_{T, "+name+"}; Events / bin",    100,      0.,    500);
-      book<TH1F>(name+"_eta",      ";#eta_{T, "+name+"}; Events / bin",  100,     -5.0,     5.0);
-      book<TH1F>(name+"_phi",      ";#phi_{T, "+name+"}; Events / bin",  100,     -4.0,     4.0);
+      book<TH1F>(name+"_eta",      ";#eta_{"+name+"}; Events / bin",     100,     -5.0,     5.0);
+      book<TH1F>(name+"_phi",      ";#phi_{"+name+"}; Events / bin",     100,     -4.0,     4.0);
     }
     name = lep+"1vs"+lep+"2";
     book<TH2F>(name+"_pt",          ";#p_{T,"+lep+"1};#p_{T,"+lep+"2}",  50,      0.,    1000,     50,       0.,  1000);
@@ -55,6 +69,35 @@ void VBFEventHists::fill(const VBFTaggerEvent & event){
   hist<TH1F>("number_of_lep")->Fill(lep_size, weight);
   hist<TH2F>("number_of_elevsmuo")->Fill(ele_size, muo_size, weight);
 
+  hist<TH1F>("number_of_PF_Higgs")->Fill((float)event.PF_Higgs_size(), weight);
+  hist<TH1F>("number_of_PF_VBF")->Fill((float)event.PF_VBF_size(), weight);
+  hist<TH1F>("number_of_PF_UE_charged")->Fill((float)event.PF_UE_charged_size(), weight);
+  hist<TH1F>("number_of_PF_UE_neutrals")->Fill((float)event.PF_UE_neutrals_size(), weight);
+
+  for(unsigned int i=0; i<((*event.reco_Z_bosons).size()+(*event.reco_H_bosons).size()); i++){
+    TLorentzVector boson;
+    TString name;
+    if (i<2) {
+      boson = (*event.reco_Z_bosons).at(i);
+      name = "Z"+to_string(i+1);
+    } else {
+      boson = (*event.reco_H_bosons).at(0);
+      name = "H";
+    }
+    hist<TH1F>(name+"_pt")->Fill(boson.Pt(), weight);
+    hist<TH1F>(name+"_eta")->Fill(boson.Eta(), weight);
+    hist<TH1F>(name+"_phi")->Fill(boson.Phi(), weight);
+    hist<TH1F>(name+"_mass")->Fill(boson.M(), weight);
+  }
+
+  hist<TH1F>("Z1_chi2")->Fill(event.Z1_chi2(), weight);
+  hist<TH1F>("Z2_chi2")->Fill(event.Z2_chi2(), weight);
+  hist<TH1F>("H_chi2")->Fill(event.H_chi2(), weight);
+  hist<TH1F>("HZZ_chi2")->Fill(event.HZZ_chi2(), weight);
+
+  if ((*event.reco_Z_bosons).size()>=2){
+    hist<TH2F>("Z1_vs_Z2_mass")->Fill((*event.reco_Z_bosons).at(0).M(), (*event.reco_Z_bosons).at(1).M(), weight);
+  }
 
   for(int i=0; i<ele_size; i++){
     if (i>=max_index) break;

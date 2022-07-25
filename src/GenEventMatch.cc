@@ -223,8 +223,29 @@ bool GenEventMatch::process(VBFTaggerEvent& event) {
   // gp_status_printer->process(event);
 
   DoDecayMatching(event);
-  return true;
-  // if(skipMotherMatching) return true;
+  // return true;
+  if(skipMotherMatching) {
+    int index_1 = 0;
+    int index_2 = 1;
+    bool found = false;
+    for(unsigned j_index1 = 0; j_index1 < (*event.genjets).size(); j_index1++ ) {
+      GenJet j1 = (*event.genjets).at(j_index1);
+      for(unsigned j_index2 = j_index1+1; j_index2 < (*event.genjets).size(); j_index2++ ) {
+        GenJet j2 = (*event.genjets).at(j_index2);
+        if (deltaEta(j1,j2)<1.4) continue;
+        TLorentzVector jj = j1.p4() + j2.p4();
+        if (jj.M()<200) continue;
+        index_1 = j_index1;
+        index_2 = j_index2;
+        found = true;
+        break;
+      }
+      if (found) break;
+    }
+    event.VBF_genjets->push_back((*event.genjets).at(index_1));
+    event.VBF_genjets->push_back((*event.genjets).at(index_2));
+    return true;
+  }
 
   std::vector<GenParticle> H_mothers_all = FindMothers(event, (*event.gen_higgs).at(0));
   std::vector<GenParticle> H_mothers;
