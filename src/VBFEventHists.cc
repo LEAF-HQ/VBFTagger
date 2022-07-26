@@ -72,9 +72,6 @@ void VBFEventHists::fill(const VBFTaggerEvent & event){
   double weight = event.weight;
   hist<TH1F>("sumweights")->Fill(1, weight);
 
-  int njets = 0;
-  double HT_jets = 0;
-
   int VBF_jet_size = (*event.VBF_jets).size();
   int non_VBF_jet_size = (*event.non_VBF_jets).size();
   int ele_size = (*event.H_electrons).size();
