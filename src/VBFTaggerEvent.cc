@@ -25,6 +25,7 @@ VBFTaggerEvent::VBFTaggerEvent(){
   gen_non_higgs_decays = new vector<GenParticle>;
   VBF_genjets = new vector<GenJet>;
   VBF_jets = new vector<Jet>;
+  non_VBF_jets = new vector<Jet>;
   H_muons = new vector<Muon>;
   H_electrons = new vector<Electron>;
   H_leptons = new vector<FlavorParticle>;
@@ -45,6 +46,15 @@ VBFTaggerEvent::VBFTaggerEvent(){
   m_identifier_VBFgenparticle1 = -1;
   m_identifier_VBFgenparticle2 = -1;
   m_gen_higgs_decay = Decay::nodecay;
+  m_eventCategory = -1;
+  m_Zeppenfeld = -1;
+  m_Zeppenfeld_charged = -1;
+  m_Zeppenfeld_neutral = -1;
+  m_energy_density_ratio = -1;
+  m_energy_density_ratio_charged = -1;
+  m_energy_density_ratio_neutral = -1;
+  m_n_nonVBF_jets = -1;
+  m_HT_nonVBF_jets = -1;
 }
 
 VBFTaggerEvent::~VBFTaggerEvent(){
@@ -55,6 +65,7 @@ VBFTaggerEvent::~VBFTaggerEvent(){
   delete gen_non_higgs_decays;
   delete VBF_genjets;
   delete VBF_jets;
+  delete non_VBF_jets;
   delete H_muons;
   delete H_electrons;
   delete H_leptons;
@@ -75,6 +86,7 @@ void VBFTaggerEvent::clear(){
   delete gen_non_higgs_decays;
   delete VBF_genjets;
   delete VBF_jets;
+  delete non_VBF_jets;
   delete H_muons;
   delete H_electrons;
   delete H_leptons;
@@ -91,6 +103,7 @@ void VBFTaggerEvent::clear(){
   gen_non_higgs_decays = 0;
   VBF_genjets = 0;
   VBF_jets = 0;
+  non_VBF_jets = 0;
   H_muons = 0;
   H_electrons = 0;
   H_leptons = 0;
@@ -111,6 +124,15 @@ void VBFTaggerEvent::clear(){
   m_identifier_VBFgenparticle1 = -1;
   m_identifier_VBFgenparticle2 = -1;
   m_gen_higgs_decay = Decay::nodecay;
+  m_eventCategory = -1;
+  m_Zeppenfeld = -1;
+  m_Zeppenfeld_charged = -1;
+  m_Zeppenfeld_neutral = -1;
+  m_energy_density_ratio = -1;
+  m_energy_density_ratio_charged = -1;
+  m_energy_density_ratio_neutral = -1;
+  m_n_nonVBF_jets = -1;
+  m_HT_nonVBF_jets = -1;
 }
 
 void VBFTaggerEvent::reset(){
@@ -122,6 +144,7 @@ void VBFTaggerEvent::reset(){
   delete gen_non_higgs_decays;
   delete VBF_genjets;
   delete VBF_jets;
+  delete non_VBF_jets;
   delete H_muons;
   delete H_electrons;
   delete H_leptons;
@@ -138,6 +161,7 @@ void VBFTaggerEvent::reset(){
   gen_non_higgs_decays = new vector<GenParticle>;
   VBF_genjets = new vector<GenJet>;
   VBF_jets = new vector<Jet>;
+  non_VBF_jets = new vector<Jet>;
   H_muons = new vector<Muon>;
   H_electrons = new vector<Electron>;
   H_leptons = new vector<FlavorParticle>;
@@ -158,4 +182,13 @@ void VBFTaggerEvent::reset(){
   m_identifier_VBFgenparticle1 = -1;
   m_identifier_VBFgenparticle2 = -1;
   m_gen_higgs_decay = Decay::nodecay;
+  m_eventCategory = -1;
+  m_Zeppenfeld = -1;
+  m_Zeppenfeld_charged = -1;
+  m_Zeppenfeld_neutral = -1;
+  m_energy_density_ratio = -1;
+  m_energy_density_ratio_charged = -1;
+  m_energy_density_ratio_neutral = -1;
+  m_n_nonVBF_jets = -1;
+  m_HT_nonVBF_jets = -1;
 }

@@ -55,6 +55,8 @@ VBFJetDefinition::VBFJetDefinition(const Config& cfg, const float& min_jet_pt_):
 
 bool VBFJetDefinition::process(VBFTaggerEvent& event) {
 
+  int n_central_jets = 0;
+
   bool isSet = false;
   for(const Jet& jet1: *event.jets_ak4chs){
     if (jet1.pt()<min_jet_pt) continue;
@@ -67,6 +69,10 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
       if (jj.M()<200) continue;
       event.VBF_jets->push_back(jet1);
       event.VBF_jets->push_back(jet2);
+
+      if (fabs(jet1.eta())<2.4) n_central_jets += 1;
+      if (fabs(jet2.eta())<2.4) n_central_jets += 1;
+
       isSet=true;
       break;
     }
@@ -74,7 +80,22 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
   }
 
   if (!isSet) return false;
+
+  event.set_eventCategory(n_central_jets);
+
+  float HT_nonVBF_jets = 0;
+
+  for(const Jet& jet: *event.jets_ak4chs){
+    if(event.VBF_jets->at(0).identifier() == jet.identifier()) continue;
+    if(event.VBF_jets->at(1).identifier() == jet.identifier()) continue;
+    event.non_VBF_jets->push_back(jet);
+    HT_nonVBF_jets += jet.pt();
+  }
+
+  event.set_n_nonVBF_jets(event.non_VBF_jets->size());
+  event.set_HT_nonVBF_jets(HT_nonVBF_jets);
   sort_by_pt<Jet>(*event.VBF_jets);
+  sort_by_pt<Jet>(*event.non_VBF_jets);
   return true;
 
 }
@@ -201,6 +222,7 @@ bool Higgs4LeptonsFinder::process(VBFTaggerEvent& event) {
   sort_by_pt<Muon>(*event.H_muons);
   sort_by_pt<FlavorParticle>(*event.H_leptons);
 
+  if (event.H_leptons->size()!=4) return false;
   return true;
 
 }
@@ -210,12 +232,30 @@ PFUESelector::PFUESelector(const Config& cfg) {};
 
 bool PFUESelector::process(VBFTaggerEvent& event) {
 
+  float Zeppenfeld_charged = 0;
+  float Zeppenfeld_neutral = 0;
+  float n_UEin_charged = 0;
+  float n_UEin_neutral = 0;
+  float n_UEout_charged = 0;
+  float n_UEout_neutral = 0;
+  Jet jet1 = event.VBF_jets->at(0);
+  Jet jet2 = event.VBF_jets->at(1);
+  float eta_min = std::min(jet1.eta(), jet2.eta());
+  float eta_max = std::max(jet1.eta(), jet2.eta());
+  float eta_avg = (eta_min+eta_max)/2;
+  float dEta_jets = deltaEta(jet1, jet2);
+
   for(const PFCandidate& cand: *event.pfcands){
     if (cand.fromPV()!=3) continue;
+    bool is_within;
+    if (eta_min+0.4 < cand.eta() && cand.eta() < eta_max-0.4) is_within = true;
+    else if (eta_min-0.4 > cand.eta() || cand.eta() > eta_max+0.4) is_within = false;
+    else is_within = false;
+
     auto closest_lep = closestParticle(cand, *event.H_leptons);
     if (closest_lep != nullptr && deltaR(cand, *closest_lep)<0.4 && (FindInVector<int>({11,13,22}, fabs(cand.type()))>=0)) {
       event.PF_Higgs->push_back(cand);
-    } else if (deltaR(cand, event.VBF_jets->at(0))<0.4 || deltaR(cand, event.VBF_jets->at(1))<0.4) {
+    } else if (deltaR(cand, jet1)<0.4 || deltaR(cand, jet2)<0.4) {
       event.PF_VBF->push_back(cand);
     } else {
       if (cand.charge()==0) {
@@ -225,7 +265,15 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
         if ((cand_id==0 || cand_id==1 ||cand_id==2 ||cand_id==130) && cand_pt<3) continue;
         if (cand_id==11 || cand_id==13 || cand_id==211) throw std::runtime_error("Neutral PF identified as e/mu/ch: "+to_string(cand_id));
         event.PF_UE_neutrals->push_back(cand);
-      } else event.PF_UE_charged->push_back(cand);
+        Zeppenfeld_neutral += fabs(cand.eta()-eta_avg)/dEta_jets;
+        if (is_within) n_UEin_neutral += 1;
+        else n_UEout_neutral += 1;
+      } else {
+        event.PF_UE_charged->push_back(cand);
+        Zeppenfeld_charged += fabs(cand.eta()-eta_avg)/dEta_jets;
+        if (is_within) n_UEin_charged += 1;
+        else n_UEout_charged += 1;
+      }
     }
   }
   sort_by_pt<PFCandidate>(*event.PF_Higgs);
@@ -237,6 +285,14 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   event.set_PF_VBF_size(event.PF_VBF->size());
   event.set_PF_UE_neutrals_size(event.PF_UE_neutrals->size());
   event.set_PF_UE_charged_size(event.PF_UE_charged->size());
+
+
+  event.set_Zeppenfeld(Zeppenfeld_charged+Zeppenfeld_neutral);
+  event.set_Zeppenfeld_charged(Zeppenfeld_charged);
+  event.set_Zeppenfeld_neutral(Zeppenfeld_neutral);
+  event.set_energy_density_ratio(((n_UEout_charged+n_UEout_neutral)!=0)? (n_UEin_charged+n_UEin_neutral)/(n_UEout_charged+n_UEout_neutral) : 0);
+  event.set_energy_density_ratio_charged((n_UEout_charged!=0)? n_UEin_charged/n_UEout_charged : 0);
+  event.set_energy_density_ratio_neutral((n_UEout_neutral!=0)? n_UEin_neutral/n_UEout_neutral : 0);
 
   return true;
 

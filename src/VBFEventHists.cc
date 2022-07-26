@@ -9,16 +9,17 @@ VBFEventHists::VBFEventHists(TString dir_, TString selection_) : BaseHists(dir_)
   is_mjj     = FindInString("mjj>200", selection.Data());
 
   book<TH1F>("sumweights",        ";sum of event weights; Events / bin",  1,       0.5,     1.5);
-  book<TH1F>("number_of_jets",    ";number of jets ; Events / bin",      11,      -0.5,    10.5);
-  book<TH1F>("number_of_ele",     ";number of electrons ; Events / bin", 11,      -0.5,    10.5);
-  book<TH1F>("number_of_muo",     ";number of muons ; Events / bin",     11,      -0.5,    10.5);
-  book<TH1F>("number_of_lep",     ";number of leptons ; Events / bin",   11,      -0.5,    10.5);
-  book<TH2F>("number_of_elevsmuo",";number of electrons; number of muons",5,      -0.5,     4.5,     5,      -0.5,    4.5);
+  book<TH1F>("number_VBF_jets",   ";number of VBF jets ; Events / bin",  11,      -0.5,    10.5);
+  book<TH1F>("number_non_VBF_jets", ";number of non VBF jets ; Events / bin", 11, -0.5,  10.5);
+  book<TH1F>("number_ele",        ";number of electrons ; Events / bin", 11,      -0.5,    10.5);
+  book<TH1F>("number_muo",        ";number of muons ; Events / bin",     11,      -0.5,    10.5);
+  book<TH1F>("number_lep",        ";number of leptons ; Events / bin",   11,      -0.5,    10.5);
+  book<TH2F>("number_elevsmuo",   ";number of electrons; number of muons",5,      -0.5,     4.5,     5,      -0.5,    4.5);
 
-  book<TH1F>("number_of_PF_Higgs", ";# of PF from Higgs; Events / bin", 101,      -0.5,   100);
-  book<TH1F>("number_of_PF_VBF", ";# of PF from VBF-like jets; Events / bin", 101,-0.5,   100);
-  book<TH1F>("number_of_PF_UE_charged", ";# of PF from UE (ch); Events / bin",101, -0.5,  100);
-  book<TH1F>("number_of_PF_UE_neutrals", ";# of PF from UE (neu); Events / bin",101,-0.5, 100);
+  book<TH1F>("number_PF_Higgs",   ";# of PF from Higgs; Events / bin", 101,      -0.5,   100);
+  book<TH1F>("number_PF_VBF",     ";# of PF from VBF-like jets; Events / bin", 101,-0.5, 100);
+  book<TH1F>("number_PF_UE_charged",  ";# of PF from UE (ch); Events / bin",101, -0.5,   100);
+  book<TH1F>("number_PF_UE_neutrals", ";# of PF from UE (neu); Events / bin",101,-0.5,   100);
 
   for (const TString& name: {"H", "Z1", "Z2"}){
     book<TH1F>(name+"_pt",       ";#p_{T, "+name+"}; Events / bin",    100,      0.,    500);
@@ -31,25 +32,39 @@ VBFEventHists::VBFEventHists(TString dir_, TString selection_) : BaseHists(dir_)
 
   book<TH1F>("HZZ_chi2",         ";chi2_{HZZ}; Events / bin",          100,      0,      10.0);
 
-  max_index = 2;
-  for (const TString& lep: {"jet", "ele", "muo", "lep"}){
+  max_index = 4;
+  for (const TString& lep: {"VBF_jet", "ele", "muo", "lep"}){
     TString name;
     for(int i=1; i<=max_index; i++){
+      if (lep=="VBF_jet" && i>2) continue;
       name = lep+to_string(i);
-      book<TH1F>(name+"_pt",       ";#p_{T, "+name+"}; Events / bin",    100,      0.,    500);
+      book<TH1F>(name+"_pt",       ";#p_{T, "+name+"}; Events / bin",    100,      0.,    500/i);
       book<TH1F>(name+"_eta",      ";#eta_{"+name+"}; Events / bin",     100,     -5.0,     5.0);
       book<TH1F>(name+"_phi",      ";#phi_{"+name+"}; Events / bin",     100,     -4.0,     4.0);
     }
     name = lep+"1vs"+lep+"2";
     book<TH2F>(name+"_pt",          ";#p_{T,"+lep+"1};#p_{T,"+lep+"2}",  50,      0.,    1000,     50,       0.,  1000);
     book<TH2F>(name+"_eta",         ";#eta_{"+lep+"1};#eta_{"+lep+"2}", 100,     -5.0,      5.0,  100,      -5.0,    5.0);
-    book<TH2F>(name+"_eta_abs",     ";#eta_{"+lep+"1};#eta_{"+lep+"2}", 100,     -5.0,      5.0,  100,      -5.0,    5.0);
+    book<TH2F>(name+"_eta_abs",     ";#eta_{"+lep+"1};#eta_{"+lep+"2}", 100,     -0.0,      5.0,  100,      -0.0,    5.0);
   }
 
-  book<TH2F>("jet1_vs_jet2_eta_abs",";#eta_{jet1}; #eta_{jet2}",         100,     -0.0,     5.0,  100,      -0.0,    5.0);
   book<TH1F>("m_jj",                ";m(jj); Events / bin",              500,      0.,   1500);
   book<TH1F>("DR_jj",               ";#Delta R(jj); Events / bin",       160,      0,       8);
   book<TH1F>("Deta_jj",             ";#Delta#eta(jj); Events / bin",     160,      0,       8);
+
+  book<TH1F>("non_VBF_jets_pt",     ";#p_{T, non-VBF jets}; Events / bin",    100,      0.,    500);
+  book<TH1F>("non_VBF_jets_eta",    ";#eta_{non-VBF jets}; Events / bin",     100,     -5.0,     5.0);
+  book<TH1F>("non_VBF_jets_phi",    ";#phi_{non-VBF jets}; Events / bin",     100,     -4.0,     4.0);
+
+
+  book<TH1F>("eventCategory",       ";eventCategory; Events / bin",        3,     -0.5,     2.5);
+  book<TH1F>("Zeppenfeld",          ";Zeppenfeld; Events / bin",          50,      0,     200);
+  book<TH1F>("Zeppenfeld_charged",  ";Zeppenfeld_charged; Events / bin",  50,      0,     200);
+  book<TH1F>("Zeppenfeld_neutral",  ";Zeppenfeld_neutral; Events / bin",  50,      0,     200);
+  book<TH1F>("energy_density_ratio",";E(U_{IN})/E(U_{OUT}); Events / bin",20,      0,      10);
+  book<TH1F>("energy_density_ratio_charged", ";charged E(U_{IN})/E(U_{OUT}); Events / bin", 40, 0, 20);
+  book<TH1F>("energy_density_ratio_neutral", ";neutral E(U_{IN})/E(U_{OUT}); Events / bin", 20, 0, 10);
+  book<TH1F>("HT_nonVBF_jets",      ";H_{T} (non-VBF jets); Events / bin", 50,    0,     500);
 
 }
 
@@ -60,10 +75,14 @@ void VBFEventHists::fill(const VBFTaggerEvent & event){
   int njets = 0;
   double HT_jets = 0;
 
+  int VBF_jet_size = (*event.VBF_jets).size();
+  int non_VBF_jet_size = (*event.non_VBF_jets).size();
   int ele_size = (*event.H_electrons).size();
   int muo_size = (*event.H_muons).size();
   int lep_size = (*event.H_leptons).size();
 
+  hist<TH1F>("number_of_VBF_jets")->Fill(VBF_jet_size, weight);
+  hist<TH1F>("number_of_non_VBF_jets")->Fill(non_VBF_jet_size, weight);
   hist<TH1F>("number_of_ele")->Fill(ele_size, weight);
   hist<TH1F>("number_of_muo")->Fill(muo_size, weight);
   hist<TH1F>("number_of_lep")->Fill(lep_size, weight);
@@ -145,8 +164,38 @@ void VBFEventHists::fill(const VBFTaggerEvent & event){
   }
 
 
-  //
-  // hist<TH1F>("number_of_jets")->Fill(njets, weight);
-  // hist<TH1F>("HT_jets")->Fill(HT_jets, weight);
+  for(int i=0; i<VBF_jet_size; i++){
+    const Jet jet1 = (*event.VBF_jets).at(i);
+    hist<TH1F>("VBF_jet"+to_string(i+1)+"_pt")->Fill(jet1.pt(), weight);
+    hist<TH1F>("VBF_jet"+to_string(i+1)+"_eta")->Fill(jet1.eta(), weight);
+    hist<TH1F>("VBF_jet"+to_string(i+1)+"_phi")->Fill(jet1.phi(), weight);
+    for(int j=i+1; j<VBF_jet_size; j++){
+      if (j>=2) break;
+      const Jet jet2 = (*event.VBF_jets).at(j);
+      hist<TH2F>("VBF_jet1vsVBF_jet2_pt")->Fill(jet1.pt(), jet2.pt(), weight);
+      hist<TH2F>("VBF_jet1vsVBF_jet2_eta")->Fill(jet1.eta(), jet2.eta(), weight);
+      hist<TH2F>("VBF_jet1vsVBF_jet2_eta_abs")->Fill(fabs(jet1.eta()), fabs(jet2.eta()), weight);
+      TLorentzVector jj = jet1.p4() + jet2.p4();
+      hist<TH1F>("m_jj")->Fill(jj.M(), weight);
+      hist<TH1F>("DR_jj")->Fill(deltaEta(jet1,jet2), weight);
+      hist<TH1F>("Deta_jj")->Fill(deltaR(jet1,jet2), weight);
+    }
+  }
+
+  for(int i=0; i<non_VBF_jet_size; i++){
+    const Jet jet = (*event.non_VBF_jets).at(i);
+    hist<TH1F>("non_VBF_jets_pt")->Fill(jet.pt(), weight);
+    hist<TH1F>("non_VBF_jets_eta")->Fill(jet.eta(), weight);
+    hist<TH1F>("non_VBF_jets_phi")->Fill(jet.phi(), weight);
+  }
+
+  hist<TH1F>("eventCategory")->Fill(event.eventCategory(), weight);
+  hist<TH1F>("Zeppenfeld")->Fill(event.Zeppenfeld(), weight);
+  hist<TH1F>("Zeppenfeld_charged")->Fill(event.Zeppenfeld_charged(), weight);
+  hist<TH1F>("Zeppenfeld_neutral")->Fill(event.Zeppenfeld_neutral(), weight);
+  hist<TH1F>("energy_density_ratio")->Fill(event.energy_density_ratio(), weight);
+  hist<TH1F>("energy_density_ratio_charged")->Fill(event.energy_density_ratio_charged(), weight);
+  hist<TH1F>("energy_density_ratio_neutral")->Fill(event.energy_density_ratio_neutral(), weight);
+  hist<TH1F>("HT_nonVBF_jets")->Fill(event.HT_nonVBF_jets(), weight);
 
 }

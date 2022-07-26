@@ -130,6 +130,7 @@ void PFStudiesTool::book_histograms(){
     // // mytag = tag+"_Jets_opp";                    book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0"));
     // // mytag = tag+"_Jets_opp_deta";               book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0 && deta>1.4"));
     // mytag = tag+"_Jets_opp_deta_mjj";           book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0 && deta>1.4 && mjj>200"));
+    // mytag = tag+"_Jets";                        book_HistFolder(mytag, new JetHists(mytag));
     mytag = tag+"_VBFEvent";                    book_HistFolder(mytag, new VBFEventHists(mytag));
   }
 }
@@ -155,6 +156,7 @@ void PFStudiesTool::fill_histograms(TString tag){
   // // mytag = tag+"_Jets_opp";          HistFolder<VBFJetsHists>(mytag)->fill(*event);
   // // mytag = tag+"_Jets_opp_deta";     HistFolder<VBFJetsHists>(mytag)->fill(*event);
   // mytag = tag+"_Jets_opp_deta_mjj"; HistFolder<VBFJetsHists>(mytag)->fill(*event);
+  // mytag = tag+"_Jets";              HistFolder<JetHists>(mytag)->fill(*event);
   mytag = tag+"_VBFEvent";          HistFolder<VBFEventHists>(mytag)->fill(*event);
 
 }
@@ -166,7 +168,7 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   event = new VBFTaggerEvent();
   event->reset();
 
-  GenID<GenJet> genjet_id = {PtEtaId(20, 5.2)};
+  MultiGenID<GenJet> genjet_id = {PtEtaId(20, 5.2), GenJetLeptonOverlapID(0.4)};
   cleaner_genjet.reset(new GenJetCleaner(genjet_id));
 
   genEvent_match.reset(new GenEventMatch(cfg));
@@ -207,7 +209,7 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   MultiID<Tau> tau_id = {TauID(Tau::DeepTauVsJetVVVLoose), TauID(Tau::DeepTauVsEleVVVLoose), TauID(Tau::DeepTauVsMuVLoose)};
   tau_cleaner.reset(new TauCleaner(tau_id));
 
-  MultiID<Jet> jet_id = {PtEtaId(20, 5.2), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT)};
+  MultiID<Jet> jet_id = {PtEtaId(20, 5.2), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT), JetLeptonOverlapID(0.4)};
   jet_cleaner.reset(new JetCleaner(jet_id));
 
   MultiID<PFCandidate> pfcand_id = {PtEtaId(0.2, 5.2)};
