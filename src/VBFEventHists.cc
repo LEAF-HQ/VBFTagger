@@ -78,17 +78,17 @@ void VBFEventHists::fill(const VBFTaggerEvent & event){
   int muo_size = (*event.H_muons).size();
   int lep_size = (*event.H_leptons).size();
 
-  hist<TH1F>("number_of_VBF_jets")->Fill(VBF_jet_size, weight);
-  hist<TH1F>("number_of_non_VBF_jets")->Fill(non_VBF_jet_size, weight);
-  hist<TH1F>("number_of_ele")->Fill(ele_size, weight);
-  hist<TH1F>("number_of_muo")->Fill(muo_size, weight);
-  hist<TH1F>("number_of_lep")->Fill(lep_size, weight);
-  hist<TH2F>("number_of_elevsmuo")->Fill(ele_size, muo_size, weight);
+  hist<TH1F>("number_VBF_jets")->Fill(VBF_jet_size, weight);
+  hist<TH1F>("number_non_VBF_jets")->Fill(non_VBF_jet_size, weight);
+  hist<TH1F>("number_ele")->Fill(ele_size, weight);
+  hist<TH1F>("number_muo")->Fill(muo_size, weight);
+  hist<TH1F>("number_lep")->Fill(lep_size, weight);
+  hist<TH2F>("number_elevsmuo")->Fill(ele_size, muo_size, weight);
 
-  hist<TH1F>("number_of_PF_Higgs")->Fill((float)event.PF_Higgs_size(), weight);
-  hist<TH1F>("number_of_PF_VBF")->Fill((float)event.PF_VBF_size(), weight);
-  hist<TH1F>("number_of_PF_UE_charged")->Fill((float)event.PF_UE_charged_size(), weight);
-  hist<TH1F>("number_of_PF_UE_neutrals")->Fill((float)event.PF_UE_neutrals_size(), weight);
+  hist<TH1F>("number_PF_Higgs")->Fill((float)event.PF_Higgs_size(), weight);
+  hist<TH1F>("number_PF_VBF")->Fill((float)event.PF_VBF_size(), weight);
+  hist<TH1F>("number_PF_UE_charged")->Fill((float)event.PF_UE_charged_size(), weight);
+  hist<TH1F>("number_PF_UE_neutrals")->Fill((float)event.PF_UE_neutrals_size(), weight);
 
   for(unsigned int i=0; i<((*event.reco_Z_bosons).size()+(*event.reco_H_bosons).size()); i++){
     TLorentzVector boson;
