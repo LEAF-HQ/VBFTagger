@@ -130,7 +130,7 @@ void PFStudiesTool::book_histograms(){
     // // mytag = tag+"_Jets_opp";                    book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0"));
     // // mytag = tag+"_Jets_opp_deta";               book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0 && deta>1.4"));
     // mytag = tag+"_Jets_opp_deta_mjj";           book_HistFolder(mytag, new VBFJetsHists(mytag, "eta1*eta2<0 && deta>1.4 && mjj>200"));
-    // mytag = tag+"_Jets";                        book_HistFolder(mytag, new JetHists(mytag));
+    mytag = tag+"_Jets";                        book_HistFolder(mytag, new JetHists(mytag));
     mytag = tag+"_VBFEvent";                    book_HistFolder(mytag, new VBFEventHists(mytag));
   }
 }
@@ -156,7 +156,7 @@ void PFStudiesTool::fill_histograms(TString tag){
   // // mytag = tag+"_Jets_opp";          HistFolder<VBFJetsHists>(mytag)->fill(*event);
   // // mytag = tag+"_Jets_opp_deta";     HistFolder<VBFJetsHists>(mytag)->fill(*event);
   // mytag = tag+"_Jets_opp_deta_mjj"; HistFolder<VBFJetsHists>(mytag)->fill(*event);
-  // mytag = tag+"_Jets";              HistFolder<JetHists>(mytag)->fill(*event);
+  mytag = tag+"_Jets";              HistFolder<JetHists>(mytag)->fill(*event);
   mytag = tag+"_VBFEvent";          HistFolder<VBFEventHists>(mytag)->fill(*event);
 
 }
@@ -216,7 +216,7 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   pfcand_cleaner.reset(new PFCandCleaner(pfcand_id));
 
   genLeptonPhaseSpace_selection.reset(new GenLeptonPhaseSpaceSelection(cfg));
-  njets_selection.reset(new NJetSelection(cfg, 2, -1));
+  njets_selection.reset(new NJetSelection(cfg, 1, -1));
   ntaus_selection.reset(new NTauSelection(cfg, -1, 0));
   nogentau_selection.reset(new NoGenTauSelection(cfg));
 
@@ -297,8 +297,8 @@ bool PFStudiesTool::Process(){
   fill_histograms("Higgs4Leptons_Selection");
 
   bool pass_definition = VBFJet_definition_low_pt->process(*event);
-  if(!pass_definition) return false;
   fill_histograms("VBF_Selection");
+  if(!pass_definition) return false;
 
   // pass_definition = VBFJet_definition->process(*event);
   // if(!pass_definition) return false;

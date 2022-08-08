@@ -5,20 +5,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-
-def main():
-    print 'start main'
+def CompareModels(filterInputs):
+    print ('Comparing '+ filterInputs)
     modelName = 'train_with_weights_scale_xsec*'
-    filterInputs = 'VBF_jets'
-    filterInputs = 'PF_VBF'
-    filterInputs = 'PF_UE_charged'
-    filterInputs = 'PF_UE_neutrals'
-    filterInputs = 'VBF_jets_PF_VBF'
-    filterInputs = 'PF_UE_charged_PF_UE_neutrals'
-    filterInputs = 'VBF_jets_PF_UE_charged_PF_UE_neutrals'
-    filterInputs = 'PF_VBF_PF_UE_charged_PF_UE_neutrals'
-    filterInputs = 'VBF_jets_PF_VBF_PF_UE_charged_PF_UE_neutrals'
-
     plotDir = '/user/'+os.environ['USER']+'/WorkingArea/DNNOutputs/PFStudies/plots/Predictions/'
     hyperParameters = OrderedDict([
         ('DenseLayer',             [[64, 32, 8], [50,50,10], [1024,512,128,32,8]]),
@@ -29,6 +18,7 @@ def main():
     ])
     models = {}
     max_auc = ('',-1)
+    print len(glob.glob(os.path.join(plotDir,filterInputs,modelName)))
     for fname in glob.glob(os.path.join(plotDir,filterInputs,modelName)):
         roc_json = os.path.join(fname,'ROC_summary.json')
         if not os.path.exists(roc_json): continue
@@ -60,7 +50,35 @@ def main():
     plt.xlabel('AUC')
     plt.ylabel('A.U.')
     fig.savefig('aucs_'+filterInputs+'.pdf')
-plt.close()
+    plt.close()
+
+
+def main():
+    # CompareModels(filterInputs = 'VBF_jets')
+    # CompareModels(filterInputs = 'PF_VBF')
+    # CompareModels(filterInputs = 'PF_UE_charged')
+    # CompareModels(filterInputs = 'PF_UE_neutrals')
+    # CompareModels(filterInputs = 'VBF_jets_PF_VBF')
+    # CompareModels(filterInputs = 'PF_UE_charged_PF_UE_neutrals')
+    # CompareModels(filterInputs = 'VBF_jets_PF_UE_charged_PF_UE_neutrals')
+    # CompareModels(filterInputs = 'PF_VBF_PF_UE_charged_PF_UE_neutrals')
+    # CompareModels(filterInputs = 'VBF_jets_PF_VBF_PF_UE_charged_PF_UE_neutrals')
+    # CompareModels(filterInputs = 'VBF_jets_non_VBF_jets')
+    # CompareModels(filterInputs = 'eventCategory_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    # CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'eventCategory-3_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'eventCategory-2_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'eventCategory-1_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'eventCategory0_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'eventCategory1_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'eventCategory2_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory-3_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory-2_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory-1_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory0_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory1_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    CompareModels(filterInputs = 'VBF_jets_non_VBF_jets_eventCategory2_Zeppenfeld_energy_density_ratio_nonVBF_jets')
+    # CompareModels(filterInputs = 'all')
 
 if __name__ == '__main__':
     main()

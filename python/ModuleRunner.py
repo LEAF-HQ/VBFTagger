@@ -13,9 +13,9 @@ class ModuleRunner(VariablesBase):
         VariablesBase.__init__(self)
         self.years = years
         self.ModuleName = ModuleName
-        self.MRB = {}
-        for year in years:
-            self.MRB[year] = ModuleRunnerBase(year, ModuleName)
+        # self.MRB = {}
+        # for year in years:
+        #     self.MRB[year] = ModuleRunnerBase(year, ModuleName)
         self.ncores = 3
         print(self)
 

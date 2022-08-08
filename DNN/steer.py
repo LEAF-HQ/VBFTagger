@@ -62,21 +62,41 @@ def main():
         runLocal = True
         runLocal = False
         json_files = glob.glob('MyModels/*json')
+        json_files = ['MyModels/VBF_jets_train_with_weights_scale_xsec_0001.json',
+        'MyModels/VBF_jets_PF_VBF_train_with_weights_scale_xsec_0005.json',
+        'MyModels/VBF_jets_PF_VBF_PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0009.json',
+        'MyModels/VBF_jets_PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0007.json',
+        'MyModels/PF_VBF_train_with_weights_scale_xsec_0002.json',
+        'MyModels/PF_VBF_PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0008.json',
+        'MyModels/PF_UE_neutrals_train_with_weights_scale_xsec_0004.json',
+        'MyModels/PF_UE_charged_train_with_weights_scale_xsec_0003.json',
+        'MyModels/PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0006.json',
+        'MyModels/VBF_jets_non_VBF_jets_train_with_weights_scale_xsec_0010.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory-3_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0018.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory-2_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0019.json',
+        'MyModels/eventCategory_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0017.json',
+        'MyModels/eventCategory-3_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0011.json',
+        'MyModels/eventCategory2_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0016.json',
+        'MyModels/eventCategory-2_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0012.json',
+        'MyModels/eventCategory1_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0015.json',
+        'MyModels/eventCategory-1_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0013.json',
+        'MyModels/eventCategory0_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0014.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0024.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory2_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0023.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory1_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0022.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory-1_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0020.json',
+        'MyModels/VBF_jets_non_VBF_jets_eventCategory0_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0021.json',
+        'MyModels/all_train_with_weights_scale_xsec_0025.json']
+        # for f in json_files:
+        #     if not os.path.exists(f):
+        #         print f
+        #         sys.exit()
         # json_files = list(filter(lambda x: 'PF_noHiggs' in x or 'gen_non_higgs_decays' in x, json_files))
         # json_files = list(filter(lambda x: any([y in x for y in ['PF_noHiggs','gen_non_higgs_decays']]), json_files))
         # json_files = list(filter(lambda x: 'PF_noHiggs' in x, json_files))
         # json_files = list(filter(lambda x: 'gen_non_higgs_decays' in x, json_files))
-        # json_files = list(filter(lambda x: 'VBF_jets_train_with_weights_scale_xsec_0001' in x, json_files))
-        # json_files = list(filter(lambda x: 'PF_VBF_train_with_weights_scale_xsec_0002' in x, json_files))
-        # json_files = list(filter(lambda x: 'PF_UE_charged_train_with_weights_scale_xsec_0003' in x, json_files))
-        # json_files = list(filter(lambda x: 'PF_UE_neutrals_train_with_weights_scale_xsec_0004' in x, json_files))
-        # json_files = list(filter(lambda x: 'VBF_jets_PF_VBF_train_with_weights_scale_xsec_0005' in x, json_files))
-        # json_files = list(filter(lambda x: 'PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0006' in x, json_files))
-        # json_files = list(filter(lambda x: 'VBF_jets_PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0007' in x, json_files))
-        # json_files = list(filter(lambda x: 'PF_VBF_PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0008' in x, json_files))
-        # json_files = list(filter(lambda x: 'VBF_jets_PF_VBF_PF_UE_charged_PF_UE_neutrals_train_with_weights_scale_xsec_0009' in x, json_files))
+        # json_files = list(filter(lambda x: 'eventCategory-3_Zeppenfeld_energy_density_ratio_nonVBF_jets_train_with_weights_scale_xsec_0011' in x, json_files))
         print('Selected files: '+str(len(json_files)))
-        # sys.exit()
         if runLocal:
             for json_file in json_files:
                 OpenJsonAndRun(json_file)
@@ -118,11 +138,11 @@ def RunCommands(dnnparameters_):
     for year in years:
         Classifier = DNNRunner(dnnparameters=dnnparameters_, input_base_path=input_base_path, output_base_path=output_base_path, year=year, samples=samples, dtype=dtype)
         # Classifier.ConvertInputs()
-        # Classifier.Preprocess()
+        Classifier.Preprocess()
         # Classifier.PlotInputs()
-        Classifier.Train()
+        # Classifier.Train()
         # Classifier.UpdatePredictions()
-        Classifier.PlotPredictions()
+        # Classifier.PlotPredictions()
 
 if __name__ == '__main__':
     main()

@@ -57,6 +57,22 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
 
   int n_central_jets = 0;
 
+  int n_jets = event.jets_ak4chs->size();
+
+  if (n_jets==0) {
+    event.set_eventCategory(-2);
+    event.set_n_nonVBF_jets(0);
+    event.set_HT_nonVBF_jets(0);
+    return true;
+  } else if (n_jets==1) {
+    const Jet jet = (*event.jets_ak4chs).at(0);
+    event.set_eventCategory(-1);
+    event.set_n_nonVBF_jets(0);
+    event.set_HT_nonVBF_jets(jet.pt());
+    event.VBF_jets->push_back(jet);
+    return true;
+  }
+
   bool isSet = false;
   for(const Jet& jet1: *event.jets_ak4chs){
     if (jet1.pt()<min_jet_pt) continue;
@@ -79,7 +95,16 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
     if (isSet==true) break;
   }
 
-  if (!isSet) return false;
+  if (!isSet){
+    const Jet jet1 = (*event.jets_ak4chs).at(0);
+    const Jet jet2 = (*event.jets_ak4chs).at(1);
+    event.set_eventCategory(-3);
+    event.set_n_nonVBF_jets(0);
+    event.set_HT_nonVBF_jets(jet1.pt()+jet2.pt());
+    event.VBF_jets->push_back(jet1);
+    event.VBF_jets->push_back(jet2);
+    return true;
+  }
 
   event.set_eventCategory(n_central_jets);
 
@@ -239,11 +264,19 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   float n_UEout_charged = 0;
   float n_UEout_neutral = 0;
   Jet jet1 = event.VBF_jets->at(0);
-  Jet jet2 = event.VBF_jets->at(1);
-  float eta_min = std::min(jet1.eta(), jet2.eta());
-  float eta_max = std::max(jet1.eta(), jet2.eta());
-  float eta_avg = (eta_min+eta_max)/2;
-  float dEta_jets = deltaEta(jet1, jet2);
+  float eta_min = jet1.eta();
+  float eta_max = jet1.eta();
+  float eta_avg = jet1.eta();
+  float dEta_jets = 1;
+
+  Jet jet2;
+  if (event.VBF_jets->size()>1) {
+    jet2 = event.VBF_jets->at(1);
+    eta_min = std::min(jet1.eta(), jet2.eta());
+    eta_max = std::max(jet1.eta(), jet2.eta());
+    eta_avg = (eta_min+eta_max)/2;
+    dEta_jets = deltaEta(jet1, jet2);
+  }
 
   for(const PFCandidate& cand: *event.pfcands){
     if (cand.fromPV()!=3) continue;
@@ -255,7 +288,7 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     auto closest_lep = closestParticle(cand, *event.H_leptons);
     if (closest_lep != nullptr && deltaR(cand, *closest_lep)<0.4 && (FindInVector<int>({11,13,22}, fabs(cand.type()))>=0)) {
       event.PF_Higgs->push_back(cand);
-    } else if (deltaR(cand, jet1)<0.4 || deltaR(cand, jet2)<0.4) {
+    } else if (deltaR(cand, jet1)<0.4 || ((event.VBF_jets->size()>1)? deltaR(cand, jet2)<0.4 :0)) {
       event.PF_VBF->push_back(cand);
     } else {
       if (cand.charge()==0) {

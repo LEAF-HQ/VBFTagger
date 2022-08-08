@@ -20,11 +20,33 @@ class PreprocessInputs(PreprocessInputsBase):
         # self.scalers['standard'].fit(self.inputs['train'])
 
     def FilterInputs(self, df, filter_regex):
+        if filter_regex==['all'] or filter_regex==None:
+            return df
         if isinstance(filter_regex, list):
-            filter_regex = '|'.join(filter_regex)
+            filter_regex_ = list(filter_regex)
+            eventCategory = list(filter(lambda x: 'eventCategory' in x ,filter_regex_))
+            if len(eventCategory)>0:
+                for x in eventCategory:
+                    filter_regex_.remove(x)
+                filter_regex_.append('eventCategory')
+                eventCategory = [int(x.replace('eventCategory','')) for x in eventCategory if x!='eventCategory']
+                if len(eventCategory)==0:
+                    eventCategory = None
+            else:
+                eventCategory = None
+            filter_regex_ = '|'.join(filter_regex_)
+        else:
+            filter_regex_ = filter_regex
+            eventCategory = None
         weights = df.filter(regex=self.colname_weights)
         labels = df.filter(regex=self.colname_category)
-        df = df.filter(regex=filter_regex)
+        df = df.filter(regex=filter_regex_)
+        if eventCategory:
+            mask = ~df.eventCategory.isin(eventCategory)
+            weights = weights[mask]
+            labels = labels[mask]
+            df = df[mask]
+            df = df.drop(columns=['eventCategory'])
         # to_remove = [x for x in df.columns[:-1] if int(x.replace(filter_regex,'').split('_')[0])>100]
         # df = df.drop(columns=to_remove)
         return pd.concat([df, weights, labels], axis=1, join='inner')
