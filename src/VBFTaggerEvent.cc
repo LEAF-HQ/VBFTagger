@@ -55,6 +55,8 @@ VBFTaggerEvent::VBFTaggerEvent(){
   m_energy_density_ratio_neutral = -1;
   m_n_nonVBF_jets = -1;
   m_HT_nonVBF_jets = -1;
+  m_n_PF_jet1 = -1;
+  m_n_PF_jet2 = -1;
 }
 
 VBFTaggerEvent::~VBFTaggerEvent(){
@@ -133,6 +135,8 @@ void VBFTaggerEvent::clear(){
   m_energy_density_ratio_neutral = -1;
   m_n_nonVBF_jets = -1;
   m_HT_nonVBF_jets = -1;
+  m_n_PF_jet1 = -1;
+  m_n_PF_jet2 = -1;
 }
 
 void VBFTaggerEvent::reset(){
@@ -191,4 +195,6 @@ void VBFTaggerEvent::reset(){
   m_energy_density_ratio_neutral = -1;
   m_n_nonVBF_jets = -1;
   m_HT_nonVBF_jets = -1;
+  m_n_PF_jet1 = -1;
+  m_n_PF_jet2 = -1;
 }

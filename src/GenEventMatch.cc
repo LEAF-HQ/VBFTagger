@@ -224,13 +224,19 @@ bool GenEventMatch::process(VBFTaggerEvent& event) {
 
   DoDecayMatching(event);
   // return true;
+  unsigned int ngenjets = (*event.genjets).size();
   if(skipMotherMatching) {
+    if (ngenjets==0) return true;
+    else if (ngenjets==1) {
+      event.VBF_genjets->push_back((*event.genjets).at(0));
+      return true;
+    }
     int index_1 = 0;
     int index_2 = 1;
     bool found = false;
-    for(unsigned j_index1 = 0; j_index1 < (*event.genjets).size(); j_index1++ ) {
+    for(unsigned j_index1 = 0; j_index1 < ngenjets; j_index1++ ) {
       GenJet j1 = (*event.genjets).at(j_index1);
-      for(unsigned j_index2 = j_index1+1; j_index2 < (*event.genjets).size(); j_index2++ ) {
+      for(unsigned j_index2 = j_index1+1; j_index2 < ngenjets; j_index2++ ) {
         GenJet j2 = (*event.genjets).at(j_index2);
         if (deltaEta(j1,j2)<1.4) continue;
         TLorentzVector jj = j1.p4() + j2.p4();
@@ -249,13 +255,13 @@ bool GenEventMatch::process(VBFTaggerEvent& event) {
 
   std::vector<GenParticle> H_mothers_all = FindMothers(event, (*event.gen_higgs).at(0));
   std::vector<GenParticle> H_mothers;
-  // std::vector<bool> VBF_jets_to_use((*event.genjets).size(), false);
+  // std::vector<bool> VBF_jets_to_use(ngenjets, false);
 
   for(unsigned m_index = 0; m_index < H_mothers_all.size(); m_index++ ){
     auto m = H_mothers_all.at(m_index);
     if (!isHadronic(m.pdgid())) continue;
     float dr_min =100;  float deta_dr_min = 100; int jet_index = -1;
-    for(unsigned j_index = 0; j_index < (*event.genjets).size(); j_index++ ) {
+    for(unsigned j_index = 0; j_index < ngenjets; j_index++ ) {
       // if (VBF_jets_to_use.at(j_index)) continue;
       GenJet j = (*event.genjets).at(j_index);
       float dr = deltaR(j,m);
@@ -285,10 +291,10 @@ bool GenEventMatch::process(VBFTaggerEvent& event) {
   if ((*event.VBF_genjets).size()==1) {
     GenJet j0 = (*event.VBF_genjets).at(0);
     int index_to_add = -1; float dr_min = 100;
-    for(unsigned j_index = 0; j_index < (*event.genjets).size(); j_index++ ) {
+    for(unsigned j_index = 0; j_index < ngenjets; j_index++ ) {
       GenJet j = (*event.genjets).at(j_index);
       if (j.pt()==j0.pt() && j.eta()==j0.eta() && j.phi()==j0.phi()) continue;
-      for(unsigned jj_index = j_index+1; jj_index < (*event.genjets).size(); jj_index++ ) {
+      for(unsigned jj_index = j_index+1; jj_index < ngenjets; jj_index++ ) {
         GenJet jj = (*event.genjets).at(jj_index);
         if (jj.pt()==j0.pt() && jj.eta()==j0.eta() && jj.phi()==j0.phi()) continue;
         TLorentzVector jjj = j.p4() + jj.p4();

@@ -75,10 +75,7 @@ private:
   unique_ptr<PFCandCleaner> pfcand_cleaner;
 
   unique_ptr<Higgs4LeptonsFinder> Higgs4Leptons_finder;
-
-  unique_ptr<VBFJetDefinition> VBFJet_definition_low_pt;
   unique_ptr<VBFJetDefinition> VBFJet_definition;
-
   unique_ptr<PFUESelector> PFUE_selector;
 
   // Selections used in the analysis
@@ -210,6 +207,7 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   tau_cleaner.reset(new TauCleaner(tau_id));
 
   MultiID<Jet> jet_id = {PtEtaId(20, 5.2), JetID(JetID::WP_TIGHT), JetPUID(JetPUID::WP_TIGHT), JetLeptonOverlapID(0.4)};
+  // MultiID<Jet> jet_id = {PtEtaId(20, 5.2), JetID(JetID::WP_TIGHT), JetLeptonOverlapID(0.4)};
   jet_cleaner.reset(new JetCleaner(jet_id));
 
   MultiID<PFCandidate> pfcand_id = {PtEtaId(0.2, 5.2)};
@@ -220,12 +218,8 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
   ntaus_selection.reset(new NTauSelection(cfg, -1, 0));
   nogentau_selection.reset(new NoGenTauSelection(cfg));
 
-
   Higgs4Leptons_finder.reset(new Higgs4LeptonsFinder(cfg));
-
-  VBFJet_definition_low_pt.reset(new VBFJetDefinition(cfg, 20));
-  VBFJet_definition.reset(new VBFJetDefinition(cfg, 50));
-
+  VBFJet_definition.reset(new VBFJetDefinition(cfg, 20));
   PFUE_selector.reset(new PFUESelector(cfg));
 
   book_histograms();
@@ -265,7 +259,7 @@ void PFStudiesTool::clean_objects(){
 }
 
 bool PFStudiesTool::select_Nobjects(){
-  if (event->genjets->size()<2) return false;
+  // if (event->genjets->size()<2) return false;
   if(!njets_selection->passes(*event)) return false;
   return true;
 }
@@ -285,10 +279,10 @@ bool PFStudiesTool::Process(){
   if(!nogentau_selection->passes(*event)) return false;
   fill_histograms("nogentau_Selection");
 
-  if (!select_Nobjects()) return false;
-  fill_histograms("NObject_Selection");
+  // if (!select_Nobjects()) return false;
+  // fill_histograms("NObject_Selection");
   genEvent_match->process(*event);
-  if(!genLeptonPhaseSpace_selection->passes(*event)) return false;
+  // if(!genLeptonPhaseSpace_selection->passes(*event)) return false;
   fill_histograms("phasespace_Selection");
 
   bool pass_H4l = Higgs4Leptons_finder->process(*event);
@@ -296,12 +290,9 @@ bool PFStudiesTool::Process(){
   if(!pass_H4l) return false;
   fill_histograms("Higgs4Leptons_Selection");
 
-  bool pass_definition = VBFJet_definition_low_pt->process(*event);
+  bool pass_definition = VBFJet_definition->process(*event);
   fill_histograms("VBF_Selection");
   if(!pass_definition) return false;
-
-  // pass_definition = VBFJet_definition->process(*event);
-  // if(!pass_definition) return false;
 
   PFUE_selector->process(*event);
   // fill one set of histograms called "nominal", which is necessary for PostAnalyzer scripts

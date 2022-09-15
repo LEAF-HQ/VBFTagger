@@ -73,8 +73,6 @@ void GenLevelStudiesJetsHists::fill(const RecoEvent & event){
   // looping over all jets from the event
   for(size_t i=0; i<event.genjets->size(); i++){
     GenJet j = event.genjets->at(i);
-    cout <<"loop over jets "<<"size: "<<event.genjets->size()<< "   i: "<<i <<endl;
-
     ht += j.pt();
 
     // njet += 1 if pt > treshold

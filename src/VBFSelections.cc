@@ -55,12 +55,9 @@ VBFJetDefinition::VBFJetDefinition(const Config& cfg, const float& min_jet_pt_):
 
 bool VBFJetDefinition::process(VBFTaggerEvent& event) {
 
-  int n_central_jets = 0;
-
   int n_jets = event.jets_ak4chs->size();
-
   if (n_jets==0) {
-    event.set_eventCategory(-2);
+    event.set_eventCategory(-3);
     event.set_n_nonVBF_jets(0);
     event.set_HT_nonVBF_jets(0);
     return true;
@@ -73,6 +70,8 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
     return true;
   }
 
+  // now there are events with at least 2 jets
+  int n_central_jets = 0;
   bool isSet = false;
   for(const Jet& jet1: *event.jets_ak4chs){
     if (jet1.pt()<min_jet_pt) continue;
@@ -85,31 +84,24 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
       if (jj.M()<200) continue;
       event.VBF_jets->push_back(jet1);
       event.VBF_jets->push_back(jet2);
-
       if (fabs(jet1.eta())<2.4) n_central_jets += 1;
       if (fabs(jet2.eta())<2.4) n_central_jets += 1;
-
       isSet=true;
       break;
     }
     if (isSet==true) break;
   }
 
-  if (!isSet){
+  if (isSet) event.set_eventCategory(n_central_jets);
+  else {
+    event.set_eventCategory(-2);
     const Jet jet1 = (*event.jets_ak4chs).at(0);
     const Jet jet2 = (*event.jets_ak4chs).at(1);
-    event.set_eventCategory(-3);
-    event.set_n_nonVBF_jets(0);
-    event.set_HT_nonVBF_jets(jet1.pt()+jet2.pt());
     event.VBF_jets->push_back(jet1);
     event.VBF_jets->push_back(jet2);
-    return true;
   }
 
-  event.set_eventCategory(n_central_jets);
-
   float HT_nonVBF_jets = 0;
-
   for(const Jet& jet: *event.jets_ak4chs){
     if(event.VBF_jets->at(0).identifier() == jet.identifier()) continue;
     if(event.VBF_jets->at(1).identifier() == jet.identifier()) continue;
@@ -263,13 +255,17 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   float n_UEin_neutral = 0;
   float n_UEout_charged = 0;
   float n_UEout_neutral = 0;
-  Jet jet1 = event.VBF_jets->at(0);
-  float eta_min = jet1.eta();
-  float eta_max = jet1.eta();
-  float eta_avg = jet1.eta();
+  Jet jet1; Jet jet2;
+  float eta_min = 0; float eta_max = 0; float eta_avg = 0;
   float dEta_jets = 1;
 
-  Jet jet2;
+  if (event.VBF_jets->size()>0) {
+    jet1 = event.VBF_jets->at(0);
+    eta_min = jet1.eta();
+    eta_max = jet1.eta();
+    eta_avg = jet1.eta();
+    dEta_jets = 1;
+  }
   if (event.VBF_jets->size()>1) {
     jet2 = event.VBF_jets->at(1);
     eta_min = std::min(jet1.eta(), jet2.eta());
@@ -278,6 +274,8 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     dEta_jets = deltaEta(jet1, jet2);
   }
 
+  vector<PFCandidate> PF_VBF_1;
+  vector<PFCandidate> PF_VBF_2;
   for(const PFCandidate& cand: *event.pfcands){
     if (cand.fromPV()!=3) continue;
     bool is_within;
@@ -289,7 +287,8 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     if (closest_lep != nullptr && deltaR(cand, *closest_lep)<0.4 && (FindInVector<int>({11,13,22}, fabs(cand.type()))>=0)) {
       event.PF_Higgs->push_back(cand);
     } else if (deltaR(cand, jet1)<0.4 || ((event.VBF_jets->size()>1)? deltaR(cand, jet2)<0.4 :0)) {
-      event.PF_VBF->push_back(cand);
+      if (deltaR(cand, jet1)<0.4) PF_VBF_1.push_back(cand);
+      else PF_VBF_2.push_back(cand);
     } else {
       if (cand.charge()==0) {
         float cand_pt = cand.pt();
@@ -309,11 +308,33 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
       }
     }
   }
-  sort_by_pt<PFCandidate>(*event.PF_Higgs);
-  sort_by_pt<PFCandidate>(*event.PF_VBF);
-  sort_by_pt<PFCandidate>(*event.PF_UE_neutrals);
-  sort_by_pt<PFCandidate>(*event.PF_UE_charged);
 
+  sort_by_pt<PFCandidate>(PF_VBF_1);
+  sort_by_pt<PFCandidate>(PF_VBF_2);
+  sort_by_pt<PFCandidate>(*event.PF_Higgs);
+  sort_by_eta<PFCandidate>(*event.PF_UE_neutrals);
+  sort_by_eta<PFCandidate>(*event.PF_UE_charged);
+
+  PFCandidate dummy_PF; dummy_PF.set_pt(0); dummy_PF.set_eta(0); dummy_PF.set_phi(0); dummy_PF.set_m(0);
+
+  int max_n_PF_per_jet = 30;
+  int count = 0;
+  for(const PFCandidate& cand: PF_VBF_1) {
+    if (count>=max_n_PF_per_jet) break;
+    event.PF_VBF->push_back(cand);
+    count++;
+  }
+  while (count < max_n_PF_per_jet) {event.PF_VBF->push_back(dummy_PF);count++;}
+  count = 0;
+  for(const PFCandidate& cand: PF_VBF_2) {
+    if (count>=max_n_PF_per_jet) break;
+    event.PF_VBF->push_back(cand);
+    count++;
+  }
+  while (count < max_n_PF_per_jet) {event.PF_VBF->push_back(dummy_PF);count++;}
+
+  event.set_n_PF_jet1(PF_VBF_1.size());
+  event.set_n_PF_jet2(PF_VBF_2.size());
   event.set_PF_Higgs_size(event.PF_Higgs->size());
   event.set_PF_VBF_size(event.PF_VBF->size());
   event.set_PF_UE_neutrals_size(event.PF_UE_neutrals->size());

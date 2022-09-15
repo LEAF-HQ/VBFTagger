@@ -44,6 +44,8 @@ public:
   float energy_density_ratio_neutral() const { return m_energy_density_ratio_neutral;}
   int n_nonVBF_jets() const { return m_n_nonVBF_jets;}
   float HT_nonVBF_jets() const { return m_HT_nonVBF_jets;}
+  int n_PF_jet1() const { return m_n_PF_jet1;}
+  int n_PF_jet2() const { return m_n_PF_jet2;}
 
   void set_identifier_VBFgenparticle1(int x) { m_identifier_VBFgenparticle1 = x;}
   void set_identifier_VBFgenparticle2(int x) { m_identifier_VBFgenparticle2 = x;}
@@ -66,6 +68,8 @@ public:
   void set_energy_density_ratio_neutral(float x) { m_energy_density_ratio_neutral = x;}
   void set_n_nonVBF_jets(int x) { m_n_nonVBF_jets = x;}
   void set_HT_nonVBF_jets(float x) { m_HT_nonVBF_jets = x;}
+  void set_n_PF_jet1(int x) { m_n_PF_jet1 = x;}
+  void set_n_PF_jet2(int x) { m_n_PF_jet2 = x;}
 
   vector<GenParticle>* gen_higgs;
   vector<GenParticle>* gen_higgs_Z;
@@ -105,5 +109,7 @@ protected:
   float m_energy_density_ratio_neutral;
   int m_n_nonVBF_jets;
   float m_HT_nonVBF_jets;
+  int m_n_PF_jet1;
+  int m_n_PF_jet2;
 
 };

@@ -4,7 +4,10 @@ from ModuleRunner import ModuleRunner
 def main():
 
     years = ['UL16postVFP', 'UL17', 'UL18']
+    # years = ['UL16postVFP', 'UL17']
+    # years = ['UL16postVFP']
     # years = ['UL17']
+    # years = ['UL18']
 
     ModuleName = 'GenLevelStudies'
     ModuleName = 'PFStudies'
