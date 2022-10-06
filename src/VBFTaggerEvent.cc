@@ -57,6 +57,27 @@ VBFTaggerEvent::VBFTaggerEvent(){
   m_HT_nonVBF_jets = -1;
   m_n_PF_jet1 = -1;
   m_n_PF_jet2 = -1;
+
+  m_is_VBF = -1;
+  PF_pt = new vector<double>;
+  PF_eta = new vector<double>;
+  PF_phi = new vector<double>;
+  PF_energy = new vector<double>;
+  PF_pdgid = new vector<double>;
+  PF_charge = new vector<double>;
+  PF_puppiweight = new vector<double>;
+  VBFjet_pt = new vector<double>;
+  VBFjet_eta = new vector<double>;
+  VBFjet_phi = new vector<double>;
+  VBFjet_energy = new vector<double>;
+  VBFjet_score_qgl = new vector<double>;
+  VBFjet_n_constituents = new vector<double>;
+  nonVBFjet_pt = new vector<double>;
+  nonVBFjet_eta = new vector<double>;
+  nonVBFjet_phi = new vector<double>;
+  nonVBFjet_energy = new vector<double>;
+  nonVBFjet_score_qgl = new vector<double>;
+  nonVBFjet_n_constituents = new vector<double>;
 }
 
 VBFTaggerEvent::~VBFTaggerEvent(){
@@ -77,6 +98,26 @@ VBFTaggerEvent::~VBFTaggerEvent(){
   delete PF_VBF;
   delete PF_UE_charged;
   delete PF_UE_neutrals;
+
+  delete PF_pt;
+  delete PF_eta;
+  delete PF_phi;
+  delete PF_energy;
+  delete PF_pdgid;
+  delete PF_charge;
+  delete PF_puppiweight;
+  delete VBFjet_pt;
+  delete VBFjet_eta;
+  delete VBFjet_phi;
+  delete VBFjet_energy;
+  delete VBFjet_score_qgl;
+  delete VBFjet_n_constituents;
+  delete nonVBFjet_pt;
+  delete nonVBFjet_eta;
+  delete nonVBFjet_phi;
+  delete nonVBFjet_energy;
+  delete nonVBFjet_score_qgl;
+  delete nonVBFjet_n_constituents;
 }
 
 void VBFTaggerEvent::clear(){
@@ -98,6 +139,25 @@ void VBFTaggerEvent::clear(){
   delete PF_VBF;
   delete PF_UE_charged;
   delete PF_UE_neutrals;
+  delete PF_pt;
+  delete PF_eta;
+  delete PF_phi;
+  delete PF_energy;
+  delete PF_pdgid;
+  delete PF_charge;
+  delete PF_puppiweight;
+  delete VBFjet_pt;
+  delete VBFjet_eta;
+  delete VBFjet_phi;
+  delete VBFjet_energy;
+  delete VBFjet_score_qgl;
+  delete VBFjet_n_constituents;
+  delete nonVBFjet_pt;
+  delete nonVBFjet_eta;
+  delete nonVBFjet_phi;
+  delete nonVBFjet_energy;
+  delete nonVBFjet_score_qgl;
+  delete nonVBFjet_n_constituents;
   gen_higgs = 0;
   gen_higgs_Z = 0;
   gen_higgs_leptons = 0;
@@ -137,6 +197,27 @@ void VBFTaggerEvent::clear(){
   m_HT_nonVBF_jets = -1;
   m_n_PF_jet1 = -1;
   m_n_PF_jet2 = -1;
+
+  m_is_VBF = -1;
+  PF_pt = new vector<double>;
+  PF_eta = new vector<double>;
+  PF_phi = new vector<double>;
+  PF_energy = new vector<double>;
+  PF_pdgid = new vector<double>;
+  PF_charge = new vector<double>;
+  PF_puppiweight = new vector<double>;
+  VBFjet_pt = new vector<double>;
+  VBFjet_eta = new vector<double>;
+  VBFjet_phi = new vector<double>;
+  VBFjet_energy = new vector<double>;
+  VBFjet_score_qgl = new vector<double>;
+  VBFjet_n_constituents = new vector<double>;
+  nonVBFjet_pt = new vector<double>;
+  nonVBFjet_eta = new vector<double>;
+  nonVBFjet_phi = new vector<double>;
+  nonVBFjet_energy = new vector<double>;
+  nonVBFjet_score_qgl = new vector<double>;
+  nonVBFjet_n_constituents = new vector<double>;
 }
 
 void VBFTaggerEvent::reset(){
@@ -158,6 +239,25 @@ void VBFTaggerEvent::reset(){
   delete PF_VBF;
   delete PF_UE_charged;
   delete PF_UE_neutrals;
+  delete PF_pt;
+  delete PF_eta;
+  delete PF_phi;
+  delete PF_energy;
+  delete PF_pdgid;
+  delete PF_charge;
+  delete PF_puppiweight;
+  delete VBFjet_pt;
+  delete VBFjet_eta;
+  delete VBFjet_phi;
+  delete VBFjet_energy;
+  delete VBFjet_score_qgl;
+  delete VBFjet_n_constituents;
+  delete nonVBFjet_pt;
+  delete nonVBFjet_eta;
+  delete nonVBFjet_phi;
+  delete nonVBFjet_energy;
+  delete nonVBFjet_score_qgl;
+  delete nonVBFjet_n_constituents;
   gen_higgs = new vector<GenParticle>;
   gen_higgs_Z = new vector<GenParticle>;
   gen_higgs_leptons = new vector<GenParticle>;
@@ -197,4 +297,26 @@ void VBFTaggerEvent::reset(){
   m_HT_nonVBF_jets = -1;
   m_n_PF_jet1 = -1;
   m_n_PF_jet2 = -1;
+
+  m_is_VBF = -1;
+
+  PF_pt = new vector<double>;
+  PF_eta = new vector<double>;
+  PF_phi = new vector<double>;
+  PF_energy = new vector<double>;
+  PF_pdgid = new vector<double>;
+  PF_charge = new vector<double>;
+  PF_puppiweight = new vector<double>;
+  VBFjet_pt = new vector<double>;
+  VBFjet_eta = new vector<double>;
+  VBFjet_phi = new vector<double>;
+  VBFjet_energy = new vector<double>;
+  VBFjet_score_qgl = new vector<double>;
+  VBFjet_n_constituents = new vector<double>;
+  nonVBFjet_pt = new vector<double>;
+  nonVBFjet_eta = new vector<double>;
+  nonVBFjet_phi = new vector<double>;
+  nonVBFjet_energy = new vector<double>;
+  nonVBFjet_score_qgl = new vector<double>;
+  nonVBFjet_n_constituents = new vector<double>;
 }

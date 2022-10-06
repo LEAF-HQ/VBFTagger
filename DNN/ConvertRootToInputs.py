@@ -35,7 +35,7 @@ class ConvertRootToInputs(ConvertRootToInputsBase):
             self.col_names.append('%s' % (pfName+'_size'))
         for pfName in ['eventCategory','Zeppenfeld','Zeppenfeld_charged','Zeppenfeld_neutral',
                        'energy_density_ratio','energy_density_ratio_charged','energy_density_ratio_neutral',
-                       'n_nonVBF_jets','HT_nonVBF_jets']:
+                       'n_nonVBF_jets','HT_nonVBF_jets','n_PF_jet1','n_PF_jet2']:
             self.var_names.append('Events.m_%s' % (pfName))
             self.col_names.append('%s' % (pfName))
         return (self.var_names,self.col_names)

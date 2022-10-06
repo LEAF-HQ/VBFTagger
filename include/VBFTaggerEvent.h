@@ -47,6 +47,10 @@ public:
   int n_PF_jet1() const { return m_n_PF_jet1;}
   int n_PF_jet2() const { return m_n_PF_jet2;}
 
+  int is_VBF() const { return m_is_VBF;}
+
+
+
   void set_identifier_VBFgenparticle1(int x) { m_identifier_VBFgenparticle1 = x;}
   void set_identifier_VBFgenparticle2(int x) { m_identifier_VBFgenparticle2 = x;}
   void set_gen_higgs_decay(Decay x) { m_gen_higgs_decay = x;}
@@ -71,6 +75,8 @@ public:
   void set_n_PF_jet1(int x) { m_n_PF_jet1 = x;}
   void set_n_PF_jet2(int x) { m_n_PF_jet2 = x;}
 
+  void set_is_VBF(int x) { m_is_VBF = x;}
+
   vector<GenParticle>* gen_higgs;
   vector<GenParticle>* gen_higgs_Z;
   vector<GenParticle>* gen_higgs_leptons;
@@ -89,6 +95,25 @@ public:
   vector<PFCandidate>* PF_VBF;
   vector<PFCandidate>* PF_UE_charged;
   vector<PFCandidate>* PF_UE_neutrals;
+  vector<double>* PF_pt;
+  vector<double>* PF_eta;
+  vector<double>* PF_phi;
+  vector<double>* PF_energy;
+  vector<double>* PF_pdgid;
+  vector<double>* PF_charge;
+  vector<double>* PF_puppiweight;
+  vector<double>* VBFjet_pt;
+  vector<double>* VBFjet_eta;
+  vector<double>* VBFjet_phi;
+  vector<double>* VBFjet_energy;
+  vector<double>* VBFjet_score_qgl;
+  vector<double>* VBFjet_n_constituents;
+  vector<double>* nonVBFjet_pt;
+  vector<double>* nonVBFjet_eta;
+  vector<double>* nonVBFjet_phi;
+  vector<double>* nonVBFjet_energy;
+  vector<double>* nonVBFjet_score_qgl;
+  vector<double>* nonVBFjet_n_constituents;
 
 protected:
   int m_identifier_VBFgenparticle1;
@@ -111,5 +136,7 @@ protected:
   float m_HT_nonVBF_jets;
   int m_n_PF_jet1;
   int m_n_PF_jet2;
+
+  int m_is_VBF;
 
 };

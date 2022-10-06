@@ -52,6 +52,8 @@ public:
 private:
   VBFTaggerEvent* event;
 
+  bool is_VBF;
+
   string NameTool = "GenLevelStudiesTool";
   vector<string> histogram_tags = {"input", "weights", "notau_Selection", "nogentau_Selection",
   "NObject_Selection", "phasespace_Selection", "Higgs4LeptonsReco", "Higgs4Leptons_Selection",
@@ -224,6 +226,8 @@ PFStudiesTool::PFStudiesTool(const Config & cfg) : BaseTool(cfg){
 
   book_histograms();
   PrintInputs();
+
+  is_VBF = FindInString("VBF",cfg.dataset_name().Data());
 }
 
 void PFStudiesTool::study_LeptonID(){
@@ -265,6 +269,8 @@ bool PFStudiesTool::select_Nobjects(){
 }
 
 bool PFStudiesTool::Process(){
+
+  event->set_is_VBF(is_VBF?1:0);
 
   sort_objects();
   // study_LeptonID();

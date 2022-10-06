@@ -315,6 +315,36 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   sort_by_eta<PFCandidate>(*event.PF_UE_neutrals);
   sort_by_eta<PFCandidate>(*event.PF_UE_charged);
 
+  for(const PFCandidate& cand: *event.pfcands){
+    auto lep = closestParticle(cand, *event.H_leptons);
+    if (lep != nullptr && deltaR(cand, *lep)<0.4 && (FindInVector<int>({11,13,22}, fabs(cand.type()))>=0)) continue;
+    event.PF_pt->push_back(cand.pt());
+    event.PF_eta->push_back(cand.eta());
+    event.PF_phi->push_back(cand.phi());
+    event.PF_energy->push_back(cand.e());
+    event.PF_pdgid->push_back(cand.pdgid());
+    event.PF_charge->push_back(cand.charge());
+    event.PF_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const Jet& jet: *event.VBF_jets){
+    event.VBFjet_pt->push_back(jet.pt());
+    event.VBFjet_eta->push_back(jet.eta());
+    event.VBFjet_phi->push_back(jet.phi());
+    event.VBFjet_energy->push_back(jet.e());
+    event.VBFjet_score_qgl->push_back(jet.score_qgl());
+    event.VBFjet_n_constituents->push_back(jet.n_constituents());
+  }
+
+  for(const Jet& jet: *event.non_VBF_jets){
+    event.nonVBFjet_pt->push_back(jet.pt());
+    event.nonVBFjet_eta->push_back(jet.eta());
+    event.nonVBFjet_phi->push_back(jet.phi());
+    event.nonVBFjet_energy->push_back(jet.e());
+    event.nonVBFjet_score_qgl->push_back(jet.score_qgl());
+    event.nonVBFjet_n_constituents->push_back(jet.n_constituents());
+  }
+
   PFCandidate dummy_PF; dummy_PF.set_pt(0); dummy_PF.set_eta(0); dummy_PF.set_phi(0); dummy_PF.set_m(0);
 
   int max_n_PF_per_jet = 30;
