@@ -296,7 +296,7 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
         if (cand_id == 22 && cand_pt<1) continue;
         if ((cand_id==0 || cand_id==1 ||cand_id==2 ||cand_id==130) && cand_pt<3) continue;
         if (cand_id==11 || cand_id==13 || cand_id==211) throw std::runtime_error("Neutral PF identified as e/mu/ch: "+to_string(cand_id));
-        event.PF_UE_neutrals->push_back(cand);
+        event.PF_UE_neutral->push_back(cand);
         Zeppenfeld_neutral += fabs(cand.eta()-eta_avg)/dEta_jets;
         if (is_within) n_UEin_neutral += 1;
         else n_UEout_neutral += 1;
@@ -312,38 +312,9 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   sort_by_pt<PFCandidate>(PF_VBF_1);
   sort_by_pt<PFCandidate>(PF_VBF_2);
   sort_by_pt<PFCandidate>(*event.PF_Higgs);
-  sort_by_eta<PFCandidate>(*event.PF_UE_neutrals);
+  sort_by_eta<PFCandidate>(*event.PF_UE_neutral);
   sort_by_eta<PFCandidate>(*event.PF_UE_charged);
 
-  for(const PFCandidate& cand: *event.pfcands){
-    auto lep = closestParticle(cand, *event.H_leptons);
-    if (lep != nullptr && deltaR(cand, *lep)<0.4 && (FindInVector<int>({11,13,22}, fabs(cand.type()))>=0)) continue;
-    event.PF_pt->push_back(cand.pt());
-    event.PF_eta->push_back(cand.eta());
-    event.PF_phi->push_back(cand.phi());
-    event.PF_energy->push_back(cand.e());
-    event.PF_pdgid->push_back(cand.pdgid());
-    event.PF_charge->push_back(cand.charge());
-    event.PF_puppiweight->push_back(cand.puppiweight());
-  }
-
-  for(const Jet& jet: *event.VBF_jets){
-    event.VBFjet_pt->push_back(jet.pt());
-    event.VBFjet_eta->push_back(jet.eta());
-    event.VBFjet_phi->push_back(jet.phi());
-    event.VBFjet_energy->push_back(jet.e());
-    event.VBFjet_score_qgl->push_back(jet.score_qgl());
-    event.VBFjet_n_constituents->push_back(jet.n_constituents());
-  }
-
-  for(const Jet& jet: *event.non_VBF_jets){
-    event.nonVBFjet_pt->push_back(jet.pt());
-    event.nonVBFjet_eta->push_back(jet.eta());
-    event.nonVBFjet_phi->push_back(jet.phi());
-    event.nonVBFjet_energy->push_back(jet.e());
-    event.nonVBFjet_score_qgl->push_back(jet.score_qgl());
-    event.nonVBFjet_n_constituents->push_back(jet.n_constituents());
-  }
 
   PFCandidate dummy_PF; dummy_PF.set_pt(0); dummy_PF.set_eta(0); dummy_PF.set_phi(0); dummy_PF.set_m(0);
 
@@ -363,12 +334,74 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   }
   while (count < max_n_PF_per_jet) {event.PF_VBF->push_back(dummy_PF);count++;}
 
+
   event.set_n_PF_jet1(PF_VBF_1.size());
   event.set_n_PF_jet2(PF_VBF_2.size());
   event.set_PF_Higgs_size(event.PF_Higgs->size());
   event.set_PF_VBF_size(event.PF_VBF->size());
-  event.set_PF_UE_neutrals_size(event.PF_UE_neutrals->size());
+  event.set_PF_UE_neutral_size(event.PF_UE_neutral->size());
   event.set_PF_UE_charged_size(event.PF_UE_charged->size());
+
+
+
+  for(const Jet& jet: *event.VBF_jets){
+    event.VBFjet_pt->push_back(jet.pt());
+    event.VBFjet_eta->push_back(jet.eta());
+    event.VBFjet_phi->push_back(jet.phi());
+    event.VBFjet_energy->push_back(jet.e());
+    event.VBFjet_score_qgl->push_back(jet.score_qgl());
+    event.VBFjet_n_constituents->push_back(jet.n_constituents());
+  }
+
+  for(const Jet& jet: *event.non_VBF_jets){
+    event.nonVBFjet_pt->push_back(jet.pt());
+    event.nonVBFjet_eta->push_back(jet.eta());
+    event.nonVBFjet_phi->push_back(jet.phi());
+    event.nonVBFjet_energy->push_back(jet.e());
+    event.nonVBFjet_score_qgl->push_back(jet.score_qgl());
+    event.nonVBFjet_n_constituents->push_back(jet.n_constituents());
+  }
+
+  for(const PFCandidate& cand: PF_VBF_1){
+    event.PF_VBF1_pt->push_back(cand.pt());
+    event.PF_VBF1_eta->push_back(cand.eta());
+    event.PF_VBF1_phi->push_back(cand.phi());
+    event.PF_VBF1_energy->push_back(cand.e());
+    event.PF_VBF1_pdgid->push_back(cand.pdgid());
+    event.PF_VBF1_charge->push_back(cand.charge());
+    event.PF_VBF1_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: PF_VBF_2){
+    event.PF_VBF2_pt->push_back(cand.pt());
+    event.PF_VBF2_eta->push_back(cand.eta());
+    event.PF_VBF2_phi->push_back(cand.phi());
+    event.PF_VBF2_energy->push_back(cand.e());
+    event.PF_VBF2_pdgid->push_back(cand.pdgid());
+    event.PF_VBF2_charge->push_back(cand.charge());
+    event.PF_VBF2_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: *event.PF_UE_neutral){
+    event.PF_UE_neutral_pt->push_back(cand.pt());
+    event.PF_UE_neutral_eta->push_back(cand.eta());
+    event.PF_UE_neutral_phi->push_back(cand.phi());
+    event.PF_UE_neutral_energy->push_back(cand.e());
+    event.PF_UE_neutral_pdgid->push_back(cand.pdgid());
+    event.PF_UE_neutral_charge->push_back(cand.charge());
+    event.PF_UE_neutral_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: *event.PF_UE_charged){
+    event.PF_UE_charged_pt->push_back(cand.pt());
+    event.PF_UE_charged_eta->push_back(cand.eta());
+    event.PF_UE_charged_phi->push_back(cand.phi());
+    event.PF_UE_charged_energy->push_back(cand.e());
+    event.PF_UE_charged_pdgid->push_back(cand.pdgid());
+    event.PF_UE_charged_charge->push_back(cand.charge());
+    event.PF_UE_charged_puppiweight->push_back(cand.puppiweight());
+  }
+
 
 
   event.set_Zeppenfeld(Zeppenfeld_charged+Zeppenfeld_neutral);

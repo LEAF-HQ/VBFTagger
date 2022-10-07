@@ -19,7 +19,7 @@ VBFEventHists::VBFEventHists(TString dir_, TString selection_) : BaseHists(dir_)
   book<TH1F>("number_PF_Higgs",   ";# of PF from Higgs; Events / bin", 101,      -0.5,   100);
   book<TH1F>("number_PF_VBF",     ";# of PF from VBF-like jets; Events / bin", 101,-0.5, 100);
   book<TH1F>("number_PF_UE_charged",  ";# of PF from UE (ch); Events / bin",101, -0.5,   100);
-  book<TH1F>("number_PF_UE_neutrals", ";# of PF from UE (neu); Events / bin",101,-0.5,   100);
+  book<TH1F>("number_PF_UE_neutral", ";# of PF from UE (neu); Events / bin",101,-0.5,   100);
 
   for (const TString& name: {"H", "Z1", "Z2"}){
     book<TH1F>(name+"_pt",       ";#p_{T, "+name+"}; Events / bin",    100,      0.,    500);
@@ -88,7 +88,7 @@ void VBFEventHists::fill(const VBFTaggerEvent & event){
   hist<TH1F>("number_PF_Higgs")->Fill((float)event.PF_Higgs_size(), weight);
   hist<TH1F>("number_PF_VBF")->Fill((float)event.PF_VBF_size(), weight);
   hist<TH1F>("number_PF_UE_charged")->Fill((float)event.PF_UE_charged_size(), weight);
-  hist<TH1F>("number_PF_UE_neutrals")->Fill((float)event.PF_UE_neutrals_size(), weight);
+  hist<TH1F>("number_PF_UE_neutral")->Fill((float)event.PF_UE_neutral_size(), weight);
 
   for(unsigned int i=0; i<((*event.reco_Z_bosons).size()+(*event.reco_H_bosons).size()); i++){
     TLorentzVector boson;

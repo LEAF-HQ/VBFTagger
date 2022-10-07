@@ -35,10 +35,10 @@ def Run(arglist, command, ncores, debug):
     print(green('  --> Done'))
 
 
-def Filtering_Original(file_list, outdir, selection, command, ncores, debug):
+def Filtering_Original(file_list, outdir, command, ncores, debug):
     arglist = []
     for input_name in file_list:
-        arglist.append({'input_name':input_name, 'output_name':outdir+'/'+input_name.split('/')[-1], 'selection': selection})
+        arglist.append({'input_name':input_name, 'output_name':outdir+'/'+input_name.split('/')[-1]})
     print(blue('  --> Filtering '+str(len(arglist))+' original files ...'))
     Run(arglist, command, ncores, debug)
 
@@ -67,7 +67,7 @@ def main(command, ncores=8, debug=False):
         os.system('mkdir -p '+output_dir+dir)
 
     orignal_merged_files_list = sorted(glob.glob(input_dir+'/UL1*/PFStudies/*root'))
-    # Filtering_Original(file_list=orignal_merged_files_list, outdir=output_dir+'all', selection=None, command=command, ncores=ncores, debug=debug)
+    # Filtering_Original(file_list=orignal_merged_files_list, outdir=output_dir+'all', command=command, ncores=ncores, debug=debug)
 
     file_list = sorted(glob.glob(output_dir+'all/*root'))
     # Filtering_Categories(file_list=file_list, dirs=dirs, outdir=output_dir, command=command, ncores=ncores, debug=debug)
@@ -78,7 +78,7 @@ def main(command, ncores=8, debug=False):
 
 if __name__ == '__main__':
     debug=False
-    # debug=True
+    debug=True
     ncores=4
     command='MultiProcess'
     command='parallelize'

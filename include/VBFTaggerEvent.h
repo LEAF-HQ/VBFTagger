@@ -20,8 +20,13 @@ public:
   ~VBFTaggerEvent();
 
   void clear();
-
   void reset();
+
+  void DeleteVectorsVBFTaggerEvent();
+  void SetZeroVectorsVBFTaggerEvent();
+  void SetNewVectors();
+  void SetNewNonVectors();
+
 
   int identifier_VBFgenparticle1() const { return m_identifier_VBFgenparticle1;}
   int identifier_VBFgenparticle2() const { return m_identifier_VBFgenparticle2;}
@@ -33,21 +38,20 @@ public:
   int PF_Higgs_size() const { return m_PF_Higgs_size;}
   int PF_VBF_size() const { return m_PF_VBF_size;}
   int PF_UE_charged_size() const { return m_PF_UE_charged_size;}
-  int PF_UE_neutrals_size() const { return m_PF_UE_neutrals_size;}
+  int PF_UE_neutral_size() const { return m_PF_UE_neutral_size;}
 
+  int is_VBF() const { return m_is_VBF;}
   int eventCategory() const { return m_eventCategory;}
+  int n_PF_jet1() const { return m_n_PF_jet1;}
+  int n_PF_jet2() const { return m_n_PF_jet2;}
+  int n_nonVBF_jets() const { return m_n_nonVBF_jets;}
+  float HT_nonVBF_jets() const { return m_HT_nonVBF_jets;}
   float Zeppenfeld() const { return m_Zeppenfeld;}
   float Zeppenfeld_charged() const { return m_Zeppenfeld_charged;}
   float Zeppenfeld_neutral() const { return m_Zeppenfeld_neutral;}
   float energy_density_ratio() const { return m_energy_density_ratio;}
   float energy_density_ratio_charged() const { return m_energy_density_ratio_charged;}
   float energy_density_ratio_neutral() const { return m_energy_density_ratio_neutral;}
-  int n_nonVBF_jets() const { return m_n_nonVBF_jets;}
-  float HT_nonVBF_jets() const { return m_HT_nonVBF_jets;}
-  int n_PF_jet1() const { return m_n_PF_jet1;}
-  int n_PF_jet2() const { return m_n_PF_jet2;}
-
-  int is_VBF() const { return m_is_VBF;}
 
 
 
@@ -61,47 +65,41 @@ public:
   void set_PF_Higgs_size(int x) { m_PF_Higgs_size = x;}
   void set_PF_VBF_size(int x) { m_PF_VBF_size = x;}
   void set_PF_UE_charged_size(int x) { m_PF_UE_charged_size = x;}
-  void set_PF_UE_neutrals_size(int x) { m_PF_UE_neutrals_size = x;}
+  void set_PF_UE_neutral_size(int x) { m_PF_UE_neutral_size = x;}
 
+  void set_is_VBF(int x) { m_is_VBF = x;}
   void set_eventCategory(int x) { m_eventCategory = x;}
+  void set_n_PF_jet1(int x) { m_n_PF_jet1 = x;}
+  void set_n_PF_jet2(int x) { m_n_PF_jet2 = x;}
+  void set_n_nonVBF_jets(int x) { m_n_nonVBF_jets = x;}
+  void set_HT_nonVBF_jets(float x) { m_HT_nonVBF_jets = x;}
   void set_Zeppenfeld(float x) { m_Zeppenfeld = x;}
   void set_Zeppenfeld_charged(float x) { m_Zeppenfeld_charged = x;}
   void set_Zeppenfeld_neutral(float x) { m_Zeppenfeld_neutral = x;}
   void set_energy_density_ratio(float x) { m_energy_density_ratio = x;}
   void set_energy_density_ratio_charged(float x) { m_energy_density_ratio_charged = x;}
   void set_energy_density_ratio_neutral(float x) { m_energy_density_ratio_neutral = x;}
-  void set_n_nonVBF_jets(int x) { m_n_nonVBF_jets = x;}
-  void set_HT_nonVBF_jets(float x) { m_HT_nonVBF_jets = x;}
-  void set_n_PF_jet1(int x) { m_n_PF_jet1 = x;}
-  void set_n_PF_jet2(int x) { m_n_PF_jet2 = x;}
-
-  void set_is_VBF(int x) { m_is_VBF = x;}
 
   vector<GenParticle>* gen_higgs;
   vector<GenParticle>* gen_higgs_Z;
   vector<GenParticle>* gen_higgs_leptons;
   vector<GenParticle>* gen_higgs_decays;
   vector<GenParticle>* gen_non_higgs_decays;
-
   vector<GenJet>* VBF_genjets;
-  vector<Jet>* VBF_jets;
-  vector<Jet>* non_VBF_jets;
+
   vector<Muon>* H_muons;
   vector<Electron>* H_electrons;
   vector<FlavorParticle>* H_leptons;
   vector<TLorentzVector>* reco_Z_bosons;
   vector<TLorentzVector>* reco_H_bosons;
+  vector<Jet>* VBF_jets;
+  vector<Jet>* non_VBF_jets;
+
   vector<PFCandidate>* PF_Higgs;
   vector<PFCandidate>* PF_VBF;
   vector<PFCandidate>* PF_UE_charged;
-  vector<PFCandidate>* PF_UE_neutrals;
-  vector<double>* PF_pt;
-  vector<double>* PF_eta;
-  vector<double>* PF_phi;
-  vector<double>* PF_energy;
-  vector<double>* PF_pdgid;
-  vector<double>* PF_charge;
-  vector<double>* PF_puppiweight;
+  vector<PFCandidate>* PF_UE_neutral;
+
   vector<double>* VBFjet_pt;
   vector<double>* VBFjet_eta;
   vector<double>* VBFjet_phi;
@@ -115,28 +113,61 @@ public:
   vector<double>* nonVBFjet_score_qgl;
   vector<double>* nonVBFjet_n_constituents;
 
+  vector<double>* PF_VBF1_pt;
+  vector<double>* PF_VBF1_eta;
+  vector<double>* PF_VBF1_phi;
+  vector<double>* PF_VBF1_energy;
+  vector<double>* PF_VBF1_pdgid;
+  vector<double>* PF_VBF1_charge;
+  vector<double>* PF_VBF1_puppiweight;
+
+  vector<double>* PF_VBF2_pt;
+  vector<double>* PF_VBF2_eta;
+  vector<double>* PF_VBF2_phi;
+  vector<double>* PF_VBF2_energy;
+  vector<double>* PF_VBF2_pdgid;
+  vector<double>* PF_VBF2_charge;
+  vector<double>* PF_VBF2_puppiweight;
+
+  vector<double>* PF_UE_charged_pt;
+  vector<double>* PF_UE_charged_eta;
+  vector<double>* PF_UE_charged_phi;
+  vector<double>* PF_UE_charged_energy;
+  vector<double>* PF_UE_charged_pdgid;
+  vector<double>* PF_UE_charged_charge;
+  vector<double>* PF_UE_charged_puppiweight;
+
+  vector<double>* PF_UE_neutral_pt;
+  vector<double>* PF_UE_neutral_eta;
+  vector<double>* PF_UE_neutral_phi;
+  vector<double>* PF_UE_neutral_energy;
+  vector<double>* PF_UE_neutral_pdgid;
+  vector<double>* PF_UE_neutral_charge;
+  vector<double>* PF_UE_neutral_puppiweight;
+
 protected:
   int m_identifier_VBFgenparticle1;
   int m_identifier_VBFgenparticle2;
   Decay m_gen_higgs_decay;
+
   float m_H_chi2, m_Z1_chi2, m_Z2_chi2, m_HZZ_chi2;
+
   int m_PF_Higgs_size;
   int m_PF_VBF_size;
   int m_PF_UE_charged_size;
-  int m_PF_UE_neutrals_size;
+  int m_PF_UE_neutral_size;
 
+  int m_is_VBF;
   int m_eventCategory;
+  int m_n_PF_jet1;
+  int m_n_PF_jet2;
+  int m_n_nonVBF_jets;
+  float m_HT_nonVBF_jets;
   float m_Zeppenfeld;
   float m_Zeppenfeld_charged;
   float m_Zeppenfeld_neutral;
   float m_energy_density_ratio;
   float m_energy_density_ratio_charged;
   float m_energy_density_ratio_neutral;
-  int m_n_nonVBF_jets;
-  float m_HT_nonVBF_jets;
-  int m_n_PF_jet1;
-  int m_n_PF_jet2;
-
-  int m_is_VBF;
 
 };
