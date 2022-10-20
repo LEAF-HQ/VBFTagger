@@ -65,6 +65,7 @@ def main(command, ncores=8, debug=False):
            }
     for dir in dirs:
         os.system('mkdir -p '+output_dir+dir)
+    os.system('mkdir -p '+output_dir+'all')
 
     orignal_merged_files_list = sorted(glob.glob(input_dir+'/UL1*/PFStudies/*root'))
     # Filtering_Original(file_list=orignal_merged_files_list, outdir=output_dir+'all', command=command, ncores=ncores, debug=debug)

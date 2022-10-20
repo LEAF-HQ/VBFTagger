@@ -6,7 +6,7 @@ outpath = os.getcwd()+'/lists/'
 os.system('mkdir -p '+outpath)
 
 with open(outpath+'ListFilesToCopy.txt', 'w') as fp:
-    fp.write('\n'.join(glob.glob('/pnfs/iihe/cms/store/user/'+os.getenv('USER')+'/Analyses/VBFTagger/UL1*/PFStudies/workdir_*_UL1*/*/*root')))
+    fp.write('\n'.join(sorted(glob.glob('/pnfs/iihe/cms/store/user/'+os.getenv('USER')+'/Analyses/VBFTagger/UL1*/PFStudies/workdir_*_UL1*/*/*root'))))
 
 folders = [
     'all',
@@ -20,4 +20,4 @@ folders = [
 
 for folder in folders:
     with open(outpath+'ListFilesToCopy_'+folder+'.txt', 'w') as fp:
-        fp.write('\n'.join(glob.glob('/pnfs/iihe/cms/store/user/'+os.getenv('USER')+'/Analyses/VBFTagger/DNNInputs/'+folder+'/*root')))
+        fp.write('\n'.join(sorted(glob.glob('/pnfs/iihe/cms/store/user/'+os.getenv('USER')+'/Analyses/VBFTagger/DNNInputs/'+folder+'/*root'))))

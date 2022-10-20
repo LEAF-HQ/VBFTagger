@@ -60,6 +60,7 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
     event.set_eventCategory(-3);
     event.set_n_nonVBF_jets(0);
     event.set_HT_nonVBF_jets(0);
+    event.set_mjj(0);
     return true;
   } else if (n_jets==1) {
     const Jet jet = (*event.jets_ak4chs).at(0);
@@ -67,6 +68,7 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
     event.set_n_nonVBF_jets(0);
     event.set_HT_nonVBF_jets(jet.pt());
     event.VBF_jets->push_back(jet);
+    event.set_mjj(jet.p4().M());
     return true;
   }
 
@@ -84,6 +86,7 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
       if (jj.M()<200) continue;
       event.VBF_jets->push_back(jet1);
       event.VBF_jets->push_back(jet2);
+      event.set_mjj(jj.M());
       if (fabs(jet1.eta())<2.4) n_central_jets += 1;
       if (fabs(jet2.eta())<2.4) n_central_jets += 1;
       isSet=true;
@@ -97,8 +100,10 @@ bool VBFJetDefinition::process(VBFTaggerEvent& event) {
     event.set_eventCategory(-2);
     const Jet jet1 = (*event.jets_ak4chs).at(0);
     const Jet jet2 = (*event.jets_ak4chs).at(1);
+    TLorentzVector jj = jet1.p4() + jet2.p4();
     event.VBF_jets->push_back(jet1);
     event.VBF_jets->push_back(jet2);
+    event.set_mjj(jj.M());
   }
 
   float HT_nonVBF_jets = 0;
@@ -337,6 +342,8 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
 
   event.set_n_PF_jet1(PF_VBF_1.size());
   event.set_n_PF_jet2(PF_VBF_2.size());
+  event.set_n_PF_VBF_charged(event.PF_UE_neutral->size());
+  event.set_n_PF_VBF_neutral(event.PF_UE_charged->size());
   event.set_PF_Higgs_size(event.PF_Higgs->size());
   event.set_PF_VBF_size(event.PF_VBF->size());
   event.set_PF_UE_neutral_size(event.PF_UE_neutral->size());
@@ -400,6 +407,86 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     event.PF_UE_charged_pdgid->push_back(cand.pdgid());
     event.PF_UE_charged_charge->push_back(cand.charge());
     event.PF_UE_charged_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: *event.PF_UE_charged){
+    event.PF_UE_pt->push_back(cand.pt());
+    event.PF_UE_eta->push_back(cand.eta());
+    event.PF_UE_phi->push_back(cand.phi());
+    event.PF_UE_energy->push_back(cand.e());
+    event.PF_UE_pdgid->push_back(cand.pdgid());
+    event.PF_UE_charge->push_back(cand.charge());
+    event.PF_UE_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: *event.PF_UE_neutral){
+    event.PF_UE_pt->push_back(cand.pt());
+    event.PF_UE_eta->push_back(cand.eta());
+    event.PF_UE_phi->push_back(cand.phi());
+    event.PF_UE_energy->push_back(cand.e());
+    event.PF_UE_pdgid->push_back(cand.pdgid());
+    event.PF_UE_charge->push_back(cand.charge());
+    event.PF_UE_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: PF_VBF_1){
+    event.PF_VBF_pt->push_back(cand.pt());
+    event.PF_VBF_eta->push_back(cand.eta());
+    event.PF_VBF_phi->push_back(cand.phi());
+    event.PF_VBF_energy->push_back(cand.e());
+    event.PF_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_VBF_charge->push_back(cand.charge());
+    event.PF_VBF_puppiweight->push_back(cand.puppiweight());
+  }
+  for(const PFCandidate& cand: PF_VBF_2){
+    event.PF_VBF_pt->push_back(cand.pt());
+    event.PF_VBF_eta->push_back(cand.eta());
+    event.PF_VBF_phi->push_back(cand.phi());
+    event.PF_VBF_energy->push_back(cand.e());
+    event.PF_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_VBF_charge->push_back(cand.charge());
+    event.PF_VBF_puppiweight->push_back(cand.puppiweight());
+  }
+
+
+  for(const PFCandidate& cand: *event.PF_UE_charged){
+    event.PF_UE_VBF_pt->push_back(cand.pt());
+    event.PF_UE_VBF_eta->push_back(cand.eta());
+    event.PF_UE_VBF_phi->push_back(cand.phi());
+    event.PF_UE_VBF_energy->push_back(cand.e());
+    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_UE_VBF_charge->push_back(cand.charge());
+    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: *event.PF_UE_neutral){
+    event.PF_UE_VBF_pt->push_back(cand.pt());
+    event.PF_UE_VBF_eta->push_back(cand.eta());
+    event.PF_UE_VBF_phi->push_back(cand.phi());
+    event.PF_UE_VBF_energy->push_back(cand.e());
+    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_UE_VBF_charge->push_back(cand.charge());
+    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: PF_VBF_1){
+    event.PF_UE_VBF_pt->push_back(cand.pt());
+    event.PF_UE_VBF_eta->push_back(cand.eta());
+    event.PF_UE_VBF_phi->push_back(cand.phi());
+    event.PF_UE_VBF_energy->push_back(cand.e());
+    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_UE_VBF_charge->push_back(cand.charge());
+    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
+  }
+
+  for(const PFCandidate& cand: PF_VBF_2){
+    event.PF_UE_VBF_pt->push_back(cand.pt());
+    event.PF_UE_VBF_eta->push_back(cand.eta());
+    event.PF_UE_VBF_phi->push_back(cand.phi());
+    event.PF_UE_VBF_energy->push_back(cand.e());
+    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_UE_VBF_charge->push_back(cand.charge());
+    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
   }
 
 

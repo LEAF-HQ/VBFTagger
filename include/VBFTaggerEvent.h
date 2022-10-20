@@ -44,8 +44,11 @@ public:
   int eventCategory() const { return m_eventCategory;}
   int n_PF_jet1() const { return m_n_PF_jet1;}
   int n_PF_jet2() const { return m_n_PF_jet2;}
+  int n_PF_VBF_charged() const { return m_n_PF_VBF_charged;}
+  int n_PF_VBF_neutral() const { return m_n_PF_VBF_neutral;}
   int n_nonVBF_jets() const { return m_n_nonVBF_jets;}
   float HT_nonVBF_jets() const { return m_HT_nonVBF_jets;}
+  float mjj() const { return m_mjj;}
   float Zeppenfeld() const { return m_Zeppenfeld;}
   float Zeppenfeld_charged() const { return m_Zeppenfeld_charged;}
   float Zeppenfeld_neutral() const { return m_Zeppenfeld_neutral;}
@@ -71,8 +74,11 @@ public:
   void set_eventCategory(int x) { m_eventCategory = x;}
   void set_n_PF_jet1(int x) { m_n_PF_jet1 = x;}
   void set_n_PF_jet2(int x) { m_n_PF_jet2 = x;}
+  void set_n_PF_VBF_charged(int x) { m_n_PF_VBF_charged = x;}
+  void set_n_PF_VBF_neutral(int x) { m_n_PF_VBF_neutral = x;}
   void set_n_nonVBF_jets(int x) { m_n_nonVBF_jets = x;}
   void set_HT_nonVBF_jets(float x) { m_HT_nonVBF_jets = x;}
+  void set_mjj(float x) { m_mjj = x;}
   void set_Zeppenfeld(float x) { m_Zeppenfeld = x;}
   void set_Zeppenfeld_charged(float x) { m_Zeppenfeld_charged = x;}
   void set_Zeppenfeld_neutral(float x) { m_Zeppenfeld_neutral = x;}
@@ -145,6 +151,30 @@ public:
   vector<double>* PF_UE_neutral_charge;
   vector<double>* PF_UE_neutral_puppiweight;
 
+  vector<double>* PF_UE_pt;
+  vector<double>* PF_UE_eta;
+  vector<double>* PF_UE_phi;
+  vector<double>* PF_UE_energy;
+  vector<double>* PF_UE_pdgid;
+  vector<double>* PF_UE_charge;
+  vector<double>* PF_UE_puppiweight;
+
+  vector<double>* PF_VBF_pt;
+  vector<double>* PF_VBF_eta;
+  vector<double>* PF_VBF_phi;
+  vector<double>* PF_VBF_energy;
+  vector<double>* PF_VBF_pdgid;
+  vector<double>* PF_VBF_charge;
+  vector<double>* PF_VBF_puppiweight;
+
+  vector<double>* PF_UE_VBF_pt;
+  vector<double>* PF_UE_VBF_eta;
+  vector<double>* PF_UE_VBF_phi;
+  vector<double>* PF_UE_VBF_energy;
+  vector<double>* PF_UE_VBF_pdgid;
+  vector<double>* PF_UE_VBF_charge;
+  vector<double>* PF_UE_VBF_puppiweight;
+
 protected:
   int m_identifier_VBFgenparticle1;
   int m_identifier_VBFgenparticle2;
@@ -161,8 +191,11 @@ protected:
   int m_eventCategory;
   int m_n_PF_jet1;
   int m_n_PF_jet2;
+  int m_n_PF_VBF_charged;
+  int m_n_PF_VBF_neutral;
   int m_n_nonVBF_jets;
   float m_HT_nonVBF_jets;
+  float m_mjj;
   float m_Zeppenfeld;
   float m_Zeppenfeld_charged;
   float m_Zeppenfeld_neutral;

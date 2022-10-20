@@ -83,6 +83,30 @@ void VBFTaggerEvent::SetNewVectors(){
   PF_UE_neutral_charge = new vector<double>;
   PF_UE_neutral_puppiweight = new vector<double>;
 
+  PF_UE_pt = new vector<double>;
+  PF_UE_eta = new vector<double>;
+  PF_UE_phi = new vector<double>;
+  PF_UE_energy = new vector<double>;
+  PF_UE_pdgid = new vector<double>;
+  PF_UE_charge = new vector<double>;
+  PF_UE_puppiweight = new vector<double>;
+
+  PF_VBF_pt = new vector<double>;
+  PF_VBF_eta = new vector<double>;
+  PF_VBF_phi = new vector<double>;
+  PF_VBF_energy = new vector<double>;
+  PF_VBF_pdgid = new vector<double>;
+  PF_VBF_charge = new vector<double>;
+  PF_VBF_puppiweight = new vector<double>;
+
+  PF_UE_VBF_pt = new vector<double>;
+  PF_UE_VBF_eta = new vector<double>;
+  PF_UE_VBF_phi = new vector<double>;
+  PF_UE_VBF_energy = new vector<double>;
+  PF_UE_VBF_pdgid = new vector<double>;
+  PF_UE_VBF_charge = new vector<double>;
+  PF_UE_VBF_puppiweight = new vector<double>;
+
 }
 
 
@@ -105,8 +129,11 @@ void VBFTaggerEvent::SetNewNonVectors(){
   m_eventCategory = -1;
   m_n_PF_jet1 = -1;
   m_n_PF_jet2 = -1;
+  m_n_PF_VBF_charged = -1;
+  m_n_PF_VBF_neutral = -1;
   m_n_nonVBF_jets = -1;
   m_HT_nonVBF_jets = -1;
+  m_mjj = -1;
   m_Zeppenfeld = -1;
   m_Zeppenfeld_charged = -1;
   m_Zeppenfeld_neutral = -1;
@@ -173,6 +200,27 @@ void VBFTaggerEvent::DeleteVectorsVBFTaggerEvent(){
   delete PF_UE_neutral_pdgid;
   delete PF_UE_neutral_charge;
   delete PF_UE_neutral_puppiweight;
+  delete PF_UE_pt;
+  delete PF_UE_eta;
+  delete PF_UE_phi;
+  delete PF_UE_energy;
+  delete PF_UE_pdgid;
+  delete PF_UE_charge;
+  delete PF_UE_puppiweight;
+  delete PF_VBF_pt;
+  delete PF_VBF_eta;
+  delete PF_VBF_phi;
+  delete PF_VBF_energy;
+  delete PF_VBF_pdgid;
+  delete PF_VBF_charge;
+  delete PF_VBF_puppiweight;
+  delete PF_UE_VBF_pt;
+  delete PF_UE_VBF_eta;
+  delete PF_UE_VBF_phi;
+  delete PF_UE_VBF_energy;
+  delete PF_UE_VBF_pdgid;
+  delete PF_UE_VBF_charge;
+  delete PF_UE_VBF_puppiweight;
 }
 
 void VBFTaggerEvent::SetZeroVectorsVBFTaggerEvent(){
@@ -233,6 +281,27 @@ void VBFTaggerEvent::SetZeroVectorsVBFTaggerEvent(){
   PF_UE_neutral_pdgid = 0;
   PF_UE_neutral_charge = 0;
   PF_UE_neutral_puppiweight = 0;
+  PF_UE_pt = 0;
+  PF_UE_eta = 0;
+  PF_UE_phi = 0;
+  PF_UE_energy = 0;
+  PF_UE_pdgid = 0;
+  PF_UE_charge = 0;
+  PF_UE_puppiweight = 0;
+  PF_VBF_pt = 0;
+  PF_VBF_eta = 0;
+  PF_VBF_phi = 0;
+  PF_VBF_energy = 0;
+  PF_VBF_pdgid = 0;
+  PF_VBF_charge = 0;
+  PF_VBF_puppiweight = 0;
+  PF_UE_VBF_pt = 0;
+  PF_UE_VBF_eta = 0;
+  PF_UE_VBF_phi = 0;
+  PF_UE_VBF_energy = 0;
+  PF_UE_VBF_pdgid = 0;
+  PF_UE_VBF_charge = 0;
+  PF_UE_VBF_puppiweight = 0;
 }
 
 
