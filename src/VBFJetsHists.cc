@@ -26,7 +26,8 @@ VBFJetsHists::VBFJetsHists(TString dir_, TString selection_) : BaseHists(dir_), 
   book<TH1F>("jet_score_CSVv2",     ";CSVv2; Events / bin",              102,     -0.01,    1.01);
   book<TH1F>("jet_score_DeepB",     ";DeepB; Events / bin",              102,     -0.01,    1.01);
   book<TH1F>("jet_score_DeepFlavB", ";DeepFlavB; Events / bin",          102,     -0.01,    1.01);
-  book<TH1F>("jet_score_qgl",       ";qgl; Events / bin",                102,     -0.01,    1.01);
+  book<TH1F>("jet_score_qgl_eta<2.5", ";qgl (eta<2.5); Events / bin",    102,     -0.01,    1.01);
+  book<TH1F>("jet_score_qgl_eta>2.5", ";qgl (eta>2.5); Events / bin",    102,     -0.01,    1.01);
   book<TH1F>("jet_ch_had_efrac",    ";ch. had. efrac; Events / bin",      20,      0.,      1.);
   book<TH1F>("jet_ne_em_efrac",     ";ne. em. efrac; Events / bin",       20,      0.,      1.);
   book<TH1F>("jet_ne_had_efrac",    ";ne. had. efrac; Events / bin",      20,      0.,      1.);
@@ -39,12 +40,20 @@ VBFJetsHists::VBFJetsHists(TString dir_, TString selection_) : BaseHists(dir_), 
   book<TH1F>("jet_n_muons",         ";# muo.; Events / bin",              50,      0.,     10);
   book<TH1F>("jet_n_electrons",     ";# ele.; Events / bin",              50,      0.,     10);
 
+  book<TH1F>("jet1_pt",            ";#p_{T, jet1}; Events / bin",        100,      0.,    500);
+  book<TH1F>("jet2_pt",            ";#p_{T, jet2}; Events / bin",        100,      0.,    500);
+  book<TH2F>("jet1_vs_jet2_pt",    ";#p_{T, jet1}; #p_{T, jet2}",         50,      0.,   1000,     50,      0.,   1000);
+
   book<TH1F>("jet1_eta",            ";#eta_{jet1}; Events / bin",        100,     -5.0,     5.0);
   book<TH1F>("jet2_eta",            ";#eta_{jet2}; Events / bin",        100,     -5.0,     5.0);
-  book<TH2F>("jet1_eta_vs_jet2",    ";#eta_{jet1}; #eta_{jet2}",         100,     -5.0,     5.0,  100,     -5.0,     5.0);
+  book<TH2F>("jet1_vs_jet2_eta",    ";#eta_{jet1}; #eta_{jet2}",         100,     -5.0,     5.0,  100,     -5.0,     5.0);
+  book<TH2F>("jet1_vs_jet2_eta_abs",";#eta_{jet1}; #eta_{jet2}",         100,     -0.0,     5.0,  100,     -0.0,     5.0);
   book<TH1F>("m_jj",                ";m(jj); Events / bin",              500,      0.,    1500);
+  book<TH1F>("DR_jj",               ";#Delta R(jj); Events / bin",       160,      0,        8);
+  book<TH1F>("Deta_jj",             ";#Delta#eta(jj); Events / bin",     160,      0,        8);
 
-  book<TH1F>("number_matched_jets", ";# of matched jets ; Events / bin", 11,      -0.5,    10.5);
+  book<TH1F>("number_matched_jets", ";# of matched jets ; Events / bin",  11,     -0.5,     10.5);
+  book<TH1F>("is_gen_matched",      ";gen Matched ; Events / bin",         3,     -0.5,      2.5);
 
 }
 
@@ -64,18 +73,30 @@ void VBFJetsHists::fill(const VBFTaggerEvent & event){
     Jet jet2_matched;
     TLorentzVector jj_matched;
 
-    if (is_etaprod || is_deta || is_mjj) { if(jet.identifier()!= event.identifier_VBFjet1() && jet.identifier()!= event.identifier_VBFjet2()) continue;}
+    if (is_etaprod || is_deta || is_mjj) {
+      if ((*event.VBF_jets).size()!=0){
+        if(jet.identifier()!= event.VBF_jets->at(0).identifier() && jet.identifier()!= event.VBF_jets->at(1).identifier()) {
+          continue;
+        }
+      }
+    }
 
     bool found_match = false;
     for(unsigned index = 0; index < event.jets_ak4chs->size(); index++ ){
       Jet jet2 = event.jets_ak4chs->at(index);
       if (jet2.identifier() == jet.identifier()) continue;
 
-      if (is_etaprod || is_deta || is_mjj) { if(jet2.identifier()!= event.identifier_VBFjet1() && jet2.identifier()!= event.identifier_VBFjet2()) continue;}
-      
+      if (is_etaprod || is_deta || is_mjj) {
+        if ((*event.VBF_jets).size()!=0){
+          if(jet2.identifier()!= event.VBF_jets->at(0).identifier() && jet2.identifier()!= event.VBF_jets->at(1).identifier()) {
+            continue;
+          }
+        }
+      }
+
       TLorentzVector jj = jet.p4() + jet2.p4();
       if (is_etaprod && jet2.eta()*jet.eta()>0) continue;
-      if (is_deta    && fabs(jet2.eta()-jet.eta())<1.4) continue;
+      if (is_deta    && deltaEta(jet,jet2)<1.4) continue;
       if (is_mjj     && jj.M()<200) continue;
       found_match = true;
       n_matched_jets++;
@@ -103,7 +124,8 @@ void VBFJetsHists::fill(const VBFTaggerEvent & event){
     hist<TH1F>("jet_score_CSVv2")->Fill(jet.score_CSVv2(), weight);
     hist<TH1F>("jet_score_DeepB")->Fill(jet.score_DeepB(), weight);
     hist<TH1F>("jet_score_DeepFlavB")->Fill(jet.score_DeepFlavB(), weight);
-    hist<TH1F>("jet_score_qgl")->Fill(jet.score_qgl(), weight);
+    if (fabs(jet.eta()) < 2.5) hist<TH1F>("jet_score_qgl_eta<2.5")->Fill(jet.score_qgl(), weight);
+    else hist<TH1F>("jet_score_qgl_eta>2.5")->Fill(jet.score_qgl(), weight);
     hist<TH1F>("jet_ch_had_efrac")->Fill(jet.ch_had_efrac(), weight);
     hist<TH1F>("jet_ne_em_efrac")->Fill(jet.ne_em_efrac(), weight);
     hist<TH1F>("jet_ne_had_efrac")->Fill(jet.ne_had_efrac(), weight);
@@ -117,12 +139,25 @@ void VBFJetsHists::fill(const VBFTaggerEvent & event){
     hist<TH1F>("jet_n_electrons")->Fill(jet.n_electrons(), weight);
 
     if (jet2_index>=0){
+      hist<TH1F>("jet1_pt")->Fill(jet.pt(), weight);
+      hist<TH1F>("jet2_pt")->Fill(jet2_matched.pt(), weight);
+      hist<TH2F>("jet1_vs_jet2_pt")->Fill(jet.pt(), jet2_matched.pt(), weight);
       hist<TH1F>("jet1_eta")->Fill(jet.eta(), weight);
       hist<TH1F>("jet2_eta")->Fill(jet2_matched.eta(), weight);
-      hist<TH2F>("jet1_eta_vs_jet2")->Fill(jet.eta(), jet2_matched.eta(), weight);
+      hist<TH2F>("jet1_vs_jet2_eta")->Fill(jet.eta(), jet2_matched.eta(), weight);
+      hist<TH2F>("jet1_vs_jet2_eta_abs")->Fill(fabs(jet.eta()), fabs(jet2_matched.eta()), weight);
       hist<TH1F>("m_jj")->Fill(jj_matched.M(), weight);
-    }
+      hist<TH1F>("DR_jj")->Fill(deltaR(jet, jet2_matched), weight);
+      hist<TH1F>("Deta_jj")->Fill(deltaEta(jet, jet2_matched), weight);
+      int n_genmatched = 0;
+      if ((*event.VBF_genjets).size()>0){
+        if (deltaR(*closestParticle(jet, *event.VBF_genjets), jet) < 0.4) n_genmatched +=1;
+        if (deltaR(*closestParticle(jet2_matched, *event.VBF_genjets), jet2_matched) < 0.4) n_genmatched +=1;
+      }
+      if (n_genmatched>2) throw runtime_error("n_genmatched is greater than 2. This shouldn't happen.");
+      hist<TH1F>("is_gen_matched")->Fill(n_genmatched, weight);
 
+    }
     hist<TH1F>("number_matched_jets")->Fill(n_matched_jets, weight);
 
   }
