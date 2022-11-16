@@ -16,6 +16,7 @@ def DoCondor(args_list):
 @timeit
 def Run(arglist, command, ncores, debug):
     # arglist = arglist[0:2]
+    arglist = list(filter(lambda x: not os.path.exists(x['output_name']), arglist))
     print(blue('  --> Running on '+str(len(arglist))+' files ...'))
     if not debug:
         if command=='MultiProcess':

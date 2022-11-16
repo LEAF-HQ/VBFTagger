@@ -55,7 +55,7 @@ private:
   bool is_VBF;
 
   string NameTool = "GenLevelStudiesTool";
-  vector<string> histogram_tags = {"input", "weights", "notau_Selection", "nogentau_Selection",
+  vector<string> histogram_tags = {"input", "weights", "nogentau_Selection", "notau_Selection",
   "NObject_Selection", "phasespace_Selection", "Higgs4LeptonsReco", "Higgs4Leptons_Selection",
   "VBF_Selection", "nominal"};
 
@@ -280,10 +280,10 @@ bool PFStudiesTool::Process(){
   fill_histograms("weights");
 
   clean_objects();
-  if(!ntaus_selection->passes(*event)) return false;
-  fill_histograms("notau_Selection");
   if(!nogentau_selection->passes(*event)) return false;
   fill_histograms("nogentau_Selection");
+  if(!ntaus_selection->passes(*event)) return false;
+  fill_histograms("notau_Selection");
 
   // if (!select_Nobjects()) return false;
   // fill_histograms("NObject_Selection");
@@ -303,6 +303,7 @@ bool PFStudiesTool::Process(){
   PFUE_selector->process(*event);
   // fill one set of histograms called "nominal", which is necessary for PostAnalyzer scripts
   fill_histograms("nominal");
+  if (event->eventCategory()==-3) return false;
   // store events passing the full selection for the next step
   return true;
 }

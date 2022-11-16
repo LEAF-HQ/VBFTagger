@@ -18,7 +18,7 @@ def main():
     # MR.CreateConfigFiles()
     # MR.Split()
     # MR.Submit()
-    MR.CheckStatus()
+    # MR.CheckStatus()
     # MR.Resubmit()
     # MR.RunLocal()
     # MR.Merge()

@@ -175,6 +175,14 @@ public:
   vector<double>* PF_UE_VBF_charge;
   vector<double>* PF_UE_VBF_puppiweight;
 
+  vector<double>* PF_UE_VBF_sorted_pt;
+  vector<double>* PF_UE_VBF_sorted_eta;
+  vector<double>* PF_UE_VBF_sorted_phi;
+  vector<double>* PF_UE_VBF_sorted_energy;
+  vector<double>* PF_UE_VBF_sorted_pdgid;
+  vector<double>* PF_UE_VBF_sorted_charge;
+  vector<double>* PF_UE_VBF_sorted_puppiweight;
+
 protected:
   int m_identifier_VBFgenparticle1;
   int m_identifier_VBFgenparticle2;

@@ -107,6 +107,14 @@ void VBFTaggerEvent::SetNewVectors(){
   PF_UE_VBF_charge = new vector<double>;
   PF_UE_VBF_puppiweight = new vector<double>;
 
+  PF_UE_VBF_sorted_pt = new vector<double>;
+  PF_UE_VBF_sorted_eta = new vector<double>;
+  PF_UE_VBF_sorted_phi = new vector<double>;
+  PF_UE_VBF_sorted_energy = new vector<double>;
+  PF_UE_VBF_sorted_pdgid = new vector<double>;
+  PF_UE_VBF_sorted_charge = new vector<double>;
+  PF_UE_VBF_sorted_puppiweight = new vector<double>;
+
 }
 
 
@@ -221,6 +229,13 @@ void VBFTaggerEvent::DeleteVectorsVBFTaggerEvent(){
   delete PF_UE_VBF_pdgid;
   delete PF_UE_VBF_charge;
   delete PF_UE_VBF_puppiweight;
+  delete PF_UE_VBF_sorted_pt;
+  delete PF_UE_VBF_sorted_eta;
+  delete PF_UE_VBF_sorted_phi;
+  delete PF_UE_VBF_sorted_energy;
+  delete PF_UE_VBF_sorted_pdgid;
+  delete PF_UE_VBF_sorted_charge;
+  delete PF_UE_VBF_sorted_puppiweight;
 }
 
 void VBFTaggerEvent::SetZeroVectorsVBFTaggerEvent(){
@@ -302,6 +317,13 @@ void VBFTaggerEvent::SetZeroVectorsVBFTaggerEvent(){
   PF_UE_VBF_pdgid = 0;
   PF_UE_VBF_charge = 0;
   PF_UE_VBF_puppiweight = 0;
+  PF_UE_VBF_sorted_pt = 0;
+  PF_UE_VBF_sorted_eta = 0;
+  PF_UE_VBF_sorted_phi = 0;
+  PF_UE_VBF_sorted_energy = 0;
+  PF_UE_VBF_sorted_pdgid = 0;
+  PF_UE_VBF_sorted_charge = 0;
+  PF_UE_VBF_sorted_puppiweight = 0;
 }
 
 

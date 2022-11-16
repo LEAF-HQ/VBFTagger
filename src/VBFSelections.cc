@@ -317,8 +317,10 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   sort_by_pt<PFCandidate>(PF_VBF_1);
   sort_by_pt<PFCandidate>(PF_VBF_2);
   sort_by_pt<PFCandidate>(*event.PF_Higgs);
-  sort_by_eta<PFCandidate>(*event.PF_UE_neutral);
-  sort_by_eta<PFCandidate>(*event.PF_UE_charged);
+  sort_by_pt<PFCandidate>(*event.PF_UE_neutral);
+  sort_by_pt<PFCandidate>(*event.PF_UE_charged);
+  // sort_by_eta<PFCandidate>(*event.PF_UE_neutral);
+  // sort_by_eta<PFCandidate>(*event.PF_UE_charged);
 
 
   PFCandidate dummy_PF; dummy_PF.set_pt(0); dummy_PF.set_eta(0); dummy_PF.set_phi(0); dummy_PF.set_m(0);
@@ -369,7 +371,12 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     event.nonVBFjet_n_constituents->push_back(jet.n_constituents());
   }
 
+  vector<PFCandidate> PF_VBF_all;
+  vector<PFCandidate> PF_UE_all;
+  vector<PFCandidate> PF_UE_VBF_all;
+
   for(const PFCandidate& cand: PF_VBF_1){
+    PF_VBF_all.push_back(cand);
     event.PF_VBF1_pt->push_back(cand.pt());
     event.PF_VBF1_eta->push_back(cand.eta());
     event.PF_VBF1_phi->push_back(cand.phi());
@@ -380,6 +387,7 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   }
 
   for(const PFCandidate& cand: PF_VBF_2){
+    PF_VBF_all.push_back(cand);
     event.PF_VBF2_pt->push_back(cand.pt());
     event.PF_VBF2_eta->push_back(cand.eta());
     event.PF_VBF2_phi->push_back(cand.phi());
@@ -389,7 +397,21 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     event.PF_VBF2_puppiweight->push_back(cand.puppiweight());
   }
 
+  sort_by_pt<PFCandidate>(PF_VBF_all);
+
+  for(const PFCandidate& cand: PF_VBF_all){
+    PF_UE_VBF_all.push_back(cand);
+    event.PF_VBF_pt->push_back(cand.pt());
+    event.PF_VBF_eta->push_back(cand.eta());
+    event.PF_VBF_phi->push_back(cand.phi());
+    event.PF_VBF_energy->push_back(cand.e());
+    event.PF_VBF_pdgid->push_back(cand.pdgid());
+    event.PF_VBF_charge->push_back(cand.charge());
+    event.PF_VBF_puppiweight->push_back(cand.puppiweight());
+  }
+
   for(const PFCandidate& cand: *event.PF_UE_neutral){
+    PF_UE_all.push_back(cand);
     event.PF_UE_neutral_pt->push_back(cand.pt());
     event.PF_UE_neutral_eta->push_back(cand.eta());
     event.PF_UE_neutral_phi->push_back(cand.phi());
@@ -400,6 +422,7 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   }
 
   for(const PFCandidate& cand: *event.PF_UE_charged){
+    PF_UE_all.push_back(cand);
     event.PF_UE_charged_pt->push_back(cand.pt());
     event.PF_UE_charged_eta->push_back(cand.eta());
     event.PF_UE_charged_phi->push_back(cand.phi());
@@ -409,7 +432,10 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     event.PF_UE_charged_puppiweight->push_back(cand.puppiweight());
   }
 
-  for(const PFCandidate& cand: *event.PF_UE_charged){
+  sort_by_pt<PFCandidate>(PF_UE_all);
+
+  for(const PFCandidate& cand: PF_UE_all){
+    PF_UE_VBF_all.push_back(cand);
     event.PF_UE_pt->push_back(cand.pt());
     event.PF_UE_eta->push_back(cand.eta());
     event.PF_UE_phi->push_back(cand.phi());
@@ -419,67 +445,8 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
     event.PF_UE_puppiweight->push_back(cand.puppiweight());
   }
 
-  for(const PFCandidate& cand: *event.PF_UE_neutral){
-    event.PF_UE_pt->push_back(cand.pt());
-    event.PF_UE_eta->push_back(cand.eta());
-    event.PF_UE_phi->push_back(cand.phi());
-    event.PF_UE_energy->push_back(cand.e());
-    event.PF_UE_pdgid->push_back(cand.pdgid());
-    event.PF_UE_charge->push_back(cand.charge());
-    event.PF_UE_puppiweight->push_back(cand.puppiweight());
-  }
 
-  for(const PFCandidate& cand: PF_VBF_1){
-    event.PF_VBF_pt->push_back(cand.pt());
-    event.PF_VBF_eta->push_back(cand.eta());
-    event.PF_VBF_phi->push_back(cand.phi());
-    event.PF_VBF_energy->push_back(cand.e());
-    event.PF_VBF_pdgid->push_back(cand.pdgid());
-    event.PF_VBF_charge->push_back(cand.charge());
-    event.PF_VBF_puppiweight->push_back(cand.puppiweight());
-  }
-  for(const PFCandidate& cand: PF_VBF_2){
-    event.PF_VBF_pt->push_back(cand.pt());
-    event.PF_VBF_eta->push_back(cand.eta());
-    event.PF_VBF_phi->push_back(cand.phi());
-    event.PF_VBF_energy->push_back(cand.e());
-    event.PF_VBF_pdgid->push_back(cand.pdgid());
-    event.PF_VBF_charge->push_back(cand.charge());
-    event.PF_VBF_puppiweight->push_back(cand.puppiweight());
-  }
-
-
-  for(const PFCandidate& cand: *event.PF_UE_charged){
-    event.PF_UE_VBF_pt->push_back(cand.pt());
-    event.PF_UE_VBF_eta->push_back(cand.eta());
-    event.PF_UE_VBF_phi->push_back(cand.phi());
-    event.PF_UE_VBF_energy->push_back(cand.e());
-    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
-    event.PF_UE_VBF_charge->push_back(cand.charge());
-    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
-  }
-
-  for(const PFCandidate& cand: *event.PF_UE_neutral){
-    event.PF_UE_VBF_pt->push_back(cand.pt());
-    event.PF_UE_VBF_eta->push_back(cand.eta());
-    event.PF_UE_VBF_phi->push_back(cand.phi());
-    event.PF_UE_VBF_energy->push_back(cand.e());
-    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
-    event.PF_UE_VBF_charge->push_back(cand.charge());
-    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
-  }
-
-  for(const PFCandidate& cand: PF_VBF_1){
-    event.PF_UE_VBF_pt->push_back(cand.pt());
-    event.PF_UE_VBF_eta->push_back(cand.eta());
-    event.PF_UE_VBF_phi->push_back(cand.phi());
-    event.PF_UE_VBF_energy->push_back(cand.e());
-    event.PF_UE_VBF_pdgid->push_back(cand.pdgid());
-    event.PF_UE_VBF_charge->push_back(cand.charge());
-    event.PF_UE_VBF_puppiweight->push_back(cand.puppiweight());
-  }
-
-  for(const PFCandidate& cand: PF_VBF_2){
+  for(const PFCandidate& cand: PF_UE_VBF_all){
     event.PF_UE_VBF_pt->push_back(cand.pt());
     event.PF_UE_VBF_eta->push_back(cand.eta());
     event.PF_UE_VBF_phi->push_back(cand.phi());
@@ -490,6 +457,17 @@ bool PFUESelector::process(VBFTaggerEvent& event) {
   }
 
 
+  sort_by_pt<PFCandidate>(PF_UE_VBF_all);
+
+  for(const PFCandidate& cand: PF_UE_VBF_all){
+    event.PF_UE_VBF_sorted_pt->push_back(cand.pt());
+    event.PF_UE_VBF_sorted_eta->push_back(cand.eta());
+    event.PF_UE_VBF_sorted_phi->push_back(cand.phi());
+    event.PF_UE_VBF_sorted_energy->push_back(cand.e());
+    event.PF_UE_VBF_sorted_pdgid->push_back(cand.pdgid());
+    event.PF_UE_VBF_sorted_charge->push_back(cand.charge());
+    event.PF_UE_VBF_sorted_puppiweight->push_back(cand.puppiweight());
+  }
 
   event.set_Zeppenfeld(Zeppenfeld_charged+Zeppenfeld_neutral);
   event.set_Zeppenfeld_charged(Zeppenfeld_charged);
