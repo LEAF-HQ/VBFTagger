@@ -31,7 +31,7 @@ class GenParticlesHists : public BaseHists{
 
 public:
   // Constructors, destructor
-  GenParticlesHists(TString dir_, TString selection_="");
+  GenParticlesHists(TString dir_, TString selection_="", bool do_stablegenparticles_=true);
   GenParticlesHists(const GenParticlesHists &) = default;
   GenParticlesHists & operator = (const GenParticlesHists &) = default;
   ~GenParticlesHists() = default;
@@ -41,7 +41,9 @@ public:
 
 private:
   TString selection;
+  bool do_stablegenparticles;
   vector<string> gen_ids_names;
+  vector<GenParticle>* genparticles;
 
   const vector<ParticleID> gen_ids = {
     ParticleID::photon, ParticleID::e, ParticleID::mu, ParticleID::v_e, ParticleID::v_mu, ParticleID::v_tau,

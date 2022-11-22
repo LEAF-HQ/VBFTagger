@@ -2,7 +2,7 @@
 <!DOCTYPE Configuration PUBLIC "" "Configuration.dtd"[
 
 <!ENTITY User             "anmalara" >
-<!ENTITY ModuleName       "GenLevelStudies" >
+<!ENTITY ModuleName       "PFStudies" >
 <!ENTITY OutputDirectory  "/pnfs/iihe/cms/store/user/&User;/Analyses/VBFTagger/Year/&ModuleName;/" >
 ]>
 
@@ -39,6 +39,35 @@
       <AdditionalDataset Name="VBF_HToZZTo4L_M130_standard"     Year="None" >  </AdditionalDataset>
       <AdditionalDataset Name="GluGluHToZZTo4L_M130_standard"   Year="None" >  </AdditionalDataset>
       <Collection ClassName="GenParticle" BranchName="genparticles_stable" FileName="stablegenparticles"/>
+    </AdditionalInput>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M120_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M120_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M124_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M124_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M126_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M126_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M130_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M130_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="PFCandidate" BranchName="pfcands" FileName="pfcands"/>
+    </AdditionalInput>
+
+    <AdditionalInput>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M125_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M125_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M120_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M120_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M124_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M124_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M126_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M126_standard"   Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="VBF_HToZZTo4L_M130_standard"     Year="None" >  </AdditionalDataset>
+      <AdditionalDataset Name="GluGluHToZZTo4L_M130_standard"   Year="None" >  </AdditionalDataset>
+      <Collection ClassName="Jet" BranchName="jets_ak4puppi" FileName="extrajets"/>
+      <Collection ClassName="Jet" BranchName="jets_ak8puppi" FileName="extrajets"/>
     </AdditionalInput>
 
   </AdditionalInputs>

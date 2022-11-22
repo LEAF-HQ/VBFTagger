@@ -23,6 +23,14 @@ Add_Signals_VBFAnalysis(AllSamples)
 
 
 config_per_year = {
+    'UL16preVFP': {
+        'arch_tag': 'slc7_amd64_gcc700',
+        'cmsswtag': 'CMSSW_10_6_28'
+    },
+    'UL16postVFP': {
+        'arch_tag': 'slc7_amd64_gcc700',
+        'cmsswtag': 'CMSSW_10_6_28'
+    },
     'UL17': {
         'arch_tag': 'slc7_amd64_gcc700',
         'cmsswtag': 'CMSSW_10_6_28'
@@ -34,31 +42,34 @@ config_per_year = {
 }
 
 
-
-
-year = 'UL18'
+years = []
+# years.append('UL16preVFP')
+# years.append('UL16postVFP')
+# years.append('UL17')
+years.append('UL18')
 stage = 'mini'
 submit = True
-#submit = False
+# submit = False
 nevt_per_job = 100000
 
 
 
 
 def main():
-    for samplename, sample in AllSamples.items():
-        print(green('--> Working on sample: \'%s\'' % (samplename)))
-        Tuplizer = TuplizeRunner(sample=sample, stage=stage, year=year, config=config_per_year[year], workarea=workarea, submit=submit)
-        # Tuplizer.CountEvents(check_missing=True)
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='new')
-        # Tuplizer.CleanBrokenFiles(nevt_per_job=nevt_per_job)
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
-        # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
-        Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=True)
-        # Tuplizer.PrintDASCrossSection(sample=sample, year=year, recalculate=True)
-    # create_default_config(allsamples=AllSamples, year='UL17', configoutname= os.path.join(os.environ['LEAFPATH'], 'LQDM', 'config', 'Default.xml'))
+    for year in years:
+        for samplename, sample in AllSamples.items():
+            print(green('--> Working on sample: \'%s\'' % (samplename)))
+            Tuplizer = TuplizeRunner(sample=sample, stage=stage, year=year, config=config_per_year[year], workarea=workarea, submit=submit)
+            # Tuplizer.CountEvents(check_missing=True)
+            # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='new')
+            # Tuplizer.CleanBrokenFiles(nevt_per_job=nevt_per_job)
+            # Tuplizer.SubmitTuplize(ncores=1, runtime=(01,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+            # Tuplizer.SubmitTuplize(ncores=1, runtime=(02,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+            # Tuplizer.SubmitTuplize(ncores=1, runtime=(05,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+            # Tuplizer.SubmitTuplize(ncores=1, runtime=(23,00,00), nevt_per_job=nevt_per_job, mode='resubmit')
+            # Tuplizer.CreateDatasetXMLFile(force_counting=True, count_weights=True)
+            # Tuplizer.PrintDASCrossSection(sample=sample, year=year, recalculate=True)
+        # create_default_config(allsamples=AllSamples, year='UL17', configoutname= os.path.join(os.environ['LEAFPATH'], 'LQDM', 'config', 'Default.xml'))
 
 
 
