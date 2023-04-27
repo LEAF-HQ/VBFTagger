@@ -83,6 +83,7 @@ def FlattenTree(input_name,output_name, tree_name='AnalysisTree', selection = No
         "m_n_PF_VBF_neutral",
         "m_n_nonVBF_jets",
         "m_HT_nonVBF_jets",
+        "m_mjj",
         "m_Zeppenfeld",
         "m_Zeppenfeld_charged",
         "m_Zeppenfeld_neutral",
